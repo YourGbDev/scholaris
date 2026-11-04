@@ -1,11 +1,12 @@
-// lib/features/auth/presentation/login_screen.dart
-//
-// Rebuilt LoginScreen based on the Stitch design reference (academic momentum,
-// Philippine trust network, institutional SSO, provider portal).
-// Preserves Supabase auth flow, EmptyStage background layer, and form hierarchy.
-
 import 'package:scholaris/shared/theme/app_typography.dart';
+import 'package:scholaris/shared/widgets/greeting_mascot.dart';
+
 import 'dart:async';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../controllers/auth_controller.dart';
+import 'session_entry_status.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -16,38 +17,29 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:scholaris/app/landing_config.dart';
 import 'package:scholaris/core/security/login_lockout_service.dart';
 import 'package:scholaris/core/security/captcha_challenge.dart';
-import 'package:scholaris/features/auth/presentation/empty_stage.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/entrance.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 
-const int kLoginEntranceTotalMs = 1450;
+final loginCaptchaProvider = Provider((ref) => acquireCaptcha);
+
+const int kLoginEntranceTotalMs = 200;
 
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
-Interval _loginInterval(int beginMs, int endMs) => EntranceMotion.intervalFrom(
-  beginMs,
-  endMs,
-  kLoginEntranceTotalMs,
-  curve: Curves.easeOutCubic,
-);
-
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({
-    super.key,
-    this.showProviderCta,
-  });
+class LoginScreen extends ConsumerStatefulWidget {
+  const LoginScreen({super.key, this.showProviderCta});
 
   /// Override for testing or explicit host configuration.
   /// When null, defaults to [isProviderCtaVisible].
   final bool? showProviderCta;
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
+class _LoginScreenState extends ConsumerState<LoginScreen>
     with
         TickerProviderStateMixin<LoginScreen>,
         EntranceMotionMixin<LoginScreen> {
@@ -58,6 +50,7 @@ class _LoginScreenState extends State<LoginScreen>
   bool _obscurePassword = true;
   bool _rememberMe = true;
   bool _isLoading = false;
+  int _loginEpoch = 0;
 
   LockoutStatus? _lockoutStatus;
   Timer? _lockoutTimer;
@@ -73,7 +66,8 @@ class _LoginScreenState extends State<LoginScreen>
     if (email.isNotEmpty) {
       final status = LoginLockoutService.instance.checkLockout(email);
       if (status.isLocked) {
-        if (_lockoutStatus?.isLocked != true || _lockoutStatus?.lockedUntil != status.lockedUntil) {
+        if (_lockoutStatus?.isLocked != true ||
+            _lockoutStatus?.lockedUntil != status.lockedUntil) {
           _startLockoutCountdown(status);
         }
       } else {
@@ -126,26 +120,30 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Future<void> _onLogin() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_isLoading || !_formKey.currentState!.validate()) return;
 
     final email = _emailController.text.trim();
-    final lockoutCheck = LoginLockoutService.instance.checkLockout(email);
+    final password = _passwordController.text;
+    final epoch = _loginEpoch;
+    final lockoutCheck = await LoginLockoutService.instance.checkLockoutRemote(
+      email,
+    );
+    if (!mounted) return;
     if (lockoutCheck.isLocked) {
       _startLockoutCountdown(lockoutCheck);
-      ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar(lockoutCheck.lockoutMessage),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_snackBar(lockoutCheck.lockoutMessage));
       return;
     }
 
     setState(() => _isLoading = true);
     debugPrint('[LOGIN] calling signInWithPassword');
     try {
-      final captcha = await acquireCaptcha(context);
-      if (!mounted || !captcha.allowed) return;
+      final captcha = await ref.read(loginCaptchaProvider)(context);
+      if (!mounted || epoch != _loginEpoch || !captcha.allowed) return;
       final result = await Supabase.instance.client.auth.signInWithPassword(
         email: email,
-        password: _passwordController.text,
+        password: password,
         captchaToken: captcha.token,
       );
       LoginLockoutService.instance.recordSuccessfulLogin(email);
@@ -157,6 +155,7 @@ class _LoginScreenState extends State<LoginScreen>
         '[LOGIN] signInWithPassword succeeded session=${result.session != null}',
       );
     } on AuthException catch (error) {
+      if (!mounted || epoch != _loginEpoch) return;
       if (error.message.contains('Email not confirmed') ||
           error.message.contains('email_not_confirmed')) {
         if (!mounted) return;
@@ -184,12 +183,16 @@ class _LoginScreenState extends State<LoginScreen>
       final msg = newStatus.isLocked
           ? newStatus.lockoutMessage
           : (newStatus.failedAttempts > 0 && newStatus.failedAttempts < 3)
-              ? '${_friendlyError(error)} (${3 - newStatus.failedAttempts} attempt${3 - newStatus.failedAttempts == 1 ? '' : 's'} remaining before lockout)'
-              : _friendlyError(error);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(_snackBar(msg));
+          ? '${_friendlyError(error)} (${3 - newStatus.failedAttempts} attempt${3 - newStatus.failedAttempts == 1 ? '' : 's'} remaining before lockout)'
+          : _friendlyError(error);
+      ScaffoldMessenger.of(context).showSnackBar(_snackBar(msg));
     } catch (_) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(_snackBar('Could not complete the security check. Please try again.'));
+      if (!mounted || epoch != _loginEpoch) return;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          _snackBar('Could not complete the security check. Please try again.'),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -238,14 +241,20 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(
-          message,
-          style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-        ),
-        backgroundColor: const Color(0xFF161C27),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      );
+    content: Text(
+      message,
+      style: AppTypography.style(
+        AppTextRole.body,
+        color: Colors.white,
+        fontSize: 13,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
+    ),
+    backgroundColor: const Color(0xFF161C27),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  );
 
   Widget _buildLockoutBanner() {
     final status = _lockoutStatus;
@@ -294,19 +303,33 @@ class _LoginScreenState extends State<LoginScreen>
                       Expanded(
                         child: Text(
                           'Account Temporarily Locked',
-                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: const Color(0xFFBA1A1A), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.cardTitle,
+                            fontSize: 13,
+                            color: const Color(0xFFBA1A1A),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFBA1A1A),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           timeStr,
-                          style: AppTypography.style(AppTextRole.metric, fontSize: 11, color: Colors.white, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.metric,
+                            fontSize: 11,
+                            color: Colors.white,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ],
@@ -314,7 +337,13 @@ class _LoginScreenState extends State<LoginScreen>
                   const SizedBox(height: 4),
                   Text(
                     'Due to ${status.failedAttempts} consecutive failed attempts, sign-in is disabled. Please wait for the timer to expire or reset your password.',
-                    style: AppTypography.style(AppTextRole.body, fontSize: 11, color: const Color(0xFF410002), height: 1.35, letterSpacing: opticalTracking(11)),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 11,
+                      color: const Color(0xFF410002),
+                      height: 1.35,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -327,8 +356,7 @@ class _LoginScreenState extends State<LoginScreen>
     // Unlocked, but has failed attempts
     final String warningText;
     if (status.failedAttempts >= 3) {
-      warningText =
-          'Security Notice: Account previously locked. 1 more failed attempt will trigger an extended account lockout.';
+      warningText = 'Security Notice: Account previously locked. 1 more failed attempt will trigger an extended account lockout.';
     } else {
       final remainingAttempts = 3 - status.failedAttempts;
       warningText =
@@ -356,7 +384,13 @@ class _LoginScreenState extends State<LoginScreen>
           Expanded(
             child: Text(
               warningText,
-              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF5D4037), height: 1.35, letterSpacing: opticalTracking(11)),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 11,
+                color: const Color(0xFF5D4037),
+                height: 1.35,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -364,378 +398,313 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _revealLogin(int index, Widget child) => KeyedSubtree(
-    key: ValueKey('login-reveal-$index'),
-    child: entranceItem(
-      index: index,
-      interval: _loginInterval(index * 140, index * 140 + 650),
-      offset: const Offset(0, 0.035),
-      child: child,
+  InputDecoration _fieldDecoration(
+    String label,
+    String hint, {
+    Widget? suffix,
+  }) => InputDecoration(
+    labelText: label,
+    floatingLabelBehavior: FloatingLabelBehavior.always,
+    labelStyle: AppTypography.style(
+      AppTextRole.label,
+      fontSize: 14,
+      color: kTextPrimary,
+      height: 1.4,
+      letterSpacing: 0,
     ),
+    hintText: hint,
+    hintStyle: AppTypography.style(
+      AppTextRole.placeholder,
+      fontSize: 14,
+      color: kTextSecondary,
+      height: 1.4,
+      letterSpacing: 0,
+    ),
+    suffixIcon: suffix,
+    filled: true,
+    fillColor: Colors.white,
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Color(0xFFCDD5CF)),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: Color(0xFFCDD5CF)),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: kPrimary, width: 1.5),
+    ),
+    errorStyle: AppTypography.style(
+      AppTextRole.caption,
+      fontSize: 12,
+      color: const Color(0xFFBA1A1A),
+      height: 1.4,
+      letterSpacing: 0,
+    ),
+    errorMaxLines: 3,
   );
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(authSessionProvider, (_, _) => _loginEpoch++);
+    final session = ref.watch(authSessionProvider);
+    if (session != null && !session.passwordRecovery) {
+      return const SessionEntryStatus();
+    }
+    final locked = _lockoutStatus?.isLocked ?? false;
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAF8),
+      backgroundColor: Colors.white,
       body: Listener(
         behavior: HitTestBehavior.translucent,
         onPointerDown: (_) {
-          if (entranceController.isAnimating) {
-            entranceController.value = 1.0;
-          }
+          if (entranceController.isAnimating) entranceController.value = 1.0;
         },
-        child: Stack(
-        children: [
-          // EmptyStage mounted beneath the surface for composition test compatibility
-          const Positioned.fill(child: EmptyStage()),
-
-          // Canvas surface background
-          const Positioned.fill(child: ColoredBox(color: Color(0xFFFAFAF8))),
-
-          // Content
-          SafeArea(
-            child: Column(
-              children: [
-                // Top Header Bar
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-                              color: const Color(0xFF161C27),
-                              tooltip: 'Back',
-                              onPressed: () {
-                                if (context.canPop()) {
-                                  context.pop();
-                                } else {
-                                  context.go('/onboarding');
-                                }
-                              },
-                            ),
-                            const SizedBox(width: 4),
-                            const Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: ScholarisLogo(fontSize: 20, badgeSize: 30, iconSize: 18),
-                              ),
-                            ),
-                          ],
+        child: SafeArea(
+          child: Column(
+            children: [
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          tooltip: 'Back',
+                          icon: const Icon(Icons.arrow_back_rounded, size: 20),
+                          onPressed: () {
+                            if (context.canPop()) {
+                              context.pop();
+                            } else {
+                              context.go('/onboarding');
+                            }
+                          },
                         ),
-                      ),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
-                              child: Center(
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: const Color(0xFFE2E8E5)),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.help_outline_rounded, size: 14, color: Color(0xFF707971)),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'Help',
-                                        style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF161C27), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              width: 28,
-                              height: 28,
-                              decoration: const BoxDecoration(
-                                color: kPrimary,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.person, size: 16, color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        const Flexible(child: ScholarisLogo(compact: true)),
+                      ],
+                    ),
                   ),
                 ),
-                // Form & Scrollable Content
-                Expanded(
-                  child: SingleChildScrollView(
-                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-                      physics: const AppleBouncingScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 460),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _revealLogin(0, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                // Hero Section: Free-floating waving couple mascot
-                                Center(
-                                  child: Image.asset(
-                                    'assets/images/mascot_couple_wave.png',
-                                    height: MediaQuery.sizeOf(context).height <= 650 ? 84.0 : 165.0,
-                                    fit: BoxFit.contain,
-                                    filterQuality: FilterQuality.medium,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return SizedBox(
-                                        height: MediaQuery.sizeOf(context).height <= 650 ? 84.0 : 165.0,
-                                      );
-                                    },
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  physics: const AppleBouncingScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 440),
+                      child: KeyedSubtree(
+                        key: const ValueKey('login-form-entrance'),
+                        child: entranceItem(
+                          index: 0,
+                          interval: const Interval(
+                            0,
+                            1,
+                            curve: Curves.easeOutCubic,
+                          ),
+                          offset: const Offset(0, 0.012),
+                          child: AutofillGroup(
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Center(
+                                    child: MascotWelcomePair(
+                                      key: const ValueKey('login-mascot-pair'),
+                                      height:
+                                          MediaQuery.sizeOf(context).height <
+                                              650
+                                          ? 120
+                                          : 168,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-
-                                ])),
-                                _revealLogin(1, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                // Padayon, Iskolar badge
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2.5),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF483502),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: const Color(0xFFC99726), width: 1.2),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Welcome back',
+                                    style: AppTypography.style(
+                                      AppTextRole.screenTitle,
+                                      fontSize: 24,
+                                      height: 1.25,
+                                      letterSpacing: -.3,
+                                    ),
                                   ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.auto_awesome, size: 11, color: Color(0xFFF1B41E)),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        'PADAYON, ISKOLAR',
-                                        style: AppTypography.style(AppTextRole.badge, fontSize: 9.5, color: const Color(0xFFFFDEA3), letterSpacing: 0.5, height: opticalLeading(9.5, isBody: false)),
-                                      ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    'Sign in to continue your scholarship journey.',
+                                    style: AppTypography.style(
+                                      AppTextRole.subtitle,
+                                      fontSize: 14,
+                                      height: 1.45,
+                                      color: kTextSecondary,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 28),
+                                  _buildLockoutBanner(),
+                                  TextFormField(
+                                    controller: _emailController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    textInputAction: TextInputAction.next,
+                                    autofillHints: const [
+                                      AutofillHints.username,
+                                      AutofillHints.email,
                                     ],
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-
-                                // Welcome Back heading
-                                Text(
-                                  'Welcome Back',
-                                  style: AppTypography.style(AppTextRole.display, fontSize: 22, color: const Color(0xFF0F4D2E), letterSpacing: -0.5, height: opticalLeading(22, isBody: false)),
-                                ),
-
-                                // Retained headline string for test contract compatibility
-                                const SizedBox(
-                                  height: 0,
-                                  width: 0,
-                                  child: OverflowBox(
-                                    maxHeight: 0,
-                                    maxWidth: 0,
-                                    child: Text(
-                                      'Your future starts somewhere.',
-                                      style: TextStyle(
-                                        fontSize: 0,
-                                        color: Colors.transparent,
-                                      ),
+                                    autocorrect: false,
+                                    textCapitalization: TextCapitalization.none,
+                                    validator: _validateEmail,
+                                    style: AppTypography.style(
+                                      AppTextRole.input,
+                                      fontSize: 14,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
+                                    decoration: _fieldDecoration(
+                                      'Email',
+                                      'you@example.com',
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 2),
-
-                                // Subtext
-                                Text(
-                                  'Sign in to track ongoing applications and unlock newly matched Philippine academic grants.',
-                                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: const Color(0xFF404942), height: 1.3, letterSpacing: opticalTracking(11.5)),
-                                ),
-                                const SizedBox(height: 6),
-
-                                // Lockout Banner / Countdown
-                                _buildLockoutBanner(),
-
-                                ])),
-                                _revealLogin(2, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                // Email Field
-                                Text(
-                                  'Email',
-                                  style: AppTypography.style(AppTextRole.label, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-                                ),
-                                const SizedBox(height: 6),
-                                TextFormField(
-                                  controller: _emailController,
-                                  keyboardType: TextInputType.emailAddress,
-                                  textInputAction: TextInputAction.next,
-                                  autofillHints: const [AutofillHints.username, AutofillHints.email],
-                                  validator: _validateEmail,
-                                  style: AppTypography.style(AppTextRole.input, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(Icons.alternate_email, size: 20, color: Color(0xFF707971)),
-                                    hintText: 'e.g. maya.santos@up.edu.ph',
-                                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 14, color: const Color(0xFF707971), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                                  const SizedBox(height: 24),
+                                  TextFormField(
+                                    controller: _passwordController,
+                                    autofillHints: const [
+                                      AutofillHints.password,
+                                    ],
+                                    textInputAction: TextInputAction.done,
+                                    obscureText: _obscurePassword,
+                                    autocorrect: false,
+                                    enableSuggestions: false,
+                                    onFieldSubmitted: (_) =>
+                                        (_isLoading || locked)
+                                        ? null
+                                        : _onLogin(),
+                                    validator: (v) => (v == null || v.isEmpty)
+                                        ? 'Enter your password.'
+                                        : null,
+                                    style: AppTypography.style(
+                                      AppTextRole.input,
+                                      fontSize: 14,
+                                      height: 1.4,
+                                      letterSpacing: 0,
                                     ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: kPrimary, width: 1.5),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-
-                                ])),
-                                _revealLogin(3, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                // Password Field Header
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
+                                    decoration: _fieldDecoration(
                                       'Password',
-                                      style: AppTypography.style(AppTextRole.label, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-                                    ),
-                                    Flexible(
-                                      child: TextButton(
-                                        onPressed: _onForgotPassword,
-                                        style: TextButton.styleFrom(
-                                          foregroundColor: kNavyTrust,
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                                          minimumSize: const Size(44, 44),
-                                          tapTargetSize: MaterialTapTargetSize.padded,
+                                      'Enter your password',
+                                      suffix: IconButton(
+                                        tooltip: _obscurePassword
+                                            ? 'Show password'
+                                            : 'Hide password',
+                                        icon: Icon(
+                                          _obscurePassword
+                                              ? Icons.visibility_outlined
+                                              : Icons.visibility_off_outlined,
+                                          size: 20,
+                                          color: kTextSecondary,
                                         ),
-                                        child: Text(
-                                          'Forgot password?',
-                                          overflow: TextOverflow.ellipsis,
-                                          style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                        onPressed: () => setState(
+                                          () => _obscurePassword =
+                                              !_obscurePassword,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                TextFormField(
-                                  controller: _passwordController,
-                                  autofillHints: const [AutofillHints.password],
-                                  obscureText: _obscurePassword,
-                                  onFieldSubmitted: (_) =>
-                                      (_isLoading || (_lockoutStatus?.isLocked ?? false))
-                                          ? null
-                                          : _onLogin(),
-                                  validator: (v) => (v == null || v.isEmpty) ? 'Enter your password.' : null,
-                                  style: AppTypography.style(AppTextRole.input, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
-                                  decoration: InputDecoration(
-                                    prefixIcon: const Icon(Icons.lock_outline, size: 20, color: Color(0xFF707971)),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                                        size: 20,
-                                        color: const Color(0xFF707971),
-                                      ),
-                                      onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                                    ),
-                                    hintText: 'Enter your password',
-                                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 14, color: const Color(0xFF707971), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
-                                    filled: true,
-                                    fillColor: Colors.white,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: kPrimary, width: 1.5),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-
-                                ])),
-                                _revealLogin(4, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                // Remember Me Checkbox
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: Checkbox(
-                                        key: const ValueKey('remember-me-checkbox'),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton(
+                                      onPressed: _onForgotPassword,
+                                      style: TextButton.styleFrom(
+                                        minimumSize: const Size(44, 44),
+                                        foregroundColor: kPrimary,
+                                      ),
+                                      child: Text(
+                                        'Forgot password?',
+                                        style: AppTypography.style(
+                                          AppTextRole.button,
+                                          fontSize: 13,
+                                          height: 1.4,
+                                          letterSpacing: 0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        key: const ValueKey(
+                                          'remember-me-checkbox',
+                                        ),
                                         value: _rememberMe,
                                         activeColor: kPrimary,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(4),
-                                        ),
-                                        side: const BorderSide(
-                                          color: Color(0xFF707971),
-                                          width: 1.5,
-                                        ),
                                         onChanged: (val) => setState(
                                           () => _rememberMe = val ?? true,
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () => setState(
-                                          () => _rememberMe = !_rememberMe,
+                                      Expanded(
+                                        child: InkWell(
+                                          onTap: () => setState(
+                                            () => _rememberMe = !_rememberMe,
+                                          ),
+                                          child: Container(
+                                            constraints: const BoxConstraints(
+                                              minHeight: 44,
+                                            ),
+                                            alignment: Alignment.centerLeft,
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                            ),
+                                            child: Text(
+                                              'Remember me for 30 days',
+                                              style: AppTypography.style(
+                                                AppTextRole.label,
+                                                fontSize: 13,
+                                                color: kTextSecondary,
+                                                height: 1.4,
+                                                letterSpacing: 0,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                        child: Text(
-                                          'Remember me for 30 days',
-                                          overflow: TextOverflow.ellipsis,
-                                           style: AppTypography.style(AppTextRole.label, fontSize: 13, color: const Color(0xFF404944), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-                                         ),
-                                       ),
-                                     ),
-                                   ],
-                                 ),
-                                const SizedBox(height: 6),
-
-                                // Primary Login Button
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 48,
-                                  child: ElevatedButton(
-                                    onPressed: (_isLoading || (_lockoutStatus?.isLocked ?? false))
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  ElevatedButton(
+                                    onPressed: (_isLoading || locked)
                                         ? null
                                         : _onLogin,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: (_lockoutStatus?.isLocked ?? false)
+                                      minimumSize: const Size(
+                                        double.infinity,
+                                        48,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 14,
+                                      ),
+                                      backgroundColor: locked
                                           ? const Color(0xFFBA1A1A)
                                           : kPrimary,
                                       foregroundColor: Colors.white,
-                                      disabledBackgroundColor: (_lockoutStatus?.isLocked ?? false)
+                                      disabledBackgroundColor: locked
                                           ? const Color(0xFFE2A0A0)
-                                          : _isLoading ? kPrimary : null,
-                                      disabledForegroundColor: (_lockoutStatus?.isLocked ?? false)
-                                          ? Colors.white.withValues(alpha: 0.8)
+                                          : _isLoading
+                                          ? kPrimary
+                                          : null,
+                                      disabledForegroundColor: locked
+                                          ? Colors.white.withValues(alpha: .8)
                                           : null,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      elevation: 2,
+                                      elevation: 0,
                                     ),
                                     child: _isLoading
                                         ? const SizedBox(
@@ -746,233 +715,87 @@ class _LoginScreenState extends State<LoginScreen>
                                               color: Colors.white,
                                             ),
                                           )
-                                        : Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                (_lockoutStatus?.isLocked ?? false)
-                                                    ? 'Account Locked'
-                                                    : 'Log in',
-                                                style: AppTypography.style(AppTextRole.button, fontSize: 16, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Icon(
-                                                (_lockoutStatus?.isLocked ?? false)
-                                                    ? Icons.lock_rounded
-                                                    : Icons.arrow_forward_rounded,
-                                                size: 18,
-                                              ),
-                                            ],
+                                        : Text(
+                                            locked
+                                                ? 'Account Locked'
+                                                : 'Sign in',
+                                            textAlign: TextAlign.center,
+                                            style: AppTypography.style(
+                                              AppTextRole.button,
+                                              fontSize: 14,
+                                              height: 1.4,
+                                              letterSpacing: 0,
+                                            ),
                                           ),
                                   ),
-                                ),
-                                const SizedBox(height: 14),
-
-                                ])),
-                                _revealLogin(5, Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                // Sign Up Navigation Link
-                                Center(
-                                  child: Wrap(
+                                  const SizedBox(height: 16),
+                                  Wrap(
                                     alignment: WrapAlignment.center,
-                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    crossAxisAlignment:
+                                        WrapCrossAlignment.center,
                                     children: [
                                       Text(
                                         "Don't have an account?",
-                                        style: AppTypography.style(AppTextRole.body, fontSize: 14, color: const Color(0xFF404942), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+                                        style: AppTypography.style(
+                                          AppTextRole.body,
+                                          fontSize: 13,
+                                          color: kTextSecondary,
+                                          height: 1.4,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
-                                      const SizedBox(width: 4),
                                       TextButton(
                                         onPressed: () => context.go('/signup'),
                                         style: TextButton.styleFrom(
+                                          minimumSize: const Size(44, 44),
                                           foregroundColor: kPrimary,
-                                          padding: EdgeInsets.zero,
-                                          minimumSize: Size.zero,
-                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         ),
                                         child: Text(
                                           'Sign up',
-                                          style: AppTypography.style(AppTextRole.button, fontSize: 14, color: kPrimary, decoration: TextDecoration.underline, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                          style: AppTypography.style(
+                                            AppTextRole.button,
+                                            fontSize: 13,
+                                            height: 1.4,
+                                            letterSpacing: 0,
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                ),
-                                const SizedBox(height: 14),
-
-                                if (_shouldShowProviderCta) ...[
-                                  // Provider / Partner Callout
-                                  InkWell(
-                                    onTap: _openProviderPortal,
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFF0F0F0),
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: const Color(0xFFD2E4FF)),
+                                  if (_shouldShowProviderCta) ...[
+                                    const SizedBox(height: 8),
+                                    TextButton(
+                                      onPressed: _openProviderPortal,
+                                      style: TextButton.styleFrom(
+                                        minimumSize: const Size(44, 44),
+                                        foregroundColor: kPrimary,
                                       ),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            'Want to help students reach their dreams?',
-                                            textAlign: TextAlign.center,
-                                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kNavyTrust, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(
-                                                  'Become a scholarship provider',
-                                                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, decoration: TextDecoration.underline, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
-                                                ),
-                                                const SizedBox(width: 4),
-                                                const Icon(Icons.arrow_forward_rounded, size: 14, color: kPrimary),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
-
-                                // Divider: OR AUTHENTICATE WITH
-                                Row(
-                                  children: [
-                                    const Expanded(child: Divider(color: Color(0xFFDDE2F3))),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10),
                                       child: Text(
-                                        'OR AUTHENTICATE WITH',
-                                        style: AppTypography.style(AppTextRole.label, fontSize: 10, color: const Color(0xFF707971), letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
-                                      ),
-                                    ),
-                                    const Expanded(child: Divider(color: Color(0xFFDDE2F3))),
-                                  ],
-                                ),
-                                const SizedBox(height: 12),
-
-                                // Institutional Student SSO • Coming soon
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: const Color(0xFFE2E8E5)),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 32,
-                                        height: 32,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFFF0F0F0),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: const Icon(Icons.account_balance_outlined, color: kNavyTrust, size: 18),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Institutional Student SSO • Coming soon',
-                                              style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
-                                            ),
-                                            Text(
-                                              'Institutional sign-in is not available yet',
-                                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 10, color: const Color(0xFF404942), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const Icon(Icons.chevron_right, color: Color(0xFF707971), size: 16),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-
-                                // Google Workspace for Education
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: 40,
-                                  child: OutlinedButton(
-                                    onPressed: null,
-                                    style: OutlinedButton.styleFrom(
-                                      backgroundColor: const Color(0xFFF0F0F0),
-                                      side: const BorderSide(color: Color(0xFFE2E8E5)),
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                      foregroundColor: kNavyTrust,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(Icons.school_outlined, size: 16, color: kNavyTrust),
-                                        const SizedBox(width: 6),
-                                        Flexible(
-                                          child: Text(
-                                            'Google sign-in • Coming soon',
-                                            style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 14),
-
-                                // Trust & Security Notice Footer
-                                Center(
-                                  child: Column(
-                                    children: [
-                                      FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(Icons.verified_user_outlined, size: 14, color: kPrimary),
-                                            const SizedBox(width: 4),
-                                            Text(
-                                              'Scholaris student access',
-                                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 11, color: kNavyTrust, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(height: 3),
-                                      Text(
-                                        'Sign in with your Scholaris account to continue.',
+                                        'Become a scholarship provider',
                                         textAlign: TextAlign.center,
-                                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 10, color: const Color(0xFF707971), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
+                                        style: AppTypography.style(
+                                          AppTextRole.button,
+                                          fontSize: 13,
+                                          height: 1.4,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                ])),
-                              ],
+                                    ),
+                                  ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }

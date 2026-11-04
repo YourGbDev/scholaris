@@ -14,6 +14,7 @@
 // Retained offstage pages preserve state; StudentTabEntrance animates each visit.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'dart:math' as math;
 
 import 'widgets/student_selection_indicator.dart';
@@ -33,6 +34,7 @@ import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
 import 'package:scholaris/features/profile/presentation/profile_tab_screen.dart';
 
 import 'widgets/student_action_sheet.dart';
+import '../../auth/presentation/session_entry_status.dart';
 import 'widgets/student_app_tour.dart';
 import '../../auth/controllers/auth_controller.dart';
 import '../../profile/providers/profile_setup_provider.dart';
@@ -45,7 +47,10 @@ import 'widgets/student_glass_refraction.dart';
 /// Defaults to the Discover tab.
 class HomeTabIndexNotifier extends Notifier<int> {
   @override
-  int build() => 0;
+  int build() {
+    ref.watch(currentUserIdProvider);
+    return 0;
+  }
 
   void selectTab(int index) {
     if (state != index) {
@@ -483,6 +488,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   final _profileScroll = ScrollController();
   final _discoverScroll = ScrollController();
   final _discoverDetails = GlobalKey();
+  final _discoverCard = GlobalKey();
+  final _tourScrollActivity = ValueNotifier<ScrollNotification?>(null);
   final _discoverEnd = GlobalKey();
   late final List<Widget> _tabs;
 
@@ -507,6 +514,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       DiscoverScreen(
         scrollController: _discoverScroll,
         detailsGuideKey: _discoverDetails,
+        cardGuideKey: _discoverCard,
         endGuideKey: _discoverEnd,
       ),
       const ApplicationsScreen(embedded: true),
@@ -526,6 +534,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _dashboardScroll.dispose();
     _profileScroll.dispose();
     _discoverScroll.dispose();
+    _tourScrollActivity.dispose();
     super.dispose();
   }
 
@@ -537,6 +546,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(currentUserIdProvider);
+    final profile = ref.watch(currentProfileProvider);
+    if (user != null &&
+        (profile.hasError ||
+            (profile.hasValue && profile.valueOrNull?.id != user))) {
+      return const SessionEntryStatus();
+    }
     final tabIndex = ref.watch(homeTabIndexProvider);
     if (tabIndex != _lastTabIndex) {
       _lastTabIndex = tabIndex;
@@ -577,9 +593,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               enabled: tabIndex == i,
                               child: NotificationListener<ScrollNotification>(
                                 key: ValueKey('student-tab-scroll-$i'),
-                                onNotification: (n) => tabIndex == i
-                                    ? _controller.handleScrollNotification(n)
-                                    : false,
+                                onNotification: (n) {
+                                  if (tabIndex != i) return false;
+                                  if (_tourActive &&
+                                      n.depth == 0 &&
+                                      n.metrics.axis == Axis.vertical) {
+                                    _tourScrollActivity.value = n;
+                                  }
+                                  return _controller.handleScrollNotification(
+                                    n,
+                                  );
+                                },
                                 child: StudentTabEntrance(
                                   active: tabIndex == i,
                                   visit: _tabVisit,
@@ -646,6 +670,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               homeTargets: _homeGuideTargets,
               discoverScroll: _discoverScroll,
               discoverDetails: _discoverDetails,
+              discoverCard: _discoverCard,
+              scrollActivity: _tourScrollActivity,
               discoverEnd: _discoverEnd,
               profileReady:
                   ref.watch(currentProfileProvider).valueOrNull != null,
@@ -1229,7 +1255,7 @@ class _StudentNavItemState extends State<_StudentNavItem>
   @override
   Widget build(BuildContext context) => TweenAnimationBuilder<Color?>(
     tween: ColorTween(
-      end: widget.selected ? kStudentNavSelectedGreen : const Color(0xFF25282B),
+      end: widget.selected ? kStudentNavSelectedGreen : kTextSupporting,
     ),
     duration: isReducedMotion(context)
         ? Duration.zero
@@ -1245,7 +1271,12 @@ class _StudentNavItemState extends State<_StudentNavItem>
     final labelMetrics = TextPainter(
       text: TextSpan(
         text: widget.label,
-        style: AppTypography.style(AppTextRole.navigation, fontSize: kStudentNavBaseFontSize, letterSpacing: -.1, height: opticalLeading(kStudentNavBaseFontSize, isBody: false)),
+        style: AppTypography.style(
+          AppTextRole.navigation,
+          fontSize: kStudentNavBaseFontSize,
+          letterSpacing: -.1,
+          height: 1.25,
+        ),
       ),
       textDirection: Directionality.of(context),
       textScaler: MediaQuery.textScalerOf(context),
@@ -1358,7 +1389,13 @@ class _StudentNavItemState extends State<_StudentNavItem>
                                 maxLines: 1,
                                 overflow: TextOverflow.visible,
                                 softWrap: false,
-                                style: AppTypography.style(AppTextRole.navigation, fontSize: kStudentNavBaseFontSize, letterSpacing: -.1, color: ink, height: opticalLeading(kStudentNavBaseFontSize, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.navigation,
+                                  fontSize: kStudentNavBaseFontSize,
+                                  letterSpacing: -.1,
+                                  color: ink,
+                                  height: 1.25,
+                                ),
                               ),
                             ),
                           ),

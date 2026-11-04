@@ -10,6 +10,8 @@
 // TODO(SMS-OTP): Integrate Telco SMS Gateway (e.g. Semaphore/Twilio) for live OTP verification.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
+
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -191,7 +193,15 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     setState(() => _errorMessage = msg);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, style: AppTypography.style(AppTextRole.body, color: Colors.white)),
+        content: Text(
+          msg,
+          style: AppTypography.style(
+            AppTextRole.body,
+            color: Colors.white,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
+        ),
         backgroundColor: const Color(0xFFBA1A1A),
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
@@ -236,7 +246,10 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         try {
           final captcha = await acquireCaptcha(context);
           if (!mounted) return;
-          if (!captcha.allowed) { setState(() => _isSubmitting = false); return; }
+          if (!captcha.allowed) {
+            setState(() => _isSubmitting = false);
+            return;
+          }
           final authRes = await client.auth.signUp(
             email: email,
             password: password,
@@ -369,7 +382,10 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         try {
           final captcha = await acquireCaptcha(context);
           if (!mounted) return;
-          if (!captcha.allowed) { setState(() => _isSubmitting = false); return; }
+          if (!captcha.allowed) {
+            setState(() => _isSubmitting = false);
+            return;
+          }
           final authRes = await client.auth.signUp(
             email: email,
             password: password,
@@ -489,7 +505,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     final isIndividual = _providerType == 'individual';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF9FE),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -512,20 +528,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
 
                   // Card container
                   Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: const Color(0xFF1A1B1F).withValues(alpha: 0.06),
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x0A000000),
-                          blurRadius: 20,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
+                    decoration: kSoftCardDecoration,
                     padding: EdgeInsets.all(
                       MediaQuery.sizeOf(context).width < 400 ? 18 : 28,
                     ),
@@ -558,7 +561,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                                 Expanded(
                                   child: Text(
                                     _errorMessage!,
-                                    style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: const Color(0xFF410002)),
+                                    style: AppTypography.style(
+                                      AppTextRole.body,
+                                      fontSize: 12.5,
+                                      color: const Color(0xFF410002),
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -625,7 +634,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       'PROVIDER REGISTRATION',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTypography.style(AppTextRole.label, fontSize: 9, color: const Color(0xFF00351C), letterSpacing: 0.4),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        fontSize: 9,
+                        color: const Color(0xFF00351C),
+                        letterSpacing: 0.4,
+                        height: 1.4,
+                      ),
                     ),
                   ),
                 ),
@@ -639,7 +654,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           icon: const Icon(Icons.arrow_back_rounded, size: 16),
           label: Text(
             'Login',
-            style: AppTypography.style(AppTextRole.button, fontSize: 12.5),
+            style: AppTypography.style(
+              AppTextRole.button,
+              fontSize: 12.5,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           style: TextButton.styleFrom(
             foregroundColor: const Color(0xFF0F4D2E),
@@ -656,8 +676,9 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEDF3),
+        color: const Color(0xFFE8ECE8),
         borderRadius: BorderRadius.circular(14),
+        border: kCardBorderCrisp,
       ),
       child: Row(
         children: [
@@ -702,7 +723,15 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         child: Text(
                           'Organization Provider',
                           maxLines: 1,
-                          style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: isOrg ? Colors.white : const Color(0xFF404942)),
+                          style: AppTypography.style(
+                            AppTextRole.navigation,
+                            fontSize: 12,
+                            color: isOrg
+                                ? Colors.white
+                                : const Color(0xFF404942),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ),
@@ -752,7 +781,15 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         child: Text(
                           'Individual Provider',
                           maxLines: 1,
-                          style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: !isOrg ? Colors.white : const Color(0xFF404942)),
+                          style: AppTypography.style(
+                            AppTextRole.navigation,
+                            fontSize: 12,
+                            color: !isOrg
+                                ? Colors.white
+                                : const Color(0xFF404942),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ),
@@ -802,7 +839,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _indivLegalNameCtrl,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter your full legal name.'
                 : null,
@@ -819,7 +861,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivEmailCtrl,
             keyboardType: TextInputType.emailAddress,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: _validateEmail,
             decoration: _inputDecoration(
               hint: 'sponsor@gmail.com',
@@ -834,7 +881,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivPhoneCtrl,
             keyboardType: TextInputType.phone,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: _validatePhone,
             decoration: _inputDecoration(
               hint: '0917 123 4567 or +639171234567',
@@ -849,7 +901,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivPasswordCtrl,
             obscureText: _obscurePassword,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             onChanged: (val) => setState(() {}),
             validator: (v) => PasswordValidator.validatePassword(v),
             decoration: _inputDecoration(
@@ -880,7 +937,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _indivConfirmCtrl,
             obscureText: _obscureConfirm,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: (v) => PasswordValidator.validateConfirmPassword(
               v,
               _indivPasswordCtrl.text,
@@ -928,7 +990,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       child: Text(
                         'Proceed to Identity & Verification',
                         maxLines: 1,
-                        style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 14,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ),
@@ -993,7 +1060,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _indivIdNumberCtrl,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter your government ID number.'
                 : null,
@@ -1104,7 +1176,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _indivTinCtrl,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             decoration: _inputDecoration(
               hint: '000-000-000-000',
               prefixIcon: Icons.receipt_long_outlined,
@@ -1132,7 +1209,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               Expanded(
                 child: Text(
                   'I consent to the collection and secure processing of my personal and financial information under RA 10173 (Philippine Data Privacy Act) for identity verification and direct grant administration.',
-                  style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: const Color(0xFF404942), height: 1.4),
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 11.5,
+                    color: const Color(0xFF404942),
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -1188,7 +1271,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         )
                       : Text(
                           'Submit Verification',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 14,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                 ),
               ),
@@ -1219,7 +1307,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Text(
           'Application submitted.',
           textAlign: TextAlign.center,
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: const Color(0xFF1A1B1F)),
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: 20,
+            color: const Color(0xFF1A1B1F),
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 6),
         Container(
@@ -1231,14 +1325,26 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           ),
           child: Text(
             'Verification status: Pending',
-            style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: const Color(0xFF92400E)),
+            style: AppTypography.style(
+              AppTextRole.badge,
+              fontSize: 12,
+              color: const Color(0xFF92400E),
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
         const SizedBox(height: 14),
         Text(
           'Thank you, ${_indivLegalNameCtrl.text.trim()}. Your individual benefactor account has been registered. You can immediately access your Benefactor Console while our compliance committee reviews your submitted PhilSys/Government credentials.',
           textAlign: TextAlign.center,
-          style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), height: 1.5),
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 13,
+            color: const Color(0xFF404942),
+            height: 1.5,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 24),
         SizedBox(
@@ -1260,7 +1366,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               children: [
                 Text(
                   'Access Individual Provider Console',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 14,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 const Icon(Icons.arrow_forward_rounded, size: 16),
@@ -1310,7 +1421,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _orgNameCtrl,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter your organization name.'
                 : null,
@@ -1362,7 +1478,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _orgRegNumberCtrl,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter SEC or BIR registration number.'
                 : null,
@@ -1398,7 +1519,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       child: Text(
                         'Proceed to Representative Details',
                         maxLines: 1,
-                        style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 14,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ),
@@ -1435,7 +1561,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _orgRepNameCtrl,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter representative full name.'
                 : null,
@@ -1451,7 +1582,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           const SizedBox(height: 6),
           TextFormField(
             controller: _orgRepPositionCtrl,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: (v) => (v == null || v.trim().isEmpty)
                 ? 'Enter official position.'
                 : null,
@@ -1468,7 +1604,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _orgRepEmailCtrl,
             keyboardType: TextInputType.emailAddress,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: _validateEmail,
             decoration: _inputDecoration(
               hint: 'msantos@ayalafoundation.org.ph',
@@ -1483,7 +1624,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _orgRepPhoneCtrl,
             keyboardType: TextInputType.phone,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: _validatePhone,
             decoration: _inputDecoration(
               hint: '0917 123 4567 or +639171234567',
@@ -1498,7 +1644,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _orgPasswordCtrl,
             obscureText: _obscurePassword,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             onChanged: (val) => setState(() {}),
             validator: (v) => PasswordValidator.validatePassword(v),
             decoration: _inputDecoration(
@@ -1529,7 +1680,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           TextFormField(
             controller: _orgConfirmCtrl,
             obscureText: _obscureConfirm,
-            style: AppTypography.style(AppTextRole.input, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.input,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             validator: (v) => PasswordValidator.validateConfirmPassword(
               v,
               _orgPasswordCtrl.text,
@@ -1595,7 +1751,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                           child: Text(
                             'Proceed to Document Uploads',
                             maxLines: 1,
-                            style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                            style: AppTypography.style(
+                              AppTextRole.button,
+                              fontSize: 14,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ),
@@ -1724,7 +1885,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                         child: Text(
                           'Review Application Dossier',
                           maxLines: 1,
-                          style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 14,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ),
@@ -1812,7 +1978,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             Expanded(
               child: Text(
                 'I confirm that I am an authorized representative of the entity with full authority to register and disburse educational aid under RA 10173 and applicable Philippine foundation governance regulations.',
-                style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: const Color(0xFF404942), height: 1.4),
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  fontSize: 11.5,
+                  color: const Color(0xFF404942),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -1862,7 +2034,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       )
                     : Text(
                         'Submit for Accreditation',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 14,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
               ),
             ),
@@ -1892,7 +2069,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Text(
           'Submitted for accreditation.',
           textAlign: TextAlign.center,
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: const Color(0xFF1A1B1F)),
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: 20,
+            color: const Color(0xFF1A1B1F),
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 6),
         Container(
@@ -1904,14 +2087,26 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           ),
           child: Text(
             'Status: Pending review',
-            style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: const Color(0xFF92400E)),
+            style: AppTypography.style(
+              AppTextRole.badge,
+              fontSize: 12,
+              color: const Color(0xFF92400E),
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
         const SizedBox(height: 14),
         Text(
           'Your institutional dossier for ${_orgNameCtrl.text.trim()} has been dispatched to the Scholaris accreditation engine. You may immediately explore the Provider Console while our clearance auditors review your SEC & BIR documents.',
           textAlign: TextAlign.center,
-          style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), height: 1.5),
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 13,
+            color: const Color(0xFF404942),
+            height: 1.5,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 24),
         SizedBox(
@@ -1933,7 +2128,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               children: [
                 Text(
                   'Access Organization Console',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 14,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 const Icon(Icons.arrow_forward_rounded, size: 16),
@@ -1963,11 +2163,23 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           children: [
             Text(
               'STEP $currentStep OF $totalSteps',
-              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF0F4D2E), letterSpacing: 0.8),
+              style: AppTypography.style(
+                AppTextRole.label,
+                fontSize: 11,
+                color: const Color(0xFF0F4D2E),
+                letterSpacing: 0.8,
+                height: 1.4,
+              ),
             ),
             Text(
               '${((currentStep / totalSteps) * 100).toInt()}% COMPLETED',
-              style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: const Color(0xFF707971)),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 10.5,
+                color: const Color(0xFF707971),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -1977,19 +2189,31 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           child: LinearProgressIndicator(
             value: currentStep / totalSteps,
             minHeight: 5,
-            backgroundColor: const Color(0xFFEEEDF3),
+            backgroundColor: const Color(0xFFE8ECE8),
             valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF0F4D2E)),
           ),
         ),
         const SizedBox(height: 14),
         Text(
           stepTitle,
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 20, color: const Color(0xFF1A1B1F), letterSpacing: -0.4),
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: 20,
+            color: const Color(0xFF1A1B1F),
+            letterSpacing: -0.4,
+            height: 1.4,
+          ),
         ),
         const SizedBox(height: 4),
         Text(
           subtitle,
-          style: AppTypography.style(AppTextRole.subtitle, fontSize: 12.5, color: const Color(0xFF404942), height: 1.4),
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            fontSize: 12.5,
+            color: const Color(0xFF404942),
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     );
@@ -2002,13 +2226,25 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Flexible(
           child: Text(
             label,
-            style: AppTypography.style(AppTextRole.label, fontSize: 12, color: const Color(0xFF1A1B1F)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 12,
+              color: const Color(0xFF1A1B1F),
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
         if (isRequired)
           Text(
             ' *',
-            style: AppTypography.style(AppTextRole.label, fontSize: 12, color: const Color(0xFFBA1A1A)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 12,
+              color: const Color(0xFFBA1A1A),
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
       ],
     );
@@ -2021,17 +2257,27 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: const Color(0xFF707971).withValues(alpha: 0.6)),
+      hintStyle: AppTypography.style(
+        AppTextRole.placeholder,
+        fontSize: 13,
+        color: const Color(0xFF707971).withValues(alpha: 0.6),
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       prefixIcon: prefixIcon != null
           ? Icon(prefixIcon, size: 18, color: const Color(0xFF707971))
           : null,
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: const Color(0xFFF4F3F8),
+      fillColor: const Color(0xFFF2F4F2),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide.none,
+        borderSide: kHairlineBorderSide,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: kHairlineBorderSide,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -2053,7 +2299,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         decoration: BoxDecoration(
           color: isUploaded
               ? const Color(0xFFB3F1C6).withValues(alpha: 0.2)
-              : const Color(0xFFF4F3F8),
+              : const Color(0xFFF2F4F2),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isUploaded
@@ -2079,12 +2325,26 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppTypography.style(AppTextRole.label, fontSize: 12.5, color: isUploaded ? const Color(0xFF0F4D2E) : const Color(0xFF404942)),
+                style: AppTypography.style(
+                  AppTextRole.label,
+                  fontSize: 12.5,
+                  color: isUploaded
+                      ? const Color(0xFF0F4D2E)
+                      : const Color(0xFF404942),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
             Text(
               isUploaded ? 'Change' : 'Browse',
-              style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: const Color(0xFF0F4D2E)),
+              style: AppTypography.style(
+                AppTextRole.button,
+                fontSize: 11.5,
+                color: const Color(0xFF0F4D2E),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -2108,7 +2368,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                       ? (passwordStrength >= 3
                             ? const Color(0xFF0F4D2E)
                             : const Color(0xFFF99A00))
-                      : const Color(0xFFEEEDF3),
+                      : const Color(0xFFE8ECE8),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -2124,11 +2384,27 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           children: [
             Text(
               'Password Complexity',
-              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF707971)),
+              style: AppTypography.style(
+                AppTextRole.label,
+                fontSize: 11,
+                color: const Color(0xFF707971),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             Text(
               PasswordValidator.strengthLabel(passwordStrength),
-              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: passwordStrength >= 3 ? const Color(0xFF0F4D2E) : (passwordStrength >= 2 ? const Color(0xFFF99A00) : const Color(0xFFBA1A1A))),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                fontSize: 11,
+                color: passwordStrength >= 3
+                    ? const Color(0xFF0F4D2E)
+                    : (passwordStrength >= 2
+                          ? const Color(0xFFF99A00)
+                          : const Color(0xFFBA1A1A)),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -2136,7 +2412,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFFF4F3F8),
+            color: const Color(0xFFF2F4F2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Column(
@@ -2180,7 +2456,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           Expanded(
             child: Text(
               text,
-              style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11, color: met ? const Color(0xFF1A1B1F) : const Color(0xFF707971)),
+              style: AppTypography.style(
+                AppTextRole.bodyEmphasis,
+                fontSize: 11,
+                color: met ? const Color(0xFF1A1B1F) : const Color(0xFF707971),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -2196,7 +2478,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
+        color: const Color(0xFFF2F4F2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -2207,13 +2489,25 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
             children: [
               Text(
                 title,
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: const Color(0xFF1A1B1F)),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 13,
+                  color: const Color(0xFF1A1B1F),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
               GestureDetector(
                 onTap: onEdit,
                 child: Text(
                   'Edit',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF0F4D2E)),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 12,
+                    color: const Color(0xFF0F4D2E),
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -2227,14 +2521,26 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
                 children: [
                   Text(
                     e.key,
-                    style: AppTypography.style(AppTextRole.label, fontSize: 11.5, color: const Color(0xFF707971)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 11.5,
+                      color: const Color(0xFF707971),
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   Flexible(
                     child: Text(
                       e.value,
                       textAlign: TextAlign.right,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, color: const Color(0xFF1A1B1F)),
+                      style: AppTypography.style(
+                        AppTextRole.bodyEmphasis,
+                        fontSize: 12,
+                        color: const Color(0xFF1A1B1F),
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ],
@@ -2256,20 +2562,7 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0xFF1A1B1F).withValues(alpha: 0.08),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x08000000),
-            blurRadius: 16,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -2290,13 +2583,25 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
           Text(
             'Confirm Your Email Address',
             textAlign: TextAlign.center,
-            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: const Color(0xFF1A1B1F), letterSpacing: -0.5),
+            style: AppTypography.style(
+              AppTextRole.screenTitle,
+              fontSize: 20,
+              color: const Color(0xFF1A1B1F),
+              letterSpacing: -0.5,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
             'We have sent an accreditation confirmation link to:\n${_pendingConfirmationEmail ?? 'your registered email'}\n\nPlease check your inbox, confirm your email address, and then sign in to finish your provider verification.',
             textAlign: TextAlign.center,
-            style: AppTypography.style(AppTextRole.body, fontSize: 14, color: const Color(0xFF707971), height: 1.5),
+            style: AppTypography.style(
+              AppTextRole.body,
+              fontSize: 14,
+              color: const Color(0xFF707971),
+              height: 1.5,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 28),
           SizedBox(
@@ -2315,7 +2620,12 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               ),
               child: Text(
                 'Proceed to Provider Sign In',
-                style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 14,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ),
@@ -2340,7 +2650,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
               child: Text(
                 'RA 10173 Philippine Data Privacy Act Compliant · Encrypted Identity Verification',
                 textAlign: TextAlign.center,
-                style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: const Color(0xFF707971)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 10,
+                  color: const Color(0xFF707971),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -2348,7 +2664,13 @@ class _ProviderSignupScreenState extends ConsumerState<ProviderSignupScreen> {
         const SizedBox(height: 4),
         Text(
           '© 2026 Scholaris Philippines • Provider Accreditation Framework',
-          style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: const Color(0xFF707971)),
+          style: AppTypography.style(
+            AppTextRole.caption,
+            fontSize: 10,
+            color: const Color(0xFF707971),
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     );

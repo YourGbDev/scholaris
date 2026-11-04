@@ -1,4 +1,3 @@
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -135,17 +134,35 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                 children: [
                   Text(
                     'ORGANIZATION REPORTING',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10, letterSpacing: 1.6, color: kOrgTextSecondary, height: opticalLeading(10, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 10,
+                      letterSpacing: 1.6,
+                      height: 1.3,
+                      color: kOrgTextSecondary,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Application analytics',
-                    style: AppTypography.style(AppTextRole.screenTitle, fontSize: narrow ? 28 : 34, color: kOrgPrimary, letterSpacing: opticalTracking(narrow ? 28 : 34), height: opticalLeading(narrow ? 28 : 34, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.screenTitle,
+                      fontSize: narrow ? 20 : 24,
+                      color: kOrgPrimary,
+                      height: 1.2,
+                      letterSpacing: ((narrow ? 20 : 24) >= 20 ? -.3 : -.15),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     'Monitor application status, compare programs, and track review progress.',
-                    style: AppTypography.style(AppTextRole.subtitle, color: kOrgTextSecondary, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
+                    style: AppTypography.style(
+                      AppTextRole.subtitle,
+                      color: kOrgTextSecondary,
+                      fontSize: 13.5,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 28),
                   Wrap(
@@ -196,6 +213,9 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                                 value: s.id,
                                 child: Text(
                                   s.title,
+                                  style: AppTypography.style(
+                                    AppTextRole.cardTitle,
+                                  ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -265,14 +285,26 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                       children: [
                         Text(
                           'Where applications stand',
-                          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 21, color: kOrgTextPrimary, letterSpacing: opticalTracking(21), height: opticalLeading(21, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.sectionTitle,
+                            fontSize: 17,
+                            height: 1.2,
+                            color: kOrgTextPrimary,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           cohort.isEmpty
                               ? 'No submitted applications in this selection.'
                               : 'Current status of ${cohort.length} ${cohort.length == 1 ? 'application' : 'applications'} in this submission cohort.',
-                          style: AppTypography.style(AppTextRole.caption, color: kOrgTextSecondary, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            color: kOrgTextSecondary,
+                            fontSize: 13.5,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         const SizedBox(height: 24),
                         ...labels.entries.map(
@@ -284,8 +316,26 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(e.value, style: AppTypography.style(AppTextRole.label, fontSize: 13.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true)))),
-                                    Text('${counts[e.key]}', style: AppTypography.style(AppTextRole.metric, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false))),
+                                    Text(
+                                      e.value,
+                                      style: AppTypography.style(
+                                        AppTextRole.label,
+                                        fontSize: 13.5,
+                                        height: 1.4,
+                                        color: kOrgTextPrimary,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
+                                    Text(
+                                      '${counts[e.key]}',
+                                      style: AppTypography.style(
+                                        AppTextRole.metric,
+                                        fontSize: 12,
+                                        height: 1.3,
+                                        color: kOrgTextSecondary,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -301,7 +351,7 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                                     color: e.key == ApplicationStatus.rejected
                                         ? const Color(0xFF87684A)
                                         : kOrgPrimary,
-                                    backgroundColor: const Color(0xFFEDF0E9),
+                                    backgroundColor: const Color(0xFFF6F6F6),
                                   ),
                                 ),
                               ],
@@ -314,7 +364,13 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                   const SizedBox(height: 28),
                   Text(
                     'Program comparison',
-                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 21, color: kOrgTextPrimary, letterSpacing: opticalTracking(21), height: opticalLeading(21, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      fontSize: 17,
+                      height: 1.2,
+                      color: kOrgTextPrimary,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   if (programs.isEmpty)
@@ -338,7 +394,16 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(s.title, style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false))),
+                            Text(
+                              s.title,
+                              style: AppTypography.style(
+                                AppTextRole.cardTitle,
+                                fontSize: 17,
+                                height: 1.2,
+                                color: kOrgTextPrimary,
+                                letterSpacing: -0.15,
+                              ),
+                            ),
                             const SizedBox(height: 14),
                             Wrap(
                               spacing: 28,
@@ -360,7 +425,13 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
                   const SizedBox(height: 12),
                   Text(
                     'Drafts are excluded. Date filters use submission time; undated applications appear only in All time. Decision time uses recorded submission and decision timestamps. Scholarship values describe offered support, not money disbursed.',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                    style: AppTypography.style(
+                      AppTextRole.caption,
+                      fontSize: 12,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -376,11 +447,40 @@ class _ReviewAnalyticsPanelState extends State<ReviewAnalyticsPanel> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true)))),
+        Text(
+          label,
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 13,
+            color: kOrgTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
+        ),
         const SizedBox(height: 8),
         if (int.tryParse(value) case final int count)
-          OrgMetricCount(motionId: 'review-analytics.$label', targetValue: count, style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kOrgPrimary, letterSpacing: opticalTracking(26), height: opticalLeading(26, isBody: false)))
-        else Text(value, style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kOrgPrimary, letterSpacing: opticalTracking(26), height: opticalLeading(26, isBody: false))),
+          OrgMetricCount(
+            motionId: 'review-analytics.$label',
+            targetValue: count,
+            style: AppTypography.style(
+              AppTextRole.metric,
+              fontSize: 26,
+              color: kOrgPrimary,
+              height: 1.2,
+              letterSpacing: -0.3,
+            ),
+          )
+        else
+          Text(
+            value,
+            style: AppTypography.style(
+              AppTextRole.metric,
+              fontSize: 26,
+              color: kOrgPrimary,
+              height: 1.2,
+              letterSpacing: -0.3,
+            ),
+          ),
       ],
     ),
   );

@@ -11,10 +11,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:http/testing.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -59,7 +62,7 @@ void main() {
         ),
       ],
     );
-    return MaterialApp.router(routerConfig: router);
+    return ProviderScope(child: MaterialApp.router(routerConfig: router));
   }
 
   testWidgets('renders heading, email, resend, and back-to-login', (
@@ -242,7 +245,139 @@ void main() {
     await tester.tap(find.text('Back to login'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Welcome Back'), findsOneWidget);
+    expect(find.text('Welcome back'), findsOneWidget);
   });
-}
 
+  testWidgets(
+    'submitting 3 consecutive invalid codes locks verification and prompts resend',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      int attempts = 0;
+      final client = GoTrueClient(
+        url: 'https://example.com/auth/v1',
+        autoRefreshToken: false,
+        flowType: AuthFlowType.implicit,
+        httpClient: MockClient((request) async {
+          attempts++;
+          return http.Response(
+            jsonEncode({
+              'msg': 'Token has expired or is invalid',
+              'code': 'otp_expired',
+            }),
+            403,
+          );
+        }),
+      );
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        harness(email: 'student@example.ph', client: client),
+      );
+      await tester.pumpAndSettle();
+
+      final verifyButton = find.widgetWithText(ElevatedButton, 'Verify code');
+      await tester.enterText(find.byType(TextFormField), '11111111');
+
+      // Attempt 1
+      await tester.ensureVisible(verifyButton);
+      await tester.tap(verifyButton);
+      await tester.pumpAndSettle();
+      expect(attempts, 1);
+      expect(
+        find.text(
+          'That code is invalid or has expired. Try again or request a new code.',
+        ),
+        findsOneWidget,
+      );
+
+      // Attempt 2
+      await tester.ensureVisible(verifyButton);
+      await tester.tap(verifyButton);
+      await tester.pumpAndSettle();
+      expect(attempts, 2);
+
+      // Attempt 3
+      await tester.ensureVisible(verifyButton);
+      await tester.tap(verifyButton);
+      await tester.pumpAndSettle();
+      expect(attempts, 3);
+      expect(
+        find.text(
+          'Maximum verification attempts reached (3/3). Please request a new code.',
+        ),
+        findsOneWidget,
+      );
+
+      // Button is now disabled
+      final btnWidget = tester.widget<ElevatedButton>(verifyButton);
+      expect(btnWidget.onPressed, isNull);
+    },
+  );
+
+  testWidgets(
+    'resending code resets attempt counter and allows new verification attempts',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      int verifyAttempts = 0;
+      int resendAttempts = 0;
+      final client = GoTrueClient(
+        url: 'https://example.com/auth/v1',
+        autoRefreshToken: false,
+        flowType: AuthFlowType.implicit,
+        httpClient: MockClient((request) async {
+          if (request.url.path.contains('verify')) {
+            verifyAttempts++;
+            return http.Response(
+              jsonEncode({
+                'msg': 'Token has expired or is invalid',
+                'code': 'otp_expired',
+              }),
+              403,
+            );
+          } else if (request.url.path.contains('resend')) {
+            resendAttempts++;
+            return http.Response('{}', 200);
+          }
+          return http.Response('Not Found', 404);
+        }),
+      );
+      addTearDown(client.dispose);
+
+      await tester.pumpWidget(
+        harness(email: 'student@example.ph', client: client),
+      );
+      await tester.pumpAndSettle();
+
+      final verifyButton = find.widgetWithText(ElevatedButton, 'Verify code');
+      await tester.enterText(find.byType(TextFormField), '11111111');
+
+      // Exhaust 3 attempts
+      for (int i = 0; i < 3; i++) {
+        await tester.ensureVisible(verifyButton);
+        await tester.tap(verifyButton);
+        await tester.pumpAndSettle();
+      }
+      expect(verifyAttempts, 3);
+      expect(tester.widget<ElevatedButton>(verifyButton).onPressed, isNull);
+
+      // Tap Resend email
+      final resendButton = find.widgetWithText(ElevatedButton, 'Resend email');
+      await tester.ensureVisible(resendButton);
+      await tester.tap(resendButton);
+      await tester.pumpAndSettle();
+      expect(resendAttempts, 1);
+
+      // Verify button is now re-enabled
+      await tester.ensureVisible(verifyButton);
+      expect(tester.widget<ElevatedButton>(verifyButton).onPressed, isNotNull);
+    },
+  );
+}

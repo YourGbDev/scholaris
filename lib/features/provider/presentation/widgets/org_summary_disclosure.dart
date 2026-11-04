@@ -28,10 +28,25 @@ class OrgSummaryDisclosure extends StatelessWidget {
           ? Duration.zero
           : const Duration(milliseconds: 200),
     ),
-    title: Text(title, style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false))),
+    title: Text(
+      title,
+      style: AppTypography.style(
+        AppTextRole.cardTitle,
+        fontSize: 13,
+        color: kOrgPrimary,
+        height: 1.3,
+        letterSpacing: 0,
+      ),
+    ),
     subtitle: Text(
       summary,
-      style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+      style: AppTypography.style(
+        AppTextRole.body,
+        fontSize: 13,
+        color: kOrgTextSecondary,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
     ),
     children: [child],
   );

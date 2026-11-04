@@ -65,7 +65,7 @@ void main() {
     final outerSizedBoxBox = tester.renderObject(sizedBox58Finder.first) as RenderBox;
 
     final navFinder = find.descendant(
-      of: find.byType(Stack),
+      of: find.byType(StudentBottomNav),
       matching: find.byType(LiquidGlassPill),
     );
     expect(navFinder, findsNWidgets(2),

@@ -88,13 +88,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       }
     } on AuthException catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar(_friendlyError(error)),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(_snackBar(_friendlyError(error)));
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        _snackBar('Could not update your password. Check your connection and try again.'),
+        _snackBar(
+          'Could not update your password. Check your connection and try again.',
+        ),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -109,7 +110,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   }
 
   String? _validatePassword(String? value) =>
-      PasswordValidator.validatePassword(value, emptyMessage: 'Enter a new password.');
+      PasswordValidator.validatePassword(
+        value,
+        emptyMessage: 'Enter a new password.',
+      );
 
   String? _validateConfirmPassword(String? value) =>
       PasswordValidator.validateConfirmPassword(
@@ -119,14 +123,20 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       );
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(
-          message,
-          style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-        ),
-        backgroundColor: const Color(0xFF161C27),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      );
+    content: Text(
+      message,
+      style: AppTypography.style(
+        AppTextRole.body,
+        color: Colors.white,
+        fontSize: 13,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
+    ),
+    backgroundColor: const Color(0xFF161C27),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +163,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: kTextPrimary,
+                    ),
                     tooltip: 'Go back',
                     onPressed: () {
                       if (Navigator.of(context).canPop()) {
@@ -171,13 +184,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         'Scholaris',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 18, color: kPrimary, letterSpacing: -0.5, height: opticalLeading(18, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          fontSize: 17,
+                          color: kPrimary,
+                          letterSpacing: -0.5,
+                          height: 1.2,
+                        ),
                       ),
                     ),
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.help_outline_rounded, size: 22, color: kTextSecondary),
+                    icon: const Icon(
+                      Icons.help_outline_rounded,
+                      size: 22,
+                      color: kTextSecondary,
+                    ),
                     tooltip: 'Help and Support',
                     onPressed: () {},
                   ),
@@ -216,7 +239,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: kPrimaryLight,
                                 borderRadius: BorderRadius.circular(20),
@@ -238,7 +264,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                       fit: BoxFit.scaleDown,
                                       child: Text(
                                         'CREDENTIAL UPDATE',
-                                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kPrimary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.label,
+                                          fontSize: 11,
+                                          color: kPrimary,
+                                          letterSpacing: 0.8,
+                                          height: 1.2,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -251,12 +283,24 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           // Heading: Create New Password
                           Text(
                             'Create New Password',
-                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 26, color: kPrimary, height: 1.2, letterSpacing: opticalTracking(26)),
+                            style: AppTypography.style(
+                              AppTextRole.screenTitle,
+                              fontSize: 20,
+                              color: kPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Your identity has been verified via the security link. Please choose a strong new password for your Scholaris account.',
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(13)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 13,
+                              color: kTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 16),
 
@@ -264,9 +308,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF1F3FF),
+                              color: kSurfaceContainerLow,
                               borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: const Color(0xFFDDE2F3)),
+                              border: Border.all(
+                                color: kSurfaceContainerHighest,
+                              ),
                             ),
                             child: Row(
                               children: [
@@ -286,29 +332,51 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'VERIFIED ACCOUNT',
-                                        style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.label,
+                                          fontSize: 10,
+                                          color: kTextSecondary,
+                                          letterSpacing: 0.5,
+                                          height: 1.2,
+                                        ),
                                       ),
                                       Text(
                                         userEmail,
                                         overflow: TextOverflow.ellipsis,
-                                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.bodyEmphasis,
+                                          fontSize: 13,
+                                          color: kTextPrimary,
+                                          height: 1.2,
+                                          letterSpacing: -0.15,
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFFE8EEFF),
+                                    color: kSurfaceContainer,
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Text(
                                     'Active',
-                                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kNavyTrust, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                    style: AppTypography.style(
+                                      AppTextRole.badge,
+                                      fontSize: 11,
+                                      color: kNavyTrust,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -325,11 +393,25 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             children: [
                               Text(
                                 'New Password',
-                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 13,
+                                  color: kTextPrimary,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                               Text(
                                 _strengthLabel(strength),
-                                style: AppTypography.style(AppTextRole.label, fontSize: 11, color: strength >= 2 ? kPrimary : Colors.orange, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 11,
+                                  color: strength >= 2
+                                      ? kPrimary
+                                      : Colors.orange,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
@@ -344,11 +426,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             validator: _validatePassword,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: kTextSecondary,
                                 size: 20,
                               ),
-                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                              onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -361,7 +447,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   height: 4,
                                   decoration: BoxDecoration(
                                     color: strength >= 1
-                                        ? (strength == 1 ? Colors.orange : kPrimary)
+                                        ? (strength == 1
+                                              ? Colors.orange
+                                              : kPrimary)
                                         : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
@@ -372,7 +460,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 child: Container(
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: strength >= 2 ? kPrimary : Colors.black12,
+                                    color: strength >= 2
+                                        ? kPrimary
+                                        : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -382,7 +472,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 child: Container(
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: strength >= 3 ? kPrimary : Colors.black12,
+                                    color: strength >= 3
+                                        ? kPrimary
+                                        : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -404,16 +496,34 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               children: [
                                 Text(
                                   'SECURITY GUIDELINES',
-                                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 10, color: kTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.sectionTitle,
+                                    fontSize: 10,
+                                    color: kTextSecondary,
+                                    letterSpacing: 0.5,
+                                    height: 1.2,
+                                  ),
                                 ),
                                 const SizedBox(height: 8),
-                                _guidelineRow('At least 8 characters long', hasMinLength),
+                                _guidelineRow(
+                                  'At least 8 characters long',
+                                  hasMinLength,
+                                ),
                                 const SizedBox(height: 6),
-                                _guidelineRow('Uppercase & lowercase letters', hasUppercase && hasLowercase),
+                                _guidelineRow(
+                                  'Uppercase & lowercase letters',
+                                  hasUppercase && hasLowercase,
+                                ),
                                 const SizedBox(height: 6),
-                                _guidelineRow('Includes at least one number (0-9)', hasNumber),
+                                _guidelineRow(
+                                  'Includes at least one number (0-9)',
+                                  hasNumber,
+                                ),
                                 const SizedBox(height: 6),
-                                _guidelineRow('Special character (!@#\$%^&*)', hasSpecial),
+                                _guidelineRow(
+                                  'Special character (!@#\$%^&*)',
+                                  hasSpecial,
+                                ),
                               ],
                             ),
                           ),
@@ -428,20 +538,36 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             children: [
                               Text(
                                 'Confirm New Password',
-                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 13,
+                                  color: kTextPrimary,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                               if (passwordsMatch)
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.check_circle_rounded, size: 14, color: kPrimary),
+                                    const Icon(
+                                      Icons.check_circle_rounded,
+                                      size: 14,
+                                      color: kPrimary,
+                                    ),
                                     const SizedBox(width: 4),
                                     Flexible(
                                       child: FittedBox(
                                         fit: BoxFit.scaleDown,
                                         child: Text(
                                           'Passwords match',
-                                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                          style: AppTypography.style(
+                                            AppTextRole.caption,
+                                            fontSize: 11,
+                                            color: kPrimary,
+                                            height: 1.4,
+                                            letterSpacing: 0,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -461,11 +587,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             validator: _validateConfirmPassword,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                                _obscureConfirm
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: kTextSecondary,
                                 size: 20,
                               ),
-                              onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                              onPressed: () => setState(
+                                () => _obscureConfirm = !_obscureConfirm,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 20),
@@ -500,12 +630,21 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                           fit: BoxFit.scaleDown,
                                           child: Text(
                                             'Reset Password',
-                                            style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                                            style: AppTypography.style(
+                                              AppTextRole.button,
+                                              fontSize: 15,
+                                              color: Colors.white,
+                                              height: 1.2,
+                                              letterSpacing: -0.15,
+                                            ),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(width: 6),
-                                      const Icon(Icons.arrow_forward_rounded, size: 18),
+                                      const Icon(
+                                        Icons.arrow_forward_rounded,
+                                        size: 18,
+                                      ),
                                     ],
                                   ),
                           ),
@@ -524,7 +663,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               },
                               child: Text(
                                 'Cancel & Back to Login',
-                                style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.button,
+                                  fontSize: 13,
+                                  color: kNavyTrust,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                             ),
                           ),
@@ -534,7 +679,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE8EEFF).withValues(alpha: 0.6),
+                              color: kSurfaceContainer.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
@@ -549,7 +694,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 Expanded(
                                   child: Text(
                                     'This action attempts to sign out active sessions on other devices for your security. Existing sessions remain valid until their token expires.',
-                                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, height: 1.3, letterSpacing: opticalTracking(11)),
+                                    style: AppTypography.style(
+                                      AppTextRole.caption,
+                                      fontSize: 11,
+                                      color: kTextSecondary,
+                                      height: 1.3,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -588,7 +739,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         Expanded(
           child: Text(
             text,
-            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: met ? kPrimary : kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.body,
+              fontSize: 12,
+              color: met ? kPrimary : kTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],
@@ -614,16 +771,33 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       keyboardType: keyboardType,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
-      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+      style: AppTypography.style(
+        AppTextRole.input,
+        fontSize: 13,
+        color: kTextPrimary,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: Colors.black38, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
+        hintStyle: AppTypography.style(
+          AppTextRole.placeholder,
+          fontSize: 13,
+          color: Colors.black38,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, size: 20, color: kTextSecondary)
+            : null,
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: kBorderLight),

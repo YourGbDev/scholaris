@@ -33,8 +33,7 @@ class _ScholarshipQrDialog extends StatefulWidget {
 class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
   bool _copied = false;
 
-  String get _qrPayload =>
-      'scholaris://scholarships/${widget.scholarship.id}';
+  String get _qrPayload => 'scholaris://scholarships/${widget.scholarship.id}';
 
   void _copyToClipboard() {
     Clipboard.setData(ClipboardData(text: _qrPayload));
@@ -69,14 +68,26 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                       children: [
                         Text(
                           'Scholarship QR Code',
-                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: const Color(0xFF161C27)),
+                          style: AppTypography.style(
+                            AppTextRole.cardTitle,
+                            fontSize: 18,
+                            color: const Color(0xFF161C27),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           s.title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTypography.style(AppTextRole.subtitle, fontSize: 12.5, color: const Color(0xFF707971)),
+                          style: AppTypography.style(
+                            AppTextRole.subtitle,
+                            fontSize: 12.5,
+                            color: const Color(0xFF707971),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -115,9 +126,12 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
 
               // URI Payload badge & Copy Button
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -127,7 +141,13 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                         _qrPayload,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11,
+                          color: const Color(0xFF404942),
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -136,10 +156,15 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                         onTap: _copyToClipboard,
                         borderRadius: BorderRadius.circular(4),
                         child: Container(
-                          constraints: const BoxConstraints(minHeight: 36, minWidth: 44),
+                          constraints: const BoxConstraints(
+                            minHeight: 36,
+                            minWidth: 44,
+                          ),
                           alignment: Alignment.center,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 6),
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -155,7 +180,15 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                               const SizedBox(width: 4),
                               Text(
                                 _copied ? 'Copied' : 'Copy',
-                                style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: _copied ? const Color(0xFF0F4D2E) : const Color(0xFF0058BC)),
+                                style: AppTypography.style(
+                                  AppTextRole.button,
+                                  fontSize: 11.5,
+                                  color: _copied
+                                      ? const Color(0xFF0F4D2E)
+                                      : const Color(0xFF0058BC),
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
@@ -170,7 +203,13 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
               Text(
                 'Students can scan this code with the Scholaris student app to open criteria and apply directly.',
                 textAlign: TextAlign.center,
-                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF707971)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 12,
+                  color: const Color(0xFF707971),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
               const SizedBox(height: 16),
 
@@ -190,7 +229,12 @@ class _ScholarshipQrDialogState extends State<_ScholarshipQrDialog> {
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(
                       'Done',
-                      style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 14,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ),

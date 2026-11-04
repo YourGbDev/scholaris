@@ -1,26 +1,49 @@
 <!doctype html>
 <html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<meta name="scholaris-captcha-version" content="2">
 <style>
-#challenge { display: flex; justify-content: center; }
+html, body { margin: 0; background: #fff; color-scheme: light; }
+#challenge { display: flex; justify-content: center; padding-top: 8px; }
 </style>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script></head>
 <body><div id="challenge"></div><script>
 const params = new URLSearchParams(location.search);
 const key = params.get('key') || '';
 const nonce = params.get('nonce') || '';
-function send(token, error) {
-  const message = JSON.stringify({nonce, token, error});
-  if (window.ScholarisCaptcha) window.ScholarisCaptcha.postMessage(message);
-  else window.parent.postMessage(message, location.origin);
+function post(message) {
+  const payload = JSON.stringify({nonce, ...message});
+  if (window.ScholarisCaptcha) window.ScholarisCaptcha.postMessage(payload);
+  else window.parent.postMessage(payload, location.origin);
 }
 let finished = false;
-const timeout = setTimeout(() => { finished = true; send(null, true); }, 15000);
+let loadingTimeout;
+function finish(token, error) {
+  if (finished) return;
+  finished = true;
+  clearTimeout(loadingTimeout);
+  post({token, error});
+}
+// Loading the SDK is bounded separately from the user's visible challenge.
+loadingTimeout = setTimeout(() => finish(null, true), 30000);
 function start() {
   if (finished) return;
-  if (!/^[A-Za-z0-9_-]+$/.test(key) || !/^[a-f0-9]{32}$/.test(nonce)) return send(null, true);
+  if (!/^[A-Za-z0-9_-]+$/.test(key) || !/^[a-f0-9]{32}$/.test(nonce)) return finish(null, true);
   if (!window.turnstile) return setTimeout(start, 100);
   const size = document.getElementById('challenge').clientWidth < 300 ? 'compact' : 'normal';
-  turnstile.render('#challenge', {sitekey: key, size, callback: token => { clearTimeout(timeout); send(token, false); }, 'error-callback': () => { clearTimeout(timeout); send(null, true); }, 'expired-callback': () => send(null, true)});
+  try {
+    turnstile.render('#challenge', {
+      sitekey: key, size, theme: 'light',
+      callback: token => finish(token, false),
+      'error-callback': () => finish(null, true),
+      'expired-callback': () => finish(null, true)
+    });
+    clearTimeout(loadingTimeout);
+    // Bootstrap readiness is separate from verified-human token delivery.
+    const ready = () => { if (!finished) post({ready: true, version: 2}); };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(ready);
+    else ready();
+  } catch (_) { finish(null, true); }
 }
 start();
 </script></body></html>

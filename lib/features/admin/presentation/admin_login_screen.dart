@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 // lib/features/admin/presentation/admin_login_screen.dart
 //
 // Dedicated Super Admin Login Portal for Scholaris.
@@ -6,8 +7,8 @@
 // - Strictly internal: no social logins, no student signups, no provider marketing
 // - Direct authentication & role-gated access to Admin HomeScreen
 
-import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -99,7 +100,10 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final email = _emailController.text.trim();
-    final lockoutCheck = LoginLockoutService.instance.checkLockout(email);
+    final lockoutCheck = await LoginLockoutService.instance.checkLockoutRemote(
+      email,
+    );
+    if (!mounted) return;
     if (lockoutCheck.isLocked) {
       _startLockoutCountdown(lockoutCheck);
       _showErrorSnackBar(lockoutCheck.lockoutMessage);
@@ -174,12 +178,22 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.error_outline_rounded, color: Colors.white, size: 20),
+            const Icon(
+              Icons.error_outline_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 message,
-                style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white),
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  fontSize: 13,
+                  color: Colors.white,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -200,24 +214,45 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            const Icon(Icons.gpp_bad_rounded, color: Color(0xFFFF6F59), size: 24),
+            const Icon(
+              Icons.gpp_bad_rounded,
+              color: Color(0xFFFF6F59),
+              size: 24,
+            ),
             const SizedBox(width: 10),
             Text(
               'Access Restricted',
-              style: AppTypography.style(AppTextRole.sectionTitle, color: Colors.white, fontSize: 18),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                color: Colors.white,
+                fontSize: 18,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
         content: Text(
           'This account does not have Super Administrator privileges.\n\nOnly authorized institutional governance officers can sign in to the Scholaris Admin Console.',
-          style: AppTypography.style(AppTextRole.body, color: const Color(0xFF94A3B8), fontSize: 13, height: 1.5),
+          style: AppTypography.style(
+            AppTextRole.body,
+            color: const Color(0xFF94A3B8),
+            fontSize: 13,
+            height: 1.5,
+            letterSpacing: 0,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'Acknowledge',
-              style: AppTypography.style(AppTextRole.button, color: const Color(0xFF34D399)),
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: const Color(0xFF34D399),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -230,7 +265,9 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
     final isLocked = _lockoutStatus?.isLocked ?? false;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A), // Deep Slate Governance Background
+      backgroundColor: const Color(
+        0xFF0F172A,
+      ), // Deep Slate Governance Background
       body: Stack(
         children: [
           // Background ambient gradient
@@ -301,12 +338,17 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Restricted Access Badge
                         Center(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF064E3B).withValues(alpha: 0.6),
+                              color: const Color(0xFF064E3B)
+                                  .withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: const Color(0xFF059669).withValues(alpha: 0.5),
+                                color: const Color(0xFF059669)
+                                    .withValues(alpha: 0.5),
                                 width: 1,
                               ),
                             ),
@@ -321,7 +363,13 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'RESTRICTED ACCESS • CENTRAL GOVERNANCE & AUDIT',
-                                  style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, letterSpacing: 0.8, color: const Color(0xFF34D399)),
+                                  style: AppTypography.style(
+                                    AppTextRole.badge,
+                                    fontSize: 10.5,
+                                    letterSpacing: 0.8,
+                                    color: const Color(0xFF34D399),
+                                    height: 1.4,
+                                  ),
                                 ),
                               ],
                             ),
@@ -341,7 +389,8 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 borderRadius: BorderRadius.circular(14),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF0F4D2E).withValues(alpha: 0.4),
+                                    color: const Color(0xFF0F4D2E)
+                                        .withValues(alpha: 0.4),
                                     blurRadius: 12,
                                     offset: const Offset(0, 4),
                                   ),
@@ -360,12 +409,24 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                 children: [
                                   Text(
                                     'Scholaris Admin Console',
-                                    style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: Colors.white, letterSpacing: -0.3),
+                                    style: AppTypography.style(
+                                      AppTextRole.screenTitle,
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                      letterSpacing: -0.3,
+                                      height: 1.4,
+                                    ),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     'Central Platform Oversight & Grant Disbursement',
-                                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF94A3B8)),
+                                    style: AppTypography.style(
+                                      AppTextRole.subtitle,
+                                      fontSize: 12,
+                                      color: const Color(0xFF94A3B8),
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -378,7 +439,13 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Subtitle
                         Text(
                           'Sign in to verify scholarship providers, audit application lifecycle approvals, and authorize official grant disbursements.',
-                          style: AppTypography.style(AppTextRole.body, fontSize: 13, height: 1.5, color: const Color(0xFFCBD5E1)),
+                          style: AppTypography.style(
+                            AppTextRole.body,
+                            fontSize: 13,
+                            height: 1.5,
+                            color: const Color(0xFFCBD5E1),
+                            letterSpacing: 0,
+                          ),
                         ),
 
                         const SizedBox(height: 28),
@@ -388,18 +455,32 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF7F1D1D).withValues(alpha: 0.4),
+                              color: const Color(0xFF7F1D1D)
+                                  .withValues(alpha: 0.4),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: const Color(0xFFEF4444)),
+                              border: Border.all(
+                                color: const Color(0xFFEF4444),
+                              ),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.timer_outlined, color: Color(0xFFFCA5A5), size: 20),
+                                const Icon(
+                                  Icons.timer_outlined,
+                                  color: Color(0xFFFCA5A5),
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
-                                    _lockoutStatus?.lockoutMessage ?? 'Too many attempts.',
-                                    style: AppTypography.style(AppTextRole.body, color: const Color(0xFFFCA5A5), fontSize: 12.5),
+                                    _lockoutStatus?.lockoutMessage ??
+                                        'Too many attempts.',
+                                    style: AppTypography.style(
+                                      AppTextRole.body,
+                                      color: const Color(0xFFFCA5A5),
+                                      fontSize: 12.5,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -411,32 +492,64 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Email Field
                         Text(
                           'ADMINISTRATOR EMAIL',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 11, letterSpacing: 1.0, color: const Color(0xFF94A3B8)),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 11,
+                            letterSpacing: 1.0,
+                            color: const Color(0xFF94A3B8),
+                            height: 1.4,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _emailController,
                           enabled: !_isLoading && !isLocked,
-                          style: AppTypography.style(AppTextRole.input, color: Colors.white, fontSize: 14),
+                          style: AppTypography.style(
+                            AppTextRole.input,
+                            color: Colors.white,
+                            fontSize: 14,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
                             hintText: 'e.g. admin@scholaris.edu.ph',
-                            hintStyle: AppTypography.style(AppTextRole.placeholder, color: const Color(0xFF64748B), fontSize: 13),
-                            prefixIcon: const Icon(Icons.alternate_email_rounded, color: Color(0xFF94A3B8), size: 19),
+                            hintStyle: AppTypography.style(
+                              AppTextRole.placeholder,
+                              color: const Color(0xFF64748B),
+                              fontSize: 13,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.alternate_email_rounded,
+                              color: Color(0xFF94A3B8),
+                              size: 19,
+                            ),
                             filled: true,
                             fillColor: const Color(0xFF0F172A),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF334155)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF334155),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF334155)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF334155),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF10B981),
+                                width: 1.5,
+                              ),
                             ),
                           ),
                           validator: (val) {
@@ -455,40 +568,76 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         // Password Field
                         Text(
                           'SECURITY CREDENTIAL',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 11, letterSpacing: 1.0, color: const Color(0xFF94A3B8)),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 11,
+                            letterSpacing: 1.0,
+                            color: const Color(0xFF94A3B8),
+                            height: 1.4,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _passwordController,
                           enabled: !_isLoading && !isLocked,
                           obscureText: _obscurePassword,
-                          style: AppTypography.style(AppTextRole.input, color: Colors.white, fontSize: 14),
+                          style: AppTypography.style(
+                            AppTextRole.input,
+                            color: Colors.white,
+                            fontSize: 14,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                           decoration: InputDecoration(
                             hintText: '••••••••••••',
-                            hintStyle: AppTypography.style(AppTextRole.placeholder, color: const Color(0xFF64748B), fontSize: 13),
-                            prefixIcon: const Icon(Icons.key_rounded, color: Color(0xFF94A3B8), size: 19),
+                            hintStyle: AppTypography.style(
+                              AppTextRole.placeholder,
+                              color: const Color(0xFF64748B),
+                              fontSize: 13,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
+                            prefixIcon: const Icon(
+                              Icons.key_rounded,
+                              color: Color(0xFF94A3B8),
+                              size: 19,
+                            ),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                                _obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
                                 color: const Color(0xFF94A3B8),
                                 size: 19,
                               ),
-                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                              onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
                             ),
                             filled: true,
                             fillColor: const Color(0xFF0F172A),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 14,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF334155)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF334155),
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF334155)),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF334155),
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
-                              borderSide: const BorderSide(color: Color(0xFF10B981), width: 1.5),
+                              borderSide: const BorderSide(
+                                color: Color(0xFF10B981),
+                                width: 1.5,
+                              ),
                             ),
                           ),
                           validator: (val) {
@@ -503,21 +652,21 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
 
                         // Authorize & Sign In Button
                         PressableScale(
-                          onTap: (_isLoading || isLocked) ? null : _handleAdminLogin,
+                          onTap: (_isLoading || isLocked)
+                              ? null
+                              : _handleAdminLogin,
                           enabled: !_isLoading && !isLocked,
                           child: Container(
                             height: 48,
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF059669),
-                                  Color(0xFF0F4D2E),
-                                ],
+                                colors: [Color(0xFF059669), Color(0xFF0F4D2E)],
                               ),
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF059669).withValues(alpha: 0.35),
+                                  color: const Color(0xFF059669)
+                                      .withValues(alpha: 0.35),
                                   blurRadius: 14,
                                   offset: const Offset(0, 4),
                                 ),
@@ -530,17 +679,29 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                                     height: 22,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2.2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
                                     ),
                                   )
                                 : Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(Icons.login_rounded, color: Colors.white, size: 18),
+                                      const Icon(
+                                        Icons.login_rounded,
+                                        color: Colors.white,
+                                        size: 18,
+                                      ),
                                       const SizedBox(width: 10),
                                       Text(
                                         'Authorize & Sign In',
-                                        style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white, letterSpacing: 0.3),
+                                        style: AppTypography.style(
+                                          AppTextRole.button,
+                                          fontSize: 14,
+                                          color: Colors.white,
+                                          letterSpacing: 0.3,
+                                          height: 1.4,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -553,18 +714,32 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF0F172A).withValues(alpha: 0.6),
+                            color: const Color(0xFF0F172A)
+                                .withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: const Color(0xFF334155).withValues(alpha: 0.5)),
+                            border: Border.all(
+                              color: const Color(0xFF334155)
+                                  .withValues(alpha: 0.5),
+                            ),
                           ),
                           child: Row(
                             children: [
-                              const Icon(Icons.verified_user_outlined, size: 16, color: Color(0xFF10B981)),
+                              const Icon(
+                                Icons.verified_user_outlined,
+                                size: 16,
+                                color: Color(0xFF10B981),
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   'Protected by Row-Level Security & Immutable Audit Logging (RA 10173).',
-                                  style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: const Color(0xFF64748B), height: 1.3),
+                                  style: AppTypography.style(
+                                    AppTextRole.caption,
+                                    fontSize: 10.5,
+                                    color: const Color(0xFF64748B),
+                                    height: 1.3,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ),
                             ],

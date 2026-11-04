@@ -1,0 +1,282 @@
+[
+  {
+    "comparison": "01-admin-320-comparison.png",
+    "source": "admin-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "bd1927c26af612e985401ca30ef305d348607bc5027a5b20ca0f81e0e6ee93b4",
+    "afterPixelSha256": "935e7531fe410ea575e50e44e8e892017a4075547e6ddaa2a86be98c7405932d",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "b7a4ce96c0ce3a410eaa087172c36c3842b1d8902cff726d560d3043d0754d26"
+  },
+  {
+    "comparison": "02-admin-390-comparison.png",
+    "source": "admin-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "15b0ae6338d204e4ec7e323521375f2fa072265687b2b98c5178f0d504bdb2e8",
+    "afterPixelSha256": "9e012594bb4bd88ff2f1291f7823bc5d451039d06676803d99ad0f6b2bdd2da1",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "85bf37bd92a13bfe21865f35d687382148a43e9f493b2c8752edb65891ae4d85"
+  },
+  {
+    "comparison": "03-authentication-320-comparison.png",
+    "source": "authentication-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "bbf2e88eef4acd44381a4ecf71beea20f0315c142f22ffc391c49a7198c0c756",
+    "afterPixelSha256": "4169f2e1a5d878f42092b610ace987ca1cccc5f426ea483a33f0177edafdcb47",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "828d0d5fc777fa3f03f186369c18763cdf25a0e74d7f768acd9520524521aa9c"
+  },
+  {
+    "comparison": "04-authentication-390-comparison.png",
+    "source": "authentication-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "809a8d09877d3d99def478146c45ea37579b50f0ea437b2399aeb5c293c49ceb",
+    "afterPixelSha256": "ae4f83cae724cae04978ed6c079d04ac60efed2e7e47a49d03592aad7660d37c",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "2f253562a489272b31442438ecaec2596eec945db800e08d790d66a20d3cd5b3"
+  },
+  {
+    "comparison": "05-authentication-errors-320-comparison.png",
+    "source": "authentication-errors-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "c8224c262e05d087b277b5e1e960655b5bcda24658875203dc4271be28b849eb",
+    "afterPixelSha256": "f5d308be18f434055bf9b25ee6d0ee2f62079e7f2acee138e3c12900036f4d4d",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "62ded02c6354410f20dcd8c55e6c8c3c4e2b886a20fbf3d7315108c4057d4e19"
+  },
+  {
+    "comparison": "06-authentication-errors-390-comparison.png",
+    "source": "authentication-errors-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "ae85afdd49baace6c2a1e624633de2635dc4a57a8a3965bdd9f687924ab7adf6",
+    "afterPixelSha256": "210f50613d1fad9e8e302152118221e148dae8694cc4185312b3cde4b70bc816",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "e20947e3e22f0e4af83b18fb61d28f03bf268618d4b4357767389b6ab356e102"
+  },
+  {
+    "comparison": "07-home-320-100-comparison.png",
+    "source": "home-320-100.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "ff72981d029b4a38289962f76ed5793ba216f9f51b83ca4eb4d2a7c127c7f51b",
+    "afterPixelSha256": "d15fed7f46a0314f1d92ed49393eed75ec06817c39f620ebcd02d6f60bbd705a",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "0b50f514a77a806fb6817c9ea832c1151cfb1906c3ba1c85e8a09335134a726d"
+  },
+  {
+    "comparison": "08-home-320-200-comparison.png",
+    "source": "home-320-200.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "223aa43ce424989135fc39e0a8ba8c0fa22f88ff3dc84f28c6c51f7d514374bd",
+    "afterPixelSha256": "58e65b3be3588b8f1b4012def77c95537ace72bc1063ec888c63cde9216bc17a",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "e2c63b29a5a27dba86b16832fe04988741d63255e6d5613c8c3ce39a51223fe2"
+  },
+  {
+    "comparison": "09-home-390-100-comparison.png",
+    "source": "home-390-100.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "96cb427c9cddb8682bdd4bd4ab78115995e80f18de71895a2fd76a0e1b9448e1",
+    "afterPixelSha256": "826eb869029f3d81d9165a2f02b26763c5d270c2f49596d7ad7d5db1b5765962",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "58ea2f1dd1f31667ffc4923b4255c7d378c2451e17702ea67a8ce9b04f11ad7d"
+  },
+  {
+    "comparison": "10-home-390-200-comparison.png",
+    "source": "home-390-200.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "82bb5c5d70130243e9d3ef3d4e2d1b9428f60679730ce80006eae1644ae677dc",
+    "afterPixelSha256": "3e8a95f6c92633a3df667d73613c24f246242085ffa6b10f9ec78ae919380f90",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "2c960479fee4dab3cf364e3bc4fe5d9ec9648f32466958856e65edc10d8892a8"
+  },
+  {
+    "comparison": "11-logout-dialog-320-comparison.png",
+    "source": "logout-dialog-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "e836346823c006aeccc017487d1ceaed15b4b2e0a6bf8a46373083a0450862dc",
+    "afterPixelSha256": "1e690b5360547aba3376241f8bbd8681a2640d851844d72de91cc736e1e4d9ac",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "bc6337dbed0add61af975f39c35b7d5cc7085e14a2a952784f04b9cf561cacd9"
+  },
+  {
+    "comparison": "12-logout-dialog-390-comparison.png",
+    "source": "logout-dialog-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "2085eb082b315bcdb243d25a2086408cb0619c9b9f042ba941ca5ee70b4c29f8",
+    "afterPixelSha256": "ec08a884849f707c60a0a03f5dbb5495499a99bf48ad62f04a333a9fb3a97657",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "5bd09b2644b193ffde59b784f5eca94052033ee80523c69104fc5ff5ad3e957e"
+  },
+  {
+    "comparison": "13-onboarding-320-comparison.png",
+    "source": "onboarding-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "2fe4edd5e741e5312b4e8532480a4ec41f31ce765af6a9eaf3a0f62fd0f30d9a",
+    "afterPixelSha256": "03c85d381aeda11b860dd752fcb2799cd0c012550ffab7397eddd8ae7bfebba4",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "777756c0fd0ef2c6d2ca954d22ab69e9011f367e11a25d70ffc72257387cbb53"
+  },
+  {
+    "comparison": "14-onboarding-390-comparison.png",
+    "source": "onboarding-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "46dd4915e2714277b7a900633f42a932401c133779bc5902b33c293e9994108a",
+    "afterPixelSha256": "6cd43d95eb47a70f466fc078f43a7546f73e588d3483d81e1d3226844d3fae23",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "cc64bd01c48509fbc02686d0f1e1e4ab542768c858e3c18eef31d4aadeb1d6ec"
+  },
+  {
+    "comparison": "15-onboarding-feature-1-320-comparison.png",
+    "source": "onboarding-feature-1-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "80b297c1998504ad8c3a67366f23cc59f1fe71b3f707cf311ae721f7b7ca795a",
+    "afterPixelSha256": "6fac54fadd32a54e0857cb5765a71aa7ca3568d0fe619b497231c465d844d5e2",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "86cb5fe4228f8916f204b9b5ce39db9e9aa837c93096c21487726161a6d1cabe"
+  },
+  {
+    "comparison": "16-onboarding-feature-1-390-comparison.png",
+    "source": "onboarding-feature-1-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "6267771477503986849d037ccc65b1ed629e8c953f33600272f1b42759825d4d",
+    "afterPixelSha256": "cdddc91356a6a8ef4d843b76b270854776b788bf816caf772575aea03a9bcf8d",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "d86e5b919590d8394d45907a4ec79154017f3e20f27c5c5b051135ebf43d61b0"
+  },
+  {
+    "comparison": "17-onboarding-feature-2-320-comparison.png",
+    "source": "onboarding-feature-2-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "e7e1af5fdb9ab9122e9deacddb2944536c5efd03776f9967c1507b5877bd533f",
+    "afterPixelSha256": "4bd6d0fd181dc1c383324cde4492e23c14191a1086a1e3fda381bd38b52166cf",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "150a5d0db5b5d1e812d8c7043b2ec19ac289d99cdb8c267d9387c17369a2d049"
+  },
+  {
+    "comparison": "18-onboarding-feature-2-390-comparison.png",
+    "source": "onboarding-feature-2-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "f4d96aacbd0acb6a75391e3df91411c7dbecc58626aba29d6811665a824cdda5",
+    "afterPixelSha256": "de3343358f6cec19de5e94fca05024cabe851a986facac0500200d5228957020",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "d151e0fbe0890841d16f19b5938ddd5014dfe0925dfa789468606101e2a22efc"
+  },
+  {
+    "comparison": "19-onboarding-feature-3-320-comparison.png",
+    "source": "onboarding-feature-3-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "1ef5c78366f9cd5ce986b6baeff58f07bf96e7f928cc55d92ec096c91f22b928",
+    "afterPixelSha256": "929b0d6793a3df7b6c8681b53d0c22c9d29d0270b5e3e703503e0add63f31e66",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "cc1a2321af99b9b9d99a4c9784cec4b26b53ad1f31195c251391b38c621f9665"
+  },
+  {
+    "comparison": "20-onboarding-feature-3-390-comparison.png",
+    "source": "onboarding-feature-3-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "8890e9e63a596dd434828e5693f0bb8ea4563f55bbe303c7034ee1f24954e3d8",
+    "afterPixelSha256": "830c76e61102fae3afac5fae6f35e96a3153d3f9c73304bc045821e7cd401069",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "30ca0ff9d2821cb9b357206a5fb97dfd25a73d3e05cfa528babc600a912af528"
+  },
+  {
+    "comparison": "21-onboarding-feature-4-320-comparison.png",
+    "source": "onboarding-feature-4-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "c07bb86082cda9e24a31cb6c86a5d2ecaf7cf5137734c5691e09cab737a5b811",
+    "afterPixelSha256": "10e07c4a13154089ebdac715586b387b70db3703e7b92e7c71156c3753b4e3b6",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "bbe494691172972fb5d199ff669b1ad968c1db8e4082715eabf1199348e19800"
+  },
+  {
+    "comparison": "22-onboarding-feature-4-390-comparison.png",
+    "source": "onboarding-feature-4-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "e8c56e117cc9413e65794e7d8b2b29de232b2224c301bd94045a26a72c6ef6c9",
+    "afterPixelSha256": "e383da5ee86d98c77d5b7eea219f2488711d7149fd33c2db9f97227903091e7d",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "5b051b9e244f63c94698a04415084423cb9ce897d87ef1030186db25e2ee86fe"
+  },
+  {
+    "comparison": "23-provider-individual-320-comparison.png",
+    "source": "provider-individual-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "a7da069228ff4553d2fec3cc8e1135cf6c3411fb9a706e3840ae6be45c653277",
+    "afterPixelSha256": "3262dc82012248b546981c970ebb719eb359b77c9676c58c50fde1e9845e811c",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "56dd92f5cba390959f012643d3e96e5b5b546d74dc88f293d8e62cbbcefc8e7f"
+  },
+  {
+    "comparison": "24-provider-individual-390-comparison.png",
+    "source": "provider-individual-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "52772a4a09a139d7ba056e208f2192d3a30ae6adbe5a98b28e98d9cf5f13066a",
+    "afterPixelSha256": "a40f5606fdfd55b97dbc68dc1243614d9d9938d1fd10c5890eec9f6c56d3fce2",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "3ff52922a9551e544630ae697146b41d5f60ce2617bb841bb4821f9c94387f4d"
+  },
+  {
+    "comparison": "25-provider-organization-320-comparison.png",
+    "source": "provider-organization-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "790338c84f8ca4e64590923ec4c55325b8e2ff5722e537c958e3b409608161e2",
+    "afterPixelSha256": "193aaf1921202336c10b314dd5f6e4e382a5ec50d504096fec4a036a3c13bc65",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "5c8e1243a7be83c29afd30cbf6a5ed8f768fd2db0d4e21e17577c29fbc3fa17c"
+  },
+  {
+    "comparison": "26-provider-organization-390-comparison.png",
+    "source": "provider-organization-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "f3913fa287911fe8435c714111bdacce52897a3be54c38c49341b6625a9e944b",
+    "afterPixelSha256": "52de3dfbe824b1e5eed3809c6cbd5e75d19298637eea2301557c401e5ff71e44",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "8d3a4a825308a948150a7556910504097ab4bda249de5110553e7b2890e125f0"
+  },
+  {
+    "comparison": "27-scholarship-card-320-comparison.png",
+    "source": "scholarship-card-320.png",
+    "width": 320,
+    "height": 844,
+    "beforePixelSha256": "6a02ef7aa37bbe2944433598f4014d8d646f33dff203219d877e308118468fc2",
+    "afterPixelSha256": "5a80cc8838f16bd555b7fe996ff7534f9fb59ef9eec9cceb628056d9b4013c16",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "53df16de88ae8a2f4a20b4ec721d055880d6035d3426286b90f5824618b1b271"
+  },
+  {
+    "comparison": "28-scholarship-card-390-comparison.png",
+    "source": "scholarship-card-390.png",
+    "width": 390,
+    "height": 844,
+    "beforePixelSha256": "f83ff2cd5299ae4bd78333522d678ac58f374e75b17473aac5225662147a65e4",
+    "afterPixelSha256": "2512b1e8de4b4d3e01408d8b6df0aceb057c035680e1d48d7fa92fc93251cedf",
+    "exportedPanelsPixelIdentical": true,
+    "sha256": "a21be25c3067d56a9ac595dcf03507799a150645ce22ac6cb286df49025125b6"
+  }
+]

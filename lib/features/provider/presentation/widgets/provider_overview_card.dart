@@ -1,3 +1,5 @@
+import '../../../../shared/theme/app_theme.dart' show kSoftCardDecoration;
+
 import 'package:flutter/material.dart';
 
 /// A light, single surface for provider overview content.
@@ -15,18 +17,7 @@ class ProviderOverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(26),
-      border: Border.all(color: const Color(0xFFE8E8E8)),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x06000000),
-          blurRadius: 4,
-          offset: Offset(0, 2),
-        ),
-      ],
-    ),
+    decoration: kSoftCardDecoration,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,

@@ -7,11 +7,7 @@ import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 
-enum SaveDraftExitAction {
-  saveAsDraft,
-  discard,
-  cancel,
-}
+enum SaveDraftExitAction { saveAsDraft, discard, cancel }
 
 /// Prompts the student with "Save your progress?" and provides three options:
 /// 1. Save as Draft (persists form state as draft and navigates away)
@@ -25,11 +21,23 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
       backgroundColor: Colors.white,
       title: Text(
         'Save your progress?',
-        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kNavyTrust),
+        style: AppTypography.style(
+          AppTextRole.sectionTitle,
+          fontSize: 17,
+          color: kNavyTrust,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
       ),
       content: Text(
         'You have unsaved progress in your application. Would you like to save it as a draft so you can return to it later, or discard your progress?',
-        style: AppTypography.style(AppTextRole.body, fontSize: 14, color: const Color(0xFF404942), height: 1.4),
+        style: AppTypography.style(
+          AppTextRole.body,
+          fontSize: 13,
+          color: const Color(0xFF404942),
+          height: 1.4,
+          letterSpacing: 0,
+        ),
       ),
       actions: [
         TextButton(
@@ -38,7 +46,13 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
               Navigator.of(dialogContext).pop(SaveDraftExitAction.cancel),
           child: Text(
             'Cancel',
-            style: AppTypography.style(AppTextRole.button, fontSize: 14, color: const Color(0xFF707971)),
+            style: AppTypography.style(
+              AppTextRole.button,
+              fontSize: 13,
+              color: const Color(0xFF707971),
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
         TextButton(
@@ -47,7 +61,13 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
               Navigator.of(dialogContext).pop(SaveDraftExitAction.discard),
           child: Text(
             'Discard',
-            style: AppTypography.style(AppTextRole.button, fontSize: 14, color: kError),
+            style: AppTypography.style(
+              AppTextRole.button,
+              fontSize: 13,
+              color: kError,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
         ElevatedButton(
@@ -64,7 +84,12 @@ Future<SaveDraftExitAction?> showSaveDraftExitDialog(BuildContext context) {
               Navigator.of(dialogContext).pop(SaveDraftExitAction.saveAsDraft),
           child: Text(
             'Save as Draft',
-            style: AppTypography.style(AppTextRole.button, fontSize: 14),
+            style: AppTypography.style(
+              AppTextRole.button,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],

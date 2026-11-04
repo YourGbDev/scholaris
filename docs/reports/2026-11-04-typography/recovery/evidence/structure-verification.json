@@ -1,0 +1,918 @@
+[
+ {
+  "file": "lib/admin/models/safety_report_presentation.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/admin_backup_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/admin_settings_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/applications_oversight_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/audit_trail_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/disbursements_oversight_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/platform_overview_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/reports_analytics_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/reports_safety_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/screens/support_concerns_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/admin/widgets/admin_review_priorities.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/app/confirmation_redirect.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/app/landing_config.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/app/recovery_redirect.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/app/router.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/auth/landing_redirect.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/auth/landing_redirect_stub.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/auth/landing_redirect_web.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/auth/session_storage_stub.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/auth/session_storage_web.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/auth/tab_scoped_local_storage.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/captcha_challenge.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/captcha_gate.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/captcha_mobile_protocol.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/captcha_view_native.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/captcha_view_stub.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/captcha_view_web.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/inactivity_guard.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/inactivity_storage.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/inactivity_storage_native.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/inactivity_storage_web.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/login_lockout_service.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/core/security/password_validator.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/admin_preview/main.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/admin_preview/student_report_preview.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/entry_preview/main.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/provider_preview/fake_application_data_source.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/provider_preview/fake_profile_data_source.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/provider_preview/fake_scholarship_data_source.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/provider_preview/fake_support_concerns.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/provider_preview/fake_support_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/provider_preview/main.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/student_navbar_preview/main.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/dev/student_regression_preview/main.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/account/presentation/account_settings_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/account/presentation/change_email_dialog.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/account/providers/account_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/account/repositories/account_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_analytics_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_analytics_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_applicants_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_applicants_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_audit_logs_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_audit_logs_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_dashboard_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_home_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_login_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_providers_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_scholarships_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_scholarships_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_users_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/presentation/admin_users_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/admin/repositories/admin_audit_log_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/models/application.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/models/application.freezed.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/models/application.g.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/models/application_document.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/applications_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/application_decision_letter.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/application_detail_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/application_status_chip.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/student_support_concerns.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/student_support_receipts.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/submission_confirmation_receipt_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/submit_application_review_dialog.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/presentation/widgets/document_upload_sheet.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/providers/applications_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/providers/application_document_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/providers/application_draft_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/repositories/application_document_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/repositories/application_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/applications/services/application_filters.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/controllers/auth_controller.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/ceremony_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/empty_stage.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/forgot_password_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/graduation_ceremony.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/login_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/reset_password_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/session_entry_status.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/signup_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/auth/presentation/verify_email_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/bookmarks/providers/bookmarks_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/bookmarks/repositories/bookmark_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/dashboard/presentation/student_dashboard_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/dashboard/presentation/widgets/student_notifications_sheet.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/home_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/student_chat_guide.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/student_chat_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/liquid_glass_pill.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/student_action_sheet.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/student_application_guide.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/student_app_tour.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/student_glass_refraction.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/student_guide_greeting.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/student_selection_indicator.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/student_swipe_cue.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/home/presentation/widgets/student_tab_entrance.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/intro/presentation/intro_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/onboarding/controllers/onboarding_controller.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/onboarding/presentation/onboarding_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/models/applicant_profile.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/models/applicant_profile.freezed.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/models/applicant_profile.g.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/models/avatar_item.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/models/profile_validator.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/models/student_profile.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/models/student_profile.freezed.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/models/student_profile.g.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/presentation/matching_power_sheet.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/presentation/profile_setup_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/presentation/profile_tab_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/presentation/widgets/avatar_display.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/presentation/widgets/avatar_selector_sheet.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/presentation/widgets/profile_setup_account_switch.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/providers/avatar_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/providers/profile_setup_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/repositories/profile_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/profile/services/matching_power_service.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/data/organization_activity_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/data/organization_team_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/data/provider_verification_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/models/organization_activity_log.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/models/organization_team_member.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/models/provider_verification.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/models/scholarship_reviewer_assignment.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/models/support_ledger.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/individual/individual_applications_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/individual/individual_grant_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/individual/individual_provider_shell.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/individual/individual_settings_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/individual/individual_support_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_activity_log_view.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_analytics_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_disbursements_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_incoming_applications_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_provider_shell.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_review_analytics_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_scholarships_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_settings_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/org_team_view.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/org/widgets/assign_reviewer_dialog.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/provider_application_detail_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/provider_home_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/provider_incoming_applications.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/provider_login_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/provider_review_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/provider_scholarships_tab.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/provider_signup_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/scholarship_form_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/applicant_review_drawer.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/individual_support_summary.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/org_metric_count.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/org_overview_workspace.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/org_review_snapshot.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/org_summary_disclosure.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/org_workspace_transition.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/provider_overview_card.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/provider_overview_panel.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/provider_verification_banner.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/scholarship_qr_dialog.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/support_payment_correction.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/presentation/widgets/support_payment_times.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/providers/organization_activity_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/providers/organization_team_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/providers/provider_scholarships_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/providers/provider_sub_role_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/providers/provider_type_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/providers/provider_verification_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/repositories/support_concern_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/provider/repositories/support_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/safety/data/safety_report_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/safety/models/safety_report.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/safety/presentation/student_safety_report.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/data/scholarship_capacity_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/models/scholarship.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/models/scholarship.freezed.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/models/scholarship.g.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/models/scholarship_capacity.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/presentation/discovery_filter_sheet.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/presentation/scholarship_detail_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/presentation/scholarship_qr_scanner_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/presentation/widgets/identity_photo_dialog.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/providers/dashboard_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/providers/discovery_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/providers/scholarships_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/providers/scholarship_capacity_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/repositories/scholarship_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/screens/discover_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/screens/saved_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/services/application_readiness.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/services/discovery_filters.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/services/matching_engine.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/scholarships/services/match_reasons.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/schools/data/school_repository.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/schools/models/school.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/schools/providers/school_provider.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/features/splash/presentation/splash_screen.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/main.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/preview_provider_main.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/theme/app_motion.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/theme/workspace_theme.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/utils/constants.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/entrance.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/greeting_mascot.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/logout_confirmation_dialog.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/mascot_pose_view.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/primary_button.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/radial_matching_gauge.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/responsive_container.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/save_draft_dialog.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/scholaris_logo.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/scholaris_logo_badge.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/scholarship_card.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/section_header.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/state_views.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/student_header_actions.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/success_overlay.dart",
+  "preserved": true
+ },
+ {
+  "file": "lib/shared/widgets/workspace_smooth_scroll.dart",
+  "preserved": true
+ }
+]

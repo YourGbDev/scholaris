@@ -1,3 +1,5 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
+import 'package:scholaris/shared/theme/app_theme.dart' show kSoftCardDecoration;
 // lib/features/provider/presentation/org/org_scholarships_tab.dart
 //
 // Institutional "My Scholarships" Management Tab faithfully matching Stitch mockup
@@ -5,7 +7,6 @@
 // Displays real Philippines scholarship grant portfolios, live quota fulfillment,
 // executive Bento performance metrics, and institutional escrow verification.
 
-import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -109,12 +110,24 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                   const SizedBox(height: 12),
                   Text(
                     'Error loading scholarships',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 16,
+                      height: 1.2,
+                      color: kOrgTextPrimary,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Check your connection and try again.',
-                    style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 12,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
@@ -123,9 +136,9 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     ),
                     onPressed: () =>
                         ref.refresh(providerScholarshipsProvider.future),
-                    child:  Text(
+                    child: const Text(
                       'Retry',
-                      style: AppTypography.style(AppTextRole.button, color: Colors.white),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
@@ -306,7 +319,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           width: 18,
           height: 18,
           decoration: BoxDecoration(
-            color: kOrgPrimary.withValues(alpha: 0.1),
+            color: kWorkspaceSubtle,
             shape: BoxShape.circle,
           ),
           child: const Center(
@@ -317,7 +330,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         Flexible(
           child: Text(
             orgName.toUpperCase(),
-            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextSecondary, letterSpacing: 0.6, height: opticalLeading(11, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 11,
+              color: kOrgTextSecondary,
+              letterSpacing: 0.6,
+              height: 1.3,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -326,12 +345,24 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           padding: const EdgeInsets.symmetric(horizontal: 6),
           child: Text(
             '•',
-            style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFC0C9C0), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.caption,
+              fontSize: 11,
+              color: const Color(0xFFC0C9C0),
+              height: 1.3,
+              letterSpacing: 0,
+            ),
           ),
         ),
         Text(
           'PORTFOLIO OVERSIGHT',
-          style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgPrimary, letterSpacing: 0.6, height: opticalLeading(11, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 11,
+            color: kOrgPrimary,
+            letterSpacing: 0.6,
+            height: 1.3,
+          ),
         ),
       ],
     );
@@ -343,14 +374,26 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         const SizedBox(height: 8),
         Text(
           'Scholarship programs',
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: isDesktop ? 32 : 26, color: kOrgTextPrimary, letterSpacing: opticalTracking(isDesktop ? 32 : 26), height: opticalLeading(isDesktop ? 32 : 26, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: isDesktop ? 24 : 20,
+            color: kOrgTextPrimary,
+            height: 1.2,
+            letterSpacing: ((isDesktop ? 24 : 20) >= 20 ? -.3 : -.15),
+          ),
         ),
         const SizedBox(height: 4),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680),
           child: Text(
             'Manage programs, eligibility requirements, and application deadlines.',
-            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              fontSize: 13.5,
+              color: kOrgTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],
@@ -435,12 +478,24 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           OrgMetricCount(
             motionId: 'programs.activeCount',
             targetValue: activeCount,
-            style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: kOrgTextPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.metric,
+              fontSize: 22,
+              color: kOrgTextPrimary,
+              height: 1.2,
+              letterSpacing: -0.3,
+            ),
           ),
           const SizedBox(width: 4),
           Text(
             activeCount == 1 ? 'Program' : 'Programs',
-            style: AppTypography.style(AppTextRole.label, fontSize: 22, color: kOrgTextPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 22,
+              color: kOrgTextPrimary,
+              height: 1.2,
+              letterSpacing: -0.3,
+            ),
           ),
         ],
       ),
@@ -458,7 +513,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           Expanded(
             child: Text(
               '$activeCount active programs',
-              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 11,
+                color: kOrgTextSecondary,
+                height: 1.3,
+                letterSpacing: 0,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -476,11 +537,23 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         targetValue: totalCommittedCapital,
         prefix: '₱',
         formatWithCommas: true,
-        style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: kOrgTextPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+        style: AppTypography.style(
+          AppTextRole.metric,
+          fontSize: 22,
+          color: kOrgTextPrimary,
+          height: 1.2,
+          letterSpacing: -0.3,
+        ),
       ),
       bottomWidget: Text(
         'Listed slots × award amount; excludes unspecified slots.',
-        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
+        style: AppTypography.style(
+          AppTextRole.caption,
+          fontSize: 11,
+          color: kOrgTextSecondary,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
       ),
     );
 
@@ -493,7 +566,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       primaryWidget: OrgMetricCount(
         motionId: 'programs.awardedCount',
         targetValue: awardedCount,
-        style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: kOrgTextPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+        style: AppTypography.style(
+          AppTextRole.metric,
+          fontSize: 22,
+          color: kOrgTextPrimary,
+          height: 1.2,
+          letterSpacing: -0.3,
+        ),
       ),
       secondarySuffix: totalQuota > 0 ? '/ $totalQuota Quota' : '/ Uncapped',
       bottomWidget: Row(
@@ -506,7 +585,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     ? (awardedCount / totalQuota).clamp(0.0, 1.0)
                     : 0.0,
                 minHeight: 5,
-                backgroundColor: const Color(0xFFE9E7ED),
+                backgroundColor: const Color(0xFFE2E4E3),
                 valueColor: const AlwaysStoppedAnimation<Color>(
                   Color(0xFF0070EB),
                 ),
@@ -516,7 +595,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           const SizedBox(width: 8),
           Text(
             '${quotaPercent.toStringAsFixed(1)}%',
-            style: AppTypography.style(AppTextRole.metric, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.metric,
+              fontSize: 11.5,
+              color: kOrgTextPrimary,
+              height: 1.2,
+              letterSpacing: -0.15,
+            ),
           ),
         ],
       ),
@@ -531,7 +616,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         targetValue: annualDisbursement,
         prefix: '₱',
         formatWithCommas: true,
-        style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: kOrgTextPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+        style: AppTypography.style(
+          AppTextRole.metric,
+          fontSize: 22,
+          color: kOrgTextPrimary,
+          height: 1.2,
+          letterSpacing: -0.3,
+        ),
       ),
       bottomWidget: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -539,7 +630,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           Expanded(
             child: Text(
               'Known awards only; excludes missing programs',
-              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 11,
+                color: kOrgTextSecondary,
+                height: 1.3,
+                letterSpacing: 0,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -550,12 +647,18 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: const Color(0xFFEEEDF3),
+                color: const Color(0xFFE8E8E8),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 'Not a payment total',
-                style: AppTypography.style(AppTextRole.caption, fontSize: 9.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(9.5), height: opticalLeading(9.5, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 9.5,
+                  color: kOrgTextPrimary,
+                  height: 1.2,
+                  letterSpacing: -0.15,
+                ),
               ),
             ),
           ),
@@ -630,7 +733,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         color: kOrgSurfaceWhite,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? kOrgPrimary : const Color(0xFFEEEDF3),
+          color: isSelected ? kOrgPrimary : const Color(0xFFE8E8E8),
           width: isSelected ? 1.5 : 1.0,
         ),
         boxShadow: [
@@ -652,7 +755,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
               Expanded(
                 child: Text(
                   title,
-                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10.5, color: isSelected ? kOrgPrimary : kOrgTextSecondary, letterSpacing: 0.5, height: opticalLeading(10.5, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 10.5,
+                    color: isSelected ? kOrgPrimary : kOrgTextSecondary,
+                    letterSpacing: 0.5,
+                    height: 1.3,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -664,7 +773,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? kOrgPrimary.withValues(alpha: 0.10)
-                      : const Color(0xFFF4F3F8),
+                      : const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -687,14 +796,26 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
               else
                 Text(
                   primaryMetric ?? '',
-                  style: AppTypography.style(AppTextRole.metric, fontSize: 22, color: kOrgTextPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.metric,
+                    fontSize: 22,
+                    color: kOrgTextPrimary,
+                    height: 1.2,
+                    letterSpacing: -0.3,
+                  ),
                 ),
               if (secondarySuffix != null) ...[
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
                     secondarySuffix,
-                    style: AppTypography.style(AppTextRole.label, fontSize: 12.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(12.5), height: ((12.5) <= 16 ? 1.45 : opticalLeading(12.5, isBody: true))),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 12.5,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -717,7 +838,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: onTap,
-            hoverColor: const Color(0xFFFAF9FD),
+            hoverColor: const Color(0xFFF8F8F8),
             child: cardContent,
           ),
         ),
@@ -747,7 +868,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
     final pills = Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEDF3),
+        color: const Color(0xFFE8E8E8),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -790,7 +911,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                   ),
                   child: Text(
                     segmentTabs[idx],
-                    style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: isSelected ? kOrgTextPrimary : kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.navigation,
+                      fontSize: 12,
+                      color: isSelected ? kOrgTextPrimary : kOrgTextSecondary,
+                      height: 1.3,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ),
@@ -805,7 +932,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       children: [
         Text(
           'Sort by:',
-          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 12,
+            color: kOrgTextSecondary,
+            height: 1.3,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(width: 4),
         PopupMenuButton<String>(
@@ -837,7 +970,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                       : _sortBy == 'allocation'
                       ? 'Total Allocation'
                       : 'Title (A–Z)',
-                  style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.navigation,
+                    fontSize: 12,
+                    color: kOrgTextPrimary,
+                    height: 1.2,
+                    letterSpacing: -0.15,
+                  ),
                 ),
                 const SizedBox(width: 2),
                 const Icon(
@@ -1013,18 +1152,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
         : null;
 
     return Container(
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1065,7 +1193,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           const SizedBox(width: 6),
                           Text(
                             isExpired ? 'Application Closed' : 'Active Intake',
-                            style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: isExpired ? kOrgError : kOrgPrimary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.badge,
+                              fontSize: 10.5,
+                              color: isExpired ? kOrgError : kOrgPrimary,
+                              height: 1.3,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -1080,7 +1214,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE9E7ED),
+                          color: const Color(0xFFE2E4E3),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -1096,7 +1230,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                               daysLeft == 0
                                   ? 'Closing today'
                                   : 'Closing in $daysLeft days',
-                              style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.badge,
+                                fontSize: 10.5,
+                                color: kOrgTextPrimary,
+                                height: 1.3,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ),
@@ -1108,12 +1248,18 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE9E7ED),
+                          color: const Color(0xFFE2E4E3),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           'Archived Intake',
-                          style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.badge,
+                            fontSize: 10.5,
+                            color: kOrgTextSecondary,
+                            height: 1.3,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
 
@@ -1156,7 +1302,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                 // Scholarship Title
                 Text(
                   scholarship.title,
-                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 17,
+                    color: kOrgTextPrimary,
+                    height: 1.2,
+                    letterSpacing: -0.15,
+                  ),
                 ),
 
                 const SizedBox(height: 6),
@@ -1168,7 +1320,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                       : 'Comprehensive collegiate grant for enrolled undergraduate students across recognized Philippine higher education institutions.',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(13)),
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 13,
+                    color: kOrgTextSecondary,
+                    height: 1.35,
+                    letterSpacing: 0,
+                  ),
                 ),
 
                 const SizedBox(height: 16),
@@ -1180,7 +1338,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF4F3F8),
+                    color: const Color(0xFFF6F6F6),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -1192,7 +1350,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           children: [
                             Text(
                               'Quota Fulfillment',
-                              style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 10.5,
+                                color: kOrgTextSecondary,
+                                height: 1.3,
+                                letterSpacing: 0,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             RichText(
@@ -1200,13 +1364,25 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                                 children: [
                                   TextSpan(
                                     text: '$occupiedCount ',
-                                    style: AppTypography.style(AppTextRole.metric, fontSize: 14.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(14.5), height: opticalLeading(14.5, isBody: false)),
+                                    style: AppTypography.style(
+                                      AppTextRole.metric,
+                                      fontSize: 14.5,
+                                      height: 1.2,
+                                      color: kOrgTextPrimary,
+                                      letterSpacing: -0.15,
+                                    ),
                                   ),
                                   TextSpan(
                                     text: hasSlots
                                         ? '/ $totalSlots'
                                         : '/ Uncapped',
-                                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                                    style: AppTypography.style(
+                                      AppTextRole.caption,
+                                      fontSize: 12,
+                                      color: kOrgTextSecondary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1221,7 +1397,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           children: [
                             Text(
                               'Funding / Scholar',
-                              style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 10.5,
+                                color: kOrgTextSecondary,
+                                height: 1.3,
+                                letterSpacing: 0,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             RichText(
@@ -1231,11 +1413,23 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                                     text: _formatCurrency(
                                       scholarship.awardAmount,
                                     ),
-                                    style: AppTypography.style(AppTextRole.metric, fontSize: 14.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(14.5), height: opticalLeading(14.5, isBody: false)),
+                                    style: AppTypography.style(
+                                      AppTextRole.metric,
+                                      fontSize: 14.5,
+                                      height: 1.2,
+                                      color: kOrgTextPrimary,
+                                      letterSpacing: -0.15,
+                                    ),
                                   ),
                                   TextSpan(
                                     text: ' / yr',
-                                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
+                                    style: AppTypography.style(
+                                      AppTextRole.caption,
+                                      fontSize: 11,
+                                      color: kOrgTextSecondary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1250,14 +1444,26 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           children: [
                             Text(
                               'Total Allocation',
-                              style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 10.5,
+                                color: kOrgTextSecondary,
+                                height: 1.3,
+                                letterSpacing: 0,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               totalAllocation != null
                                   ? _formatCurrency(totalAllocation)
                                   : 'Uncapped',
-                              style: AppTypography.style(AppTextRole.metric, fontSize: 14.5, color: kOrgPrimary, letterSpacing: opticalTracking(14.5), height: opticalLeading(14.5, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.metric,
+                                fontSize: 14.5,
+                                color: kOrgPrimary,
+                                height: 1.2,
+                                letterSpacing: -0.15,
+                              ),
                             ),
                           ],
                         ),
@@ -1280,7 +1486,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                             hasSlots
                                 ? '$totalSlots total • $occupiedCount occupied • ${remainingSeats ?? 0} remaining'
                                 : 'Uncapped capacity • $occupiedCount scholar${occupiedCount == 1 ? "" : "s"} approved',
-                            style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              fontSize: 11,
+                              color: kOrgTextSecondary,
+                              height: 1.3,
+                              letterSpacing: 0,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -1292,7 +1504,15 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                               : fillPercent >= 100
                               ? '100% (Fully Booked)'
                               : '$fillPercent% (${remainingSeats ?? 0} open)',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: fillPercent >= 100 ? kOrgPrimary : kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 11,
+                            color: fillPercent >= 100
+                                ? kOrgPrimary
+                                : kOrgTextPrimary,
+                            height: 1.2,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                       ],
                     ),
@@ -1302,7 +1522,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                       child: LinearProgressIndicator(
                         value: hasSlots ? fillRatio : 0.0,
                         minHeight: 6,
-                        backgroundColor: const Color(0xFFE9E7ED),
+                        backgroundColor: const Color(0xFFE2E4E3),
                         valueColor: const AlwaysStoppedAnimation<Color>(
                           kOrgPrimary,
                         ),
@@ -1318,10 +1538,10 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             decoration: const BoxDecoration(
-              color: Color(0xFFF7F6FA),
+              color: Color(0xFFF6F6F6),
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
               border: Border(
-                top: BorderSide(color: Color(0xFFEEEDF3), width: 1),
+                top: BorderSide(color: Color(0xFFE8E8E8), width: 1),
               ),
             ),
             child: Wrap(
@@ -1353,7 +1573,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                         const SizedBox(width: 6),
                         Text(
                           'View $applicantCount ${applicantCount == 1 ? "Applicant" : "Applicants"}',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 12.5, color: const Color(0xFF0058BC), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 12.5,
+                            color: const Color(0xFF0058BC),
+                            height: 1.3,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -1365,7 +1591,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                   runSpacing: 8,
                   children: [
                     Material(
-                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      color: const Color(0xFFE2E4E3).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1387,7 +1613,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                               const SizedBox(width: 4),
                               Text(
                                 'QR',
-                                style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.button,
+                                  fontSize: 11.5,
+                                  color: kOrgTextPrimary,
+                                  height: 1.3,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
@@ -1396,7 +1628,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     ),
                     const SizedBox(width: 8),
                     Material(
-                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      color: const Color(0xFFE2E4E3).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1418,7 +1650,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                               const SizedBox(width: 4),
                               Text(
                                 'Reviewers',
-                                style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.button,
+                                  fontSize: 11.5,
+                                  color: kOrgTextPrimary,
+                                  height: 1.3,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
@@ -1427,7 +1665,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                     ),
                     const SizedBox(width: 8),
                     Material(
-                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      color: const Color(0xFFE2E4E3).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1439,14 +1677,20 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           ),
                           child: Text(
                             'Edit Criteria',
-                            style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.button,
+                              fontSize: 11.5,
+                              color: kOrgTextPrimary,
+                              height: 1.3,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Material(
-                      color: const Color(0xFFE3E2E7).withValues(alpha: 0.6),
+                      color: const Color(0xFFE2E4E3).withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(8),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
@@ -1467,7 +1711,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                           ),
                           child: Text(
                             'Manage Ledger',
-                            style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.button,
+                              fontSize: 11.5,
+                              color: kOrgTextPrimary,
+                              height: 1.3,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ),
@@ -1489,23 +1739,25 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
       Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: const Color(0xFFF4F3F8),
+          color: const Color(0xFFF6F6F6),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
           'Funding verification not recorded. Program allocations are estimates, not confirmed escrow balances or completed payments.',
-          style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 13,
+            color: kOrgTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       );
   Widget _buildEmptyState() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEEEDF3)),
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1513,7 +1765,7 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F3F8),
+              color: const Color(0xFFF6F6F6),
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Center(
@@ -1531,7 +1783,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
                 : _selectedSegment == 2
                 ? 'No Draft Endowments'
                 : 'No Active Scholarships Found',
-            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.cardTitle,
+              fontSize: 16,
+              height: 1.2,
+              color: kOrgTextPrimary,
+              letterSpacing: -0.15,
+            ),
           ),
           const SizedBox(height: 6),
           ConstrainedBox(
@@ -1540,7 +1798,13 @@ class _OrgScholarshipsTabState extends ConsumerState<OrgScholarshipsTab> {
               _selectedSegment == 0
                   ? 'Get started by creating your first scholarship grant endowment to review student applications and allocate quotas.'
                   : 'There are no scholarship records in this category.',
-              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+              style: AppTypography.style(
+                AppTextRole.body,
+                fontSize: 13,
+                color: kOrgTextSecondary,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
               textAlign: TextAlign.center,
             ),
           ),

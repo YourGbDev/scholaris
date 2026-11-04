@@ -6,6 +6,7 @@
 // Zero fabricated metrics, zero fake compliance stamps, zero fake candidate identities.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
@@ -86,8 +87,7 @@ class ApplicationRecord {
     final yearLevel = profile?['year_level'] as int?;
     final gpa = (profile?['gpa'] as num?)?.toDouble();
     final region = (profile?['region'] as String?)?.trim();
-    final cityMunicipality =
-        (profile?['city_municipality'] as String?)?.trim();
+    final cityMunicipality = (profile?['city_municipality'] as String?)?.trim();
     final email = (profile?['email'] as String?)?.trim();
 
     final title = scholarshipMap?['title'] as String?;
@@ -109,8 +109,8 @@ class ApplicationRecord {
       yearLevel: yearLevel,
       gpa: gpa,
       region: (region != null && region.isNotEmpty) ? region : null,
-      cityMunicipality: (cityMunicipality != null &&
-              cityMunicipality.isNotEmpty)
+      cityMunicipality:
+          (cityMunicipality != null && cityMunicipality.isNotEmpty)
           ? cityMunicipality
           : null,
       email: (email != null && email.isNotEmpty) ? email : null,
@@ -124,8 +124,9 @@ class ApplicationRecord {
 // 2. Data Fetching State Providers
 // =============================================================================
 
-final adminApplicationsProvider =
-    FutureProvider<List<ApplicationRecord>>((ref) async {
+final adminApplicationsProvider = FutureProvider<List<ApplicationRecord>>((
+  ref,
+) async {
   final supabase = Supabase.instance.client;
 
   // Step 1: Fetch applications with scholarships join
@@ -149,12 +150,12 @@ final adminApplicationsProvider =
   final appsList = List<Map<String, dynamic>>.from(appsResponse);
 
   // Step 2: Collect all unique user_ids from result, then fetch their profiles
-  final userIds =
-      appsList.map((a) => a['user_id'] as String).toSet().toList();
+  final userIds = appsList.map((a) => a['user_id'] as String).toSet().toList();
   final profilesResponse = await supabase
       .from('profiles')
       .select(
-          'id, full_name, school, course, year_level, gpa, region, city_municipality, email')
+        'id, full_name, school, course, year_level, gpa, region, city_municipality, email',
+      )
       .inFilter('id', userIds);
 
   // Build a lookup map
@@ -164,18 +165,22 @@ final adminApplicationsProvider =
 
   // Step 3: When building ApplicationRecord, look up profile from profileMap
   return appsList
-      .map((app) => ApplicationRecord.fromMap(
-            app,
-            profile: profileMap[app['user_id'] as String],
-          ))
+      .map(
+        (app) => ApplicationRecord.fromMap(
+          app,
+          profile: profileMap[app['user_id'] as String],
+        ),
+      )
       .toList();
 });
 
-final adminApplicationSearchQueryProvider =
-    StateProvider.autoDispose<String>((ref) => '');
+final adminApplicationSearchQueryProvider = StateProvider.autoDispose<String>(
+  (ref) => '',
+);
 
-final adminApplicationStatusFilterProvider =
-    StateProvider.autoDispose<String>((ref) => 'all');
+final adminApplicationStatusFilterProvider = StateProvider.autoDispose<String>(
+  (ref) => 'all',
+);
 
 // =============================================================================
 // 3. UI Component: ApplicationsOversightScreen
@@ -239,8 +244,18 @@ class _ApplicationsOversightScreenState
   String _formatDate(DateTime? dt) {
     if (dt == null) return '—';
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
@@ -283,110 +298,111 @@ class _ApplicationsOversightScreenState
         skeleton: _buildSkeleton(context),
         child: appsAsync.when(
           loading: () => _buildSkeleton(context),
-        error: (err, stack) => Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: ErrorView(
-              title: 'Unable to Load Applications Oversight',
-              message: 'Failed to query live applications registry: $err',
-              onRetry: () => ref.invalidate(adminApplicationsProvider),
+          error: (err, stack) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: ErrorView(
+                title: 'Unable to Load Applications Oversight',
+                message: 'Failed to query live applications registry: $err',
+                onRetry: () => ref.invalidate(adminApplicationsProvider),
+              ),
             ),
           ),
-        ),
-        data: (allApplications) {
-          final totalCount = allApplications.length;
+          data: (allApplications) {
+            final totalCount = allApplications.length;
 
-          if (!_isDetailOpen &&
-              (widget.initialInspectApproved ||
-                  Uri.base.queryParameters['inspect'] == 'approved')) {
-            _checkAndAutoOpen(allApplications);
-          }
+            if (!_isDetailOpen &&
+                (widget.initialInspectApproved ||
+                    Uri.base.queryParameters['inspect'] == 'approved')) {
+              _checkAndAutoOpen(allApplications);
+            }
 
-          // Status Counts computed strictly from live database rows
-          final statusCounts = <String, int>{
-            'all': totalCount,
-            'draft': 0,
-            'submitted': 0,
-            'under_review': 0,
-            'shortlisted': 0,
-            'awarded': 0,
-            'approved': 0,
-            'rejected': 0,
-            'withdrawn': 0,
-          };
+            // Status Counts computed strictly from live database rows
+            final statusCounts = <String, int>{
+              'all': totalCount,
+              'draft': 0,
+              'submitted': 0,
+              'under_review': 0,
+              'shortlisted': 0,
+              'awarded': 0,
+              'approved': 0,
+              'rejected': 0,
+              'withdrawn': 0,
+            };
 
-          for (final app in allApplications) {
-            final st = app.status.toLowerCase().trim();
-            statusCounts[st] = (statusCounts[st] ?? 0) + 1;
-          }
+            for (final app in allApplications) {
+              final st = app.status.toLowerCase().trim();
+              statusCounts[st] = (statusCounts[st] ?? 0) + 1;
+            }
 
-          // Filter by status
-          List<ApplicationRecord> filtered = allApplications;
-          if (activeStatusFilter != 'all') {
-            filtered = filtered.where((a) {
-              final st = a.status.toLowerCase().trim();
-              if (activeStatusFilter == 'under_review') {
-                return st == 'under_review' || st == 'underreview';
-              }
-              return st == activeStatusFilter;
-            }).toList();
-          }
+            // Filter by status
+            List<ApplicationRecord> filtered = allApplications;
+            if (activeStatusFilter != 'all') {
+              filtered = filtered.where((a) {
+                final st = a.status.toLowerCase().trim();
+                if (activeStatusFilter == 'under_review') {
+                  return st == 'under_review' || st == 'underreview';
+                }
+                return st == activeStatusFilter;
+              }).toList();
+            }
 
-          // Filter by search query (applicant name or scholarship title)
-          if (searchQuery.isNotEmpty) {
-            filtered = filtered.where((a) {
-              final name = (a.applicantName ?? '').toLowerCase();
-              final title = (a.scholarshipTitle ?? '').toLowerCase();
-              final school = (a.school ?? '').toLowerCase();
-              return name.contains(searchQuery) ||
-                  title.contains(searchQuery) ||
-                  school.contains(searchQuery);
-            }).toList();
-          }
+            // Filter by search query (applicant name or scholarship title)
+            if (searchQuery.isNotEmpty) {
+              filtered = filtered.where((a) {
+                final name = (a.applicantName ?? '').toLowerCase();
+                final title = (a.scholarshipTitle ?? '').toLowerCase();
+                final school = (a.school ?? '').toLowerCase();
+                return name.contains(searchQuery) ||
+                    title.contains(searchQuery) ||
+                    school.contains(searchQuery);
+              }).toList();
+            }
 
-          return SingleChildScrollView(
-            physics: const AppleBouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 3a. Header Bar
-                _buildHeaderBar(context, totalCount: totalCount),
-                const SizedBox(height: 18),
+            return SingleChildScrollView(
+              physics: const AppleBouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 3a. Header Bar
+                  _buildHeaderBar(context, totalCount: totalCount),
+                  const SizedBox(height: 18),
 
-                // Live Telemetry KPI Summary Strip
-                _buildTelemetryStrip(
-                  context,
-                  totalCount: totalCount,
-                  submittedCount: statusCounts['submitted'] ?? 0,
-                  underReviewCount: statusCounts['under_review'] ?? 0,
-                  approvedCount: (statusCounts['approved'] ?? 0) +
-                      (statusCounts['awarded'] ?? 0),
-                ),
-                const SizedBox(height: 18),
+                  // Live Telemetry KPI Summary Strip
+                  _buildTelemetryStrip(
+                    context,
+                    totalCount: totalCount,
+                    submittedCount: statusCounts['submitted'] ?? 0,
+                    underReviewCount: statusCounts['under_review'] ?? 0,
+                    approvedCount:
+                        (statusCounts['approved'] ?? 0) +
+                        (statusCounts['awarded'] ?? 0),
+                  ),
+                  const SizedBox(height: 18),
 
-                // 3b & 3c. Filter and Search Shelf
-                _buildFilterAndSearchShelf(
-                  context,
-                  statusCounts: statusCounts,
-                  activeFilter: activeStatusFilter,
-                  searchQuery: searchQuery,
-                ),
-                const SizedBox(height: 16),
-
-                // 3d & 3f. Applications List or Empty State
-                if (filtered.isEmpty)
-                  _buildEmptyState(
-                    activeTab: _getFilterLabel(activeStatusFilter),
+                  // 3b & 3c. Filter and Search Shelf
+                  _buildFilterAndSearchShelf(
+                    context,
+                    statusCounts: statusCounts,
+                    activeFilter: activeStatusFilter,
                     searchQuery: searchQuery,
-                  )
-                else
-                  _buildApplicationsList(context, filtered),
-                const SizedBox(height: 32),
-              ],
-            ),
-          );
-        },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // 3d & 3f. Applications List or Empty State
+                  if (filtered.isEmpty)
+                    _buildEmptyState(
+                      activeTab: _getFilterLabel(activeStatusFilter),
+                      searchQuery: searchQuery,
+                    )
+                  else
+                    _buildApplicationsList(context, filtered),
+                  const SizedBox(height: 32),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -419,7 +435,13 @@ class _ApplicationsOversightScreenState
               const SizedBox(width: 6),
               Text(
                 'STUDENT SCHOLARSHIP INTAKE',
-                style: AppTypography.style(AppTextRole.label, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.label,
+                  color: kSeqOnSurfaceVariant,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -427,16 +449,19 @@ class _ApplicationsOversightScreenState
         const SizedBox(height: 8),
 
         // Title
-        Text(
-          'Applications Oversight',
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface),
-        ),
+        Text('Applications Oversight', style: seqPageTitle(context)),
         const SizedBox(height: 4),
 
         // Subtitle: strictly live database count
         Text(
           '$totalCount student applications across listed scholarships',
-          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            color: kSeqOnSurfaceVariant,
+            fontSize: 14,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     );
@@ -463,7 +488,7 @@ class _ApplicationsOversightScreenState
           subtitle: 'All live applications',
           icon: Icons.assignment_outlined,
           color: kSeqOnSurface,
-          containerBg: kSeqSurfaceContainerLow,
+          containerBg: kWorkspaceSubtle,
         ),
       ),
       StaggeredListItem(
@@ -475,7 +500,7 @@ class _ApplicationsOversightScreenState
           subtitle: 'Awaiting evaluation',
           icon: Icons.send_rounded,
           color: kSeqSecondary,
-          containerBg: kSeqSecondaryFixed.withValues(alpha: 0.4),
+          containerBg: kWorkspaceSubtle,
         ),
       ),
       StaggeredListItem(
@@ -487,7 +512,7 @@ class _ApplicationsOversightScreenState
           subtitle: 'In-flight assessment',
           icon: Icons.schedule_rounded,
           color: kSeqTertiaryContainer,
-          containerBg: kSeqTertiaryFixed.withValues(alpha: 0.4),
+          containerBg: kWorkspaceSubtle,
         ),
       ),
       StaggeredListItem(
@@ -499,7 +524,7 @@ class _ApplicationsOversightScreenState
           subtitle: 'Approved applications',
           icon: Icons.check_circle_rounded,
           color: kSeqPrimaryContainer,
-          containerBg: kSeqPrimaryFixed.withValues(alpha: 0.4),
+          containerBg: kWorkspaceSubtle,
         ),
       ),
     ];
@@ -507,12 +532,14 @@ class _ApplicationsOversightScreenState
     if (width >= 1024) {
       return Row(
         children: cards
-            .map((c) => Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: c,
-                  ),
-                ))
+            .map(
+              (c) => Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: c,
+                ),
+              ),
+            )
             .toList(),
       );
     } else if (width >= 600) {
@@ -538,10 +565,10 @@ class _ApplicationsOversightScreenState
     } else {
       return Column(
         children: cards
-            .map((c) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: c,
-                ))
+            .map(
+              (c) =>
+                  Padding(padding: const EdgeInsets.only(bottom: 8), child: c),
+            )
             .toList(),
       );
     }
@@ -568,7 +595,13 @@ class _ApplicationsOversightScreenState
               Flexible(
                 child: Text(
                   title,
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -588,16 +621,38 @@ class _ApplicationsOversightScreenState
           numericValue != null
               ? CountUpAnimation(
                   targetValue: numericValue,
-                  style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface)),
+                  style: seqTabularFigures(
+                    AppTypography.style(
+                      AppTextRole.metric,
+                      fontSize: 24,
+                      height: 1.2,
+                      color: kSeqOnSurface,
+                      letterSpacing: -.4,
+                    ),
+                  ),
                 )
               : Text(
                   value,
-                  style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface)),
+                  style: seqTabularFigures(
+                    AppTypography.style(
+                      AppTextRole.metric,
+                      fontSize: 24,
+                      height: 1.2,
+                      color: kSeqOnSurface,
+                      letterSpacing: -.4,
+                    ),
+                  ),
                 ),
           const SizedBox(height: 2),
           Text(
             subtitle,
-            style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              color: kSeqOnSurfaceVariant,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -667,25 +722,33 @@ class _ApplicationsOversightScreenState
             decoration: BoxDecoration(
               color: kSeqSurfaceContainerLow,
               borderRadius: BorderRadius.circular(10),
-              border:
-                  Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: kSeqOutlineVariant.withValues(alpha: 0.3),
+              ),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.search_rounded,
-                  size: 18,
-                  color: kSeqOutline,
-                ),
+                const Icon(Icons.search_rounded, size: 18, color: kSeqOutline),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    style: AppTypography.style(AppTextRole.input, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
+                    style: AppTypography.style(
+                      AppTextRole.input,
+                      fontSize: 14,
+                      height: 1.4,
+                      color: kTextSupporting,
+                      letterSpacing: 0,
+                    ),
                     decoration: InputDecoration(
-                      hintText:
-                          'Filter by applicant name, school, or scholarship title...',
-                      hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                      hintText: 'Filter by applicant name, school, or scholarship title...',
+                      hintStyle: AppTypography.style(
+                        AppTextRole.placeholder,
+                        color: kSeqOutline,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(vertical: 8),
@@ -693,21 +756,29 @@ class _ApplicationsOversightScreenState
                     onChanged: (val) {
                       ref
                           .read(adminApplicationSearchQueryProvider.notifier)
-                          .state = val.trim().toLowerCase();
+                          .state = val
+                          .trim()
+                          .toLowerCase();
                     },
                   ),
                 ),
                 if (searchQuery.isNotEmpty)
                   IconButton(
-                    icon: const Icon(Icons.close_rounded,
-                        size: 16, color: kSeqOutline),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      size: 16,
+                      color: kSeqOutline,
+                    ),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () {
                       _searchController.clear();
                       ref
-                          .read(adminApplicationSearchQueryProvider.notifier)
-                          .state = '';
+                              .read(
+                                adminApplicationSearchQueryProvider.notifier,
+                              )
+                              .state =
+                          '';
                     },
                   ),
               ],
@@ -732,21 +803,27 @@ class _ApplicationsOversightScreenState
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           margin: const EdgeInsets.symmetric(horizontal: 2),
           decoration: BoxDecoration(
-            color: isSelected ? kSeqPrimaryContainer : Colors.transparent,
+            color: isSelected ? kWorkspaceSelected : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: kSeqPrimaryContainer.withValues(alpha: 0.25),
+                      color: Colors.black.withValues(alpha: 0.08),
                       blurRadius: 4,
                       offset: const Offset(0, 1),
-                    )
+                    ),
                   ]
                 : null,
           ),
           child: Text(
             label,
-            style: AppTypography.style(AppTextRole.navigation, color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+            style: AppTypography.style(
+              AppTextRole.navigation,
+              color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant,
+              fontSize: 11,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ),
@@ -781,7 +858,9 @@ class _ApplicationsOversightScreenState
   // --- 3d. Applications List -------------------------------------------------
 
   Widget _buildApplicationsList(
-      BuildContext context, List<ApplicationRecord> list) {
+    BuildContext context,
+    List<ApplicationRecord> list,
+  ) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -808,11 +887,11 @@ class _ApplicationsOversightScreenState
     // Initials for avatar
     final initials = applicantDisplayName.trim().isNotEmpty
         ? applicantDisplayName
-            .trim()
-            .split(RegExp(r'\s+'))
-            .take(2)
-            .map((part) => part.isNotEmpty ? part[0].toUpperCase() : '')
-            .join()
+              .trim()
+              .split(RegExp(r'\s+'))
+              .take(2)
+              .map((part) => part.isNotEmpty ? part[0].toUpperCase() : '')
+              .join()
         : 'AP';
 
     return PressableScale(
@@ -834,13 +913,19 @@ class _ApplicationsOversightScreenState
                     width: 38,
                     height: 38,
                     decoration: BoxDecoration(
-                      color: kSeqPrimaryFixed,
+                      color: kWorkspaceSubtle,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,
                     child: Text(
                       initials,
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOnPrimaryFixedVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOnPrimaryFixedVariant,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -852,14 +937,30 @@ class _ApplicationsOversightScreenState
                       children: [
                         Text(
                           applicantDisplayName,
-                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: hasApplicantName ? kSeqOnSurface : kSeqOutline),
+                          style: AppTypography.style(
+                            AppTextRole.cardTitle,
+                            fontSize: 16,
+                            color: hasApplicantName
+                                ? kSeqOnSurface
+                                : kSeqOutline,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 2),
                         Text(
                           schoolDisplayName,
-                          style: AppTypography.style(AppTextRole.subtitle, color: hasSchool ? kSeqOnSurfaceVariant : kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                          style: AppTypography.style(
+                            AppTextRole.subtitle,
+                            color: hasSchool
+                                ? kSeqOnSurfaceVariant
+                                : kSeqOutline,
+                            fontSize: 13,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -867,7 +968,13 @@ class _ApplicationsOversightScreenState
                           const SizedBox(height: 2),
                           Text(
                             courseYearText,
-                            style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              color: kSeqOutline,
+                              fontSize: 11,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -901,12 +1008,24 @@ class _ApplicationsOversightScreenState
                       children: [
                         Text(
                           'PROGRAM & GRANT POOL',
-                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            color: kSeqOutline,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           scholarshipTitleText,
-                          style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                          style: AppTypography.style(
+                            AppTextRole.bodyEmphasis,
+                            color: kSeqOnSurfaceVariant,
+                            fontSize: 14,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -919,12 +1038,26 @@ class _ApplicationsOversightScreenState
                     children: [
                       Text(
                         'ALLOCATION',
-                        style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          color: kSeqOutline,
+                          fontSize: 11,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         scholarshipAmountText,
-                        style: seqTabularFigures(AppTypography.style(AppTextRole.metric, color: kSeqPrimaryContainer, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19)),
+                        style: seqTabularFigures(
+                          AppTypography.style(
+                            AppTextRole.metric,
+                            color: kSeqPrimaryContainer,
+                            fontSize: 17,
+                            height: 1.25,
+                            letterSpacing: -.15,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -935,7 +1068,9 @@ class _ApplicationsOversightScreenState
               // Bottom Row: Timestamps & Inspect Link
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 6),
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: kSeqSurfaceContainerLow,
                   borderRadius: BorderRadius.circular(8),
@@ -950,19 +1085,43 @@ class _ApplicationsOversightScreenState
                           Flexible(
                             child: Text(
                               'Applied: $appliedAtText',
-                              style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                              style: seqTabularFigures(
+                                AppTypography.style(
+                                  AppTextRole.caption,
+                                  color: kSeqOnSurfaceVariant,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Text('•',
-                              style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                          Text(
+                            '•',
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              color: kSeqOutline,
+                              fontSize: 11,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
+                          ),
                           const SizedBox(width: 8),
                           Flexible(
                             child: Text(
                               'Updated: $updatedAtText',
-                              style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                              style: seqTabularFigures(
+                                AppTypography.style(
+                                  AppTextRole.caption,
+                                  color: kSeqOutline,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -976,7 +1135,13 @@ class _ApplicationsOversightScreenState
                       children: [
                         Text(
                           'Inspect Dossier',
-                          style: AppTypography.style(AppTextRole.button, color: kSeqSecondary, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            color: kSeqSecondary,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         const SizedBox(width: 4),
                         const Icon(
@@ -998,7 +1163,10 @@ class _ApplicationsOversightScreenState
 
   // --- 3e. Application Detail Drawer / Dialog (Read-Only) --------------------
 
-  Future<void> _showApplicationDetail(BuildContext context, ApplicationRecord item) {
+  Future<void> _showApplicationDetail(
+    BuildContext context,
+    ApplicationRecord item,
+  ) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
     final applicantDisplayName = item.applicantName ?? 'Name not set';
     final schoolDisplayName = item.school ?? 'School not set';
@@ -1016,16 +1184,20 @@ class _ApplicationsOversightScreenState
           horizontal: isDesktop ? 40 : 16,
           vertical: 24,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: Text(
                 'Application Dossier',
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 17,
+                  height: 1.25,
+                  color: kSeqOnSurface,
+                  letterSpacing: -.15,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1044,7 +1216,13 @@ class _ApplicationsOversightScreenState
                 // Applicant Identity Section
                 Text(
                   'APPLICANT PROFILE',
-                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 _dossierRow('Candidate Name', applicantDisplayName),
@@ -1059,8 +1237,7 @@ class _ApplicationsOversightScreenState
                   _dossierRow('Administrative Region', item.region!),
                 if (item.cityMunicipality != null &&
                     item.cityMunicipality!.isNotEmpty)
-                  _dossierRow(
-                      'City / Municipality', item.cityMunicipality!),
+                  _dossierRow('City / Municipality', item.cityMunicipality!),
                 const SizedBox(height: 14),
                 Divider(color: kSeqOutlineVariant.withValues(alpha: 0.25)),
                 const SizedBox(height: 10),
@@ -1068,7 +1245,13 @@ class _ApplicationsOversightScreenState
                 // Scholarship Program Section
                 Text(
                   'SCHOLARSHIP PROGRAM',
-                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 _dossierRow('Grant Program', scholarshipTitleText),
@@ -1081,7 +1264,13 @@ class _ApplicationsOversightScreenState
                 // Intake & Clearance State Section
                 Text(
                   'INTAKE & CLEARANCE STATE',
-                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 8),
 
@@ -1095,7 +1284,13 @@ class _ApplicationsOversightScreenState
                         width: 170,
                         child: Text(
                           'Clearance Status',
-                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            color: kSeqOutline,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                       Expanded(
@@ -1106,7 +1301,13 @@ class _ApplicationsOversightScreenState
                             const SizedBox(height: 3),
                             Text(
                               item.status,
-                              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kSeqOutline),
+                              style: AppTypography.style(
+                                AppTextRole.badge,
+                                fontSize: 11,
+                                color: kSeqOutline,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ),
@@ -1137,7 +1338,13 @@ class _ApplicationsOversightScreenState
                 // Notes Field
                 Text(
                   'APPLICATION NOTES',
-                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Container(
@@ -1155,11 +1362,22 @@ class _ApplicationsOversightScreenState
                         ? item.notes!
                         : 'No notes',
                     style: item.notes != null && item.notes!.trim().isNotEmpty
-                        ? AppTypography.style(AppTextRole.body, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0)
-                        : AppTypography.style(AppTextRole.body, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                        ? AppTypography.style(
+                            AppTextRole.body,
+                            color: kSeqOnSurface,
+                            fontSize: 13,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          )
+                        : AppTypography.style(
+                            AppTextRole.body,
+                            color: kSeqOutline,
+                            fontSize: 13,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -1172,7 +1390,9 @@ class _ApplicationsOversightScreenState
               if (item.status.toLowerCase().trim() == 'approved') ...[
                 Consumer(
                   builder: (fContext, cRef, _) {
-                    final disbAsync = cRef.watch(applicationDisbursementProvider(item.id));
+                    final disbAsync = cRef.watch(
+                      applicationDisbursementProvider(item.id),
+                    );
                     return disbAsync.when(
                       loading: () => Container(
                         width: double.infinity,
@@ -1183,38 +1403,64 @@ class _ApplicationsOversightScreenState
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(kSeqPrimary),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              kSeqPrimary,
+                            ),
                           ),
                         ),
                       ),
                       error: (err, _) => Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: kSeqErrorContainer,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.error_outline_rounded, size: 18, color: kSeqOnErrorContainer),
+                            const Icon(
+                              Icons.error_outline_rounded,
+                              size: 18,
+                              color: kSeqOnErrorContainer,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 'Unable to verify disbursement record. Please try again.',
-                                style: AppTypography.style(AppTextRole.body, color: kSeqOnErrorContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                                style: AppTypography.style(
+                                  AppTextRole.body,
+                                  color: kSeqOnErrorContainer,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
                             TextButton.icon(
                               style: TextButton.styleFrom(
                                 foregroundColor: kSeqOnErrorContainer,
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 minimumSize: Size.zero,
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              onPressed: () => cRef.invalidate(applicationDisbursementProvider(item.id)),
+                              onPressed: () => cRef.invalidate(
+                                applicationDisbursementProvider(item.id),
+                              ),
                               icon: const Icon(Icons.refresh_rounded, size: 14),
-                              label:  Text('Retry', style: AppTypography.style(AppTextRole.button, fontSize: 12)),
+                              label: Text(
+                                'Retry',
+                                style: AppTypography.style(
+                                  AppTextRole.button,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -1245,7 +1491,13 @@ class _ApplicationsOversightScreenState
                                 const SizedBox(width: 8),
                                 Text(
                                   '● Disbursement on record',
-                                  style: AppTypography.style(AppTextRole.badge, color: kSeqOnPrimaryFixedVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                                  style: AppTypography.style(
+                                    AppTextRole.badge,
+                                    color: kSeqOnPrimaryFixedVariant,
+                                    fontSize: 11,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ],
                             ),
@@ -1262,16 +1514,27 @@ class _ApplicationsOversightScreenState
                                   item,
                                 );
                               },
-                              icon: const Icon(Icons.verified_rounded, size: 18),
+                              icon: const Icon(
+                                Icons.verified_rounded,
+                                size: 18,
+                              ),
                               label: const Text('Confirm Award & Disburse'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: kSeqPrimary,
                                 foregroundColor: kSeqOnPrimary,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                textStyle: AppTypography.style(AppTextRole.button, color: kSeqOnPrimary, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+                                textStyle: AppTypography.style(
+                                  AppTextRole.button,
+                                  color: kSeqOnPrimary,
+                                  fontSize: 12,
+                                  height: 16 / 12,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ),
                           ),
@@ -1288,7 +1551,13 @@ class _ApplicationsOversightScreenState
                   onPressed: () => Navigator.of(dialogContext).pop(),
                   child: Text(
                     'Close',
-                    style: AppTypography.style(AppTextRole.button, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+                    style: AppTypography.style(
+                      AppTextRole.button,
+                      color: kSeqOnSurfaceVariant,
+                      fontSize: 12,
+                      height: 16 / 12,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ),
@@ -1330,7 +1599,10 @@ class _ApplicationsOversightScreenState
 
   Widget _dossierRow(String label, String value) {
     final lower = label.toLowerCase();
-    final isMono = lower.contains('id') || lower.contains('timestamp') || lower.contains('date');
+    final isMono =
+        lower.contains('id') ||
+        lower.contains('timestamp') ||
+        lower.contains('date');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -1340,15 +1612,33 @@ class _ApplicationsOversightScreenState
             width: 170,
             child: Text(
               label,
-              style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: isMono
-                  ? AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kSeqOnSurface)
-                  : AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                  ? AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 11.5,
+                      color: kSeqOnSurface,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    )
+                  : AppTypography.style(
+                      AppTextRole.body,
+                      color: kSeqOnSurface,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
             ),
           ),
         ],
@@ -1374,8 +1664,9 @@ class _ApplicationsOversightScreenState
             decoration: BoxDecoration(
               color: kSeqSurfaceContainerLow,
               shape: BoxShape.circle,
-              border:
-                  Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: kSeqOutlineVariant.withValues(alpha: 0.3),
+              ),
             ),
             child: const Icon(
               Icons.assignment_outlined,
@@ -1386,14 +1677,26 @@ class _ApplicationsOversightScreenState
           const SizedBox(height: 16),
           Text(
             'No applications found',
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 17,
+              height: 1.25,
+              color: kSeqOnSurface,
+              letterSpacing: -.15,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             searchQuery.isNotEmpty
                 ? 'No applications match your search query "$searchQuery".'
                 : 'There are currently 0 applications in the "$activeTab" category.',
-            style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+            style: AppTypography.style(
+              AppTextRole.body,
+              color: kSeqOnSurfaceVariant,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -1432,10 +1735,7 @@ class _ApplicationsOversightScreenState
           const SizedBox(height: 20),
 
           // Filter Shelf Skeleton
-          Container(
-            height: 90,
-            decoration: kAdminCardDecoration,
-          ),
+          Container(height: 90, decoration: kAdminCardDecoration),
           const SizedBox(height: 16),
 
           // Cards Skeleton
@@ -1548,7 +1848,13 @@ class StatusBadge extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               label,
-              style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                color: fg,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -1562,10 +1868,7 @@ class StatusBadge extends StatelessWidget {
 // =============================================================================
 
 class _CreateDisbursementSheet extends StatefulWidget {
-  const _CreateDisbursementSheet({
-    required this.item,
-    required this.onSuccess,
-  });
+  const _CreateDisbursementSheet({required this.item, required this.onSuccess});
 
   final ApplicationRecord item;
   final VoidCallback onSuccess;
@@ -1666,7 +1969,8 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
         await supabase.from('notifications').insert({
           'user_id': widget.item.userId,
           'title': 'Scholarship Officially Awarded! 🎓',
-          'message': 'Congratulations! Your grant for "$schTitle" has been officially confirmed by the administration and disbursement is scheduled.',
+          'message':
+              'Congratulations! Your grant for "$schTitle" has been officially confirmed by the administration and disbursement is scheduled.',
           'type': 'application_update',
           'target_id': widget.item.id,
         });
@@ -1721,7 +2025,13 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
                 Expanded(
                   child: Text(
                     'Confirm Award & Schedule Disbursement',
-                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      fontSize: 17,
+                      height: 1.25,
+                      color: kSeqOnSurface,
+                      letterSpacing: -.15,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1758,8 +2068,13 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
             // Payment Method Dropdown
             Text(
               'PAYMENT METHOD',
-              style:
-                  AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 6),
             Container(
@@ -1781,7 +2096,13 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
                       value: pm['value'],
                       child: Text(
                         pm['label']!,
-                        style: AppTypography.style(AppTextRole.label, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          color: kSeqOnSurface,
+                          fontSize: 14,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     );
                   }).toList(),
@@ -1797,15 +2118,26 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
             // Reference Number
             Text(
               'REFERENCE NUMBER (OPTIONAL)',
-              style:
-                  AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 6),
             TextField(
               controller: _referenceController,
               decoration: InputDecoration(
                 hintText: 'e.g. GC-2026-XXXX',
-                hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                hintStyle: AppTypography.style(
+                  AppTextRole.placeholder,
+                  color: kSeqOutline,
+                  fontSize: 13,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 filled: true,
                 fillColor: kSeqSurfaceContainerLow,
                 contentPadding: const EdgeInsets.symmetric(
@@ -1834,8 +2166,13 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
             // Notes
             Text(
               'NOTES (OPTIONAL)',
-              style:
-                  AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 6),
             TextField(
@@ -1843,7 +2180,13 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'Add internal disbursement notes or instructions...',
-                hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                hintStyle: AppTypography.style(
+                  AppTextRole.placeholder,
+                  color: kSeqOutline,
+                  fontSize: 13,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 filled: true,
                 fillColor: kSeqSurfaceContainerLow,
                 contentPadding: const EdgeInsets.all(14),
@@ -1878,7 +2221,13 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  textStyle: AppTypography.style(AppTextRole.button, color: kSeqOnPrimary, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+                  textStyle: AppTypography.style(
+                    AppTextRole.button,
+                    color: kSeqOnPrimary,
+                    fontSize: 12,
+                    height: 16 / 12,
+                    letterSpacing: 0,
+                  ),
                 ),
                 child: _isSubmitting
                     ? const SizedBox(
@@ -1906,17 +2255,28 @@ class _CreateDisbursementSheetState extends State<_CreateDisbursementSheet> {
           width: 110,
           child: Text(
             label,
-            style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+            style: AppTypography.style(
+              AppTextRole.label,
+              color: kSeqOutline,
+              fontSize: 11,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+            style: AppTypography.style(
+              AppTextRole.bodyEmphasis,
+              color: kSeqOnSurface,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],
     );
   }
 }
-

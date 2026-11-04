@@ -9,8 +9,8 @@
 //   Default:     /ceremony -> GraduationCeremony plays -> onCompleted -> /login
 //   Celebration: CeremonyScreen(title, subtitle, onCompleted) -> plays -> onCompleted()
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -130,7 +130,13 @@ class _CeremonyScreenState extends State<CeremonyScreen> {
                         if (widget.title != null)
                           Text(
                             widget.title!,
-                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 16, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.screenTitle,
+                              fontSize: 15,
+                              color: const Color(0xFF0F4D2E),
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -138,7 +144,13 @@ class _CeremonyScreenState extends State<CeremonyScreen> {
                           const SizedBox(height: 4),
                           Text(
                             widget.subtitle!,
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF404942), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 12,
+                              color: const Color(0xFF404942),
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
                             maxLines: 3,
                             overflow: TextOverflow.ellipsis,
                           ),

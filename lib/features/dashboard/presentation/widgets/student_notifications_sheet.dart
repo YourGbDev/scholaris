@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../../../auth/controllers/auth_controller.dart';
 
 import 'package:scholaris/features/account/presentation/account_settings_screen.dart';
@@ -25,7 +26,10 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 
 Future<void> showStudentNotificationsSheet(BuildContext context) {
   HapticFeedback.lightImpact();
-  ProviderScope.containerOf(context, listen: false).invalidate(applicationsProvider);
+  ProviderScope.containerOf(
+    context,
+    listen: false,
+  ).invalidate(applicationsProvider);
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
@@ -38,12 +42,16 @@ Future<void> showStudentNotificationsSheet(BuildContext context) {
   );
 }
 
-final studentNotificationsProvider = FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
-  final userId = ref.watch(currentUserIdProvider);
-  if (userId == null) return [];
-  return Supabase.instance.client.from('notifications').select()
-      .eq('user_id', userId).order('created_at', ascending: false);
-});
+final studentNotificationsProvider =
+    FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+      final userId = ref.watch(currentUserIdProvider);
+      if (userId == null) return [];
+      return Supabase.instance.client
+          .from('notifications')
+          .select()
+          .eq('user_id', userId)
+          .order('created_at', ascending: false);
+    });
 
 class StudentNotificationItem {
   const StudentNotificationItem({
@@ -90,42 +98,61 @@ class StudentNotificationsSheet extends ConsumerWidget {
       profile: profile,
     );
     for (final row in (savedNotifications.valueOrNull ?? []).reversed) {
-      items.insert(0, StudentNotificationItem(
-        id: row['id'] as String,
-        title: row['title'] as String,
-        subtitle: row['message'] as String,
-        icon: Icons.notifications_active_outlined,
-        iconColor: kPrimary,
-        iconBgColor: const Color(0xFFDCF3E5),
-        badgeText: row['is_read'] == true ? 'Read' : 'New',
-        onTap: () async {
-          try {
-            await Supabase.instance.client.from('notifications')
-                .update({'is_read': true}).eq('id', row['id'] as String).select('id').single();
-            ref.invalidate(studentNotificationsProvider);
-            if (!context.mounted) return;
-            Navigator.of(context).pop();
-            final target = row['target_id'] as String?;
-            if (target != null) context.push('/application/$target');
-          } catch (_) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Could not mark notification as read. Please retry.')));
+      items.insert(
+        0,
+        StudentNotificationItem(
+          id: row['id'] as String,
+          title: row['title'] as String,
+          subtitle: row['message'] as String,
+          icon: Icons.notifications_active_outlined,
+          iconColor: kPrimary,
+          iconBgColor: const Color(0xFFDCF3E5),
+          badgeText: row['is_read'] == true ? 'Read' : 'New',
+          onTap: () async {
+            try {
+              await Supabase.instance.client
+                  .from('notifications')
+                  .update({'is_read': true})
+                  .eq('id', row['id'] as String)
+                  .select('id')
+                  .single();
+              ref.invalidate(studentNotificationsProvider);
+              if (!context.mounted) return;
+              Navigator.of(context).pop();
+              final target = row['target_id'] as String?;
+              if (target != null) context.push('/application/$target');
+            } catch (_) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Could not mark notification as read. Please retry.',
+                    ),
+                  ),
+                );
+              }
             }
-          }
-        },
-      ));
+          },
+        ),
+      );
     }
     if (savedNotifications.hasError) {
-      items.insert(0, StudentNotificationItem(id: 'load_error', title: 'Could not load notifications',
-        subtitle: 'Tap to retry.', icon: Icons.refresh, iconColor: kPrimary,
-        iconBgColor: const Color(0xFFDCF3E5), onTap: () => ref.invalidate(studentNotificationsProvider)));
+      items.insert(
+        0,
+        StudentNotificationItem(
+          id: 'load_error',
+          title: 'Could not load notifications',
+          subtitle: 'Tap to retry.',
+          icon: Icons.refresh,
+          iconColor: kPrimary,
+          iconBgColor: const Color(0xFFDCF3E5),
+          onTap: () => ref.invalidate(studentNotificationsProvider),
+        ),
+      );
     }
 
     return Container(
-      constraints: BoxConstraints(
-        maxHeight: mediaQuery.size.height * 0.75,
-      ),
+      constraints: BoxConstraints(maxHeight: mediaQuery.size.height * 0.75),
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -162,7 +189,13 @@ class StudentNotificationsSheet extends ConsumerWidget {
                     children: [
                       Text(
                         'Notifications',
-                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          fontSize: 18,
+                          color: const Color(0xFF161C27),
+                          height: 1.25,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       if (items.isNotEmpty) ...[
                         const SizedBox(width: 8),
@@ -177,7 +210,13 @@ class StudentNotificationsSheet extends ConsumerWidget {
                           ),
                           child: Text(
                             '${items.length} Active',
-                            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.badge,
+                              fontSize: 11,
+                              color: kPrimary,
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ],
@@ -187,7 +226,10 @@ class StudentNotificationsSheet extends ConsumerWidget {
               ),
               PressableScale(
                 child: IconButton(
-                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  constraints: const BoxConstraints(
+                    minWidth: 44,
+                    minHeight: 44,
+                  ),
                   padding: const EdgeInsets.all(10),
                   icon: const Icon(
                     Icons.tune_rounded,
@@ -212,7 +254,10 @@ class StudentNotificationsSheet extends ConsumerWidget {
 
           // Content Area
           if (savedNotifications.isLoading)
-            const Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator())
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: CircularProgressIndicator(),
+            )
           else if (items.isEmpty)
             _buildEmptyState(context)
           else
@@ -221,7 +266,8 @@ class StudentNotificationsSheet extends ConsumerWidget {
                 shrinkWrap: true,
                 physics: const AppleBouncingScrollPhysics(),
                 itemCount: items.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 10),
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
                 itemBuilder: (ctx, index) {
                   final item = items[index];
                   return _buildNotificationCard(item);
@@ -254,8 +300,8 @@ class StudentNotificationsSheet extends ConsumerWidget {
             subtitle: isGpaMissing && isSchoolMissing
                 ? 'Add your current GWA & institution to unlock high-fit scholarships.'
                 : (isGpaMissing
-                    ? 'Declare your current GWA to calculate accurate match probabilities.'
-                    : 'Add your school/university to find campus-specific grants.'),
+                      ? 'Declare your current GWA to calculate accurate match probabilities.'
+                      : 'Add your school/university to find campus-specific grants.'),
             icon: Icons.person_outline_rounded,
             iconColor: const Color(0xFF0058BC),
             iconBgColor: const Color(0xFFF0F0F0),
@@ -273,11 +319,15 @@ class StudentNotificationsSheet extends ConsumerWidget {
     // 2. Live Application Status Notices
     for (final app in apps) {
       // Final decision messages must come from the committed notification row.
-      if (app.status == ApplicationStatus.approved || app.status == ApplicationStatus.rejected ||
-          app.status == ApplicationStatus.awarded) { continue; }
-      final sch = scholarships
-          .cast<Scholarship?>()
-          .firstWhere((s) => s?.id == app.scholarshipId, orElse: () => null);
+      if (app.status == ApplicationStatus.approved ||
+          app.status == ApplicationStatus.rejected ||
+          app.status == ApplicationStatus.awarded) {
+        continue;
+      }
+      final sch = scholarships.cast<Scholarship?>().firstWhere(
+        (s) => s?.id == app.scholarshipId,
+        orElse: () => null,
+      );
       final schTitle = sch?.title ?? 'Grant Application';
 
       switch (app.status) {
@@ -306,7 +356,8 @@ class StudentNotificationsSheet extends ConsumerWidget {
             StudentNotificationItem(
               id: 'app_submitted_${app.id}',
               title: 'Application Under Review',
-              subtitle: '$schTitle • Dossier is queued for provider evaluation.',
+              subtitle:
+                  '$schTitle • Dossier is queued for provider evaluation.',
               icon: Icons.hourglass_top_rounded,
               iconColor: const Color(0xFF623A00),
               iconBgColor: const Color(0xFFFEF7E6),
@@ -323,7 +374,8 @@ class StudentNotificationsSheet extends ConsumerWidget {
             StudentNotificationItem(
               id: 'app_evaluating_${app.id}',
               title: 'Evaluation In Progress',
-              subtitle: '$schTitle • Committee is currently scoring candidate qualifications.',
+              subtitle:
+                  '$schTitle • Committee is currently scoring candidate qualifications.',
               icon: Icons.pending_actions_rounded,
               iconColor: const Color(0xFF0058BC),
               iconBgColor: const Color(0xFFF0F0F0),
@@ -340,7 +392,8 @@ class StudentNotificationsSheet extends ConsumerWidget {
             StudentNotificationItem(
               id: 'app_declined_${app.id}',
               title: 'Application Decision',
-              subtitle: '$schTitle • Review completed. Tap to view provider remarks and alternatives.',
+              subtitle:
+                  '$schTitle • Review completed. Tap to view provider remarks and alternatives.',
               icon: Icons.info_outline_rounded,
               iconColor: const Color(0xFFBA1A1A),
               iconBgColor: const Color(0xFFFFEDEC),
@@ -368,14 +421,10 @@ class StudentNotificationsSheet extends ConsumerWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: item.onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(kRadiusCard),
           child: Container(
             padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFAFAFA),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
-            ),
+            decoration: kSoftCardDecoration,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -386,11 +435,7 @@ class StudentNotificationsSheet extends ConsumerWidget {
                     color: item.iconBgColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    item.icon,
-                    color: item.iconColor,
-                    size: 20,
-                  ),
+                  child: Icon(item.icon, color: item.iconColor, size: 20),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -403,8 +448,14 @@ class StudentNotificationsSheet extends ConsumerWidget {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Text(
-                              item.title,
-                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
+                            item.title,
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 13.5,
+                              color: const Color(0xFF161C27),
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
                           ),
                           if (item.badgeText != null) ...[
                             Container(
@@ -418,7 +469,13 @@ class StudentNotificationsSheet extends ConsumerWidget {
                               ),
                               child: Text(
                                 item.badgeText!,
-                                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: item.iconColor, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.badge,
+                                  fontSize: 10,
+                                  color: item.iconColor,
+                                  height: 1.25,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ),
                           ],
@@ -427,7 +484,13 @@ class StudentNotificationsSheet extends ConsumerWidget {
                       const SizedBox(height: 4),
                       Text(
                         item.subtitle,
-                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF707971), height: 1.35, letterSpacing: opticalTracking(12)),
+                        style: AppTypography.style(
+                          AppTextRole.subtitle,
+                          fontSize: 12,
+                          color: const Color(0xFF707971),
+                          height: 1.35,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -473,13 +536,25 @@ class StudentNotificationsSheet extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             "You're All Caught Up",
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16.5, color: const Color(0xFF161C27), letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 16.5,
+              color: const Color(0xFF161C27),
+              height: 1.25,
+              letterSpacing: -0.15,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             "You have no unread alerts. You'll receive real-time notifications here when providers update your applications or request documentation.",
             textAlign: TextAlign.center,
-            style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: const Color(0xFF707971), height: 1.45, letterSpacing: opticalTracking(12.5)),
+            style: AppTypography.style(
+              AppTextRole.body,
+              fontSize: 12.5,
+              color: const Color(0xFF707971),
+              height: 1.45,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 20),
           PressableScale(
@@ -509,7 +584,12 @@ class StudentNotificationsSheet extends ConsumerWidget {
                 icon: const Icon(Icons.settings_outlined, size: 16),
                 label: Text(
                   'Notification Preferences',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 12.5, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 12.5,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ),

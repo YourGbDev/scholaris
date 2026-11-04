@@ -5,10 +5,12 @@
 // Features a background circular track, smooth progress arc in Golden Opportunity
 // (kTertiaryFixedDim / #FABC28), and centered percentage + "Active" status label.
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking;
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+
 import '../theme/app_theme.dart';
 
 class RadialMatchingGauge extends StatelessWidget {
@@ -79,12 +81,28 @@ class RadialMatchingGauge extends StatelessWidget {
             children: [
               Text(
                 '$percentage%',
-                style: AppTypography.style(AppTextRole.metric, fontSize: size * 0.22, color: textColor, height: 1.0, letterSpacing: opticalTracking(size * 0.22)),
+                style: AppTypography.style(
+                  AppTextRole.metric,
+                  fontSize: size * 0.22,
+                  color: textColor,
+                  height: 1.0,
+                  letterSpacing: ((size * 0.22) >= 20
+                      ? -.3
+                      : (size * 0.22) >= 16
+                      ? -.15
+                      : 0),
+                ),
               ),
               const SizedBox(height: 1),
               Text(
                 status.toUpperCase(),
-                style: AppTypography.style(AppTextRole.badge, fontSize: size * 0.11, color: effectiveSubtextColor, letterSpacing: 0.5, height: 1.0),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  fontSize: size * 0.11,
+                  color: effectiveSubtextColor,
+                  letterSpacing: 0.5,
+                  height: 1.0,
+                ),
               ),
             ],
           ),

@@ -35,6 +35,56 @@ void main() {
     await tester.tap(find.text('View activity'));
     expect(destination, 'activity');
   });
+  for (final size in [(320.0, 2.0), (390.0, 1.0), (1280.0, 1.0)]) {
+    testWidgets(
+      'individual welcome stays separate from review priority at $size',
+      (tester) async {
+        await tester.binding.setSurfaceSize(Size(size.$1, 1000));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        var reviewed = false;
+        await tester.pumpWidget(
+          MaterialApp(
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: TextScaler.linear(size.$2)),
+              child: child!,
+            ),
+            home: Scaffold(
+              body: ProviderOverviewPanel(
+                name: 'Elena',
+                individual: true,
+                scholarships: const [],
+                applicationCount: 3,
+                pendingCount: 3,
+                onApplications: () => reviewed = true,
+                onScholarships: () {},
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        final mascot = find.image(
+          const AssetImage('assets/mascots/greetings/ari.png'),
+        );
+        expect(mascot, findsOneWidget);
+        expect(
+          find.image(
+            const AssetImage('assets/images/provider_hero_illustration.png'),
+          ),
+          findsNothing,
+        );
+        expect(find.text('Hi, Elena'), findsOneWidget);
+        expect(
+          tester.getRect(mascot).bottom,
+          lessThan(tester.getRect(find.text('3 applications to review')).top),
+        );
+        await tester.ensureVisible(find.text('Review applications'));
+        await tester.tap(find.text('Review applications'));
+        expect(reviewed, isTrue);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
   for (final width in [360.0, 1280.0]) {
     testWidgets(
       'organization overview has one review priority and responsive workspace at $width',
@@ -94,7 +144,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Hi, Elena — a little support. A new beginning.'), findsOneWidget);
+      expect(find.text('Hi, Elena'), findsOneWidget);
       expect(find.text('Start your first scholarship'), findsOneWidget);
       expect(find.text('Your first opportunity starts here.'), findsOneWidget);
       await tester.ensureVisible(find.text('Manage scholarships'));

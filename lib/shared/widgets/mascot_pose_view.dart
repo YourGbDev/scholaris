@@ -9,12 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
 
 /// Available mascot emotional poses.
-enum MascotPose {
-  celebrating,
-  consoling,
-  searching,
-  confused,
-}
+enum MascotPose { celebrating, consoling, searching, confused }
 
 /// Helper function to resolve the asset path for a given pose and gender string.
 /// Uses female mascot when gender is female; defaults to male mascot for male/unset profiles.
@@ -23,6 +18,22 @@ String getMascotAssetPath(MascotPose pose, {String? gender}) {
   final genderStr = isFemale ? 'female' : 'male';
   return 'assets/mascots/mascot_${genderStr}_${pose.name}.png';
 }
+
+/// Names follow the same gender fallback as mascot assets.
+String getMascotName({String? gender}) =>
+    gender?.trim().toLowerCase() == 'female' ? 'Ari' : 'Ariel';
+
+/// Canonical portraits anchor Home, entry, and the guided introduction.
+String getMascotGreetingAssetPath({String? gender}) =>
+    gender?.trim().toLowerCase() == 'female'
+    ? 'assets/mascots/greetings/ari.png'
+    : 'assets/mascots/greetings/ariel.png';
+
+/// Campus setting for the Home welcome card; identity follows the same gender rule.
+String getMascotCampusAssetPath({String? gender}) =>
+    gender?.trim().toLowerCase() == 'female'
+    ? 'assets/images/student_hero_graduate_campus_female.png'
+    : 'assets/images/student_hero_graduate_campus.png';
 
 /// A responsive widget displaying the appropriate mascot pose graphic.
 class MascotPoseView extends StatelessWidget {

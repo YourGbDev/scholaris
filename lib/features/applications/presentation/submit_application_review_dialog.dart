@@ -267,7 +267,13 @@ class _SubmitApplicationReviewDialogState
                               'Final Step • Review',
 
                               overflow: TextOverflow.ellipsis,
-                              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kSecondary, letterSpacing: 0.5),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 11,
+                                color: kSecondary,
+                                letterSpacing: 0.5,
+                                height: 1.4,
+                              ),
                             ),
                           ),
                         ],
@@ -276,20 +282,38 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(height: 6),
                     Text(
                       'Submit Application',
-                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 22, color: kOnSurface, letterSpacing: -0.2),
+                      style: AppTypography.style(
+                        AppTextRole.sectionTitle,
+                        fontSize: 20,
+                        color: kOnSurface,
+                        letterSpacing: -0.2,
+                        height: 1.4,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     // Prompt label preserved for accessibility and test suites
                     Text(
                       'Apply to this scholarship?',
-                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kSecondary),
+                      style: AppTypography.style(
+                        AppTextRole.cardTitle,
+                        fontSize: 12,
+                        color: kSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       '${widget.scholarship.title} • ${widget.scholarship.provider ?? "National Science Endowment"}',
 
                       overflow: TextOverflow.ellipsis,
-                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOnSurfaceVariant),
+                      style: AppTypography.style(
+                        AppTextRole.subtitle,
+                        fontSize: 12,
+                        color: kOnSurfaceVariant,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -326,7 +350,13 @@ class _SubmitApplicationReviewDialogState
                   'Review & Submit',
 
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimaryDark),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 12,
+                    color: kPrimaryDark,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -335,7 +365,13 @@ class _SubmitApplicationReviewDialogState
                   'Review Required',
 
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kOnSurfaceVariant),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 12,
+                    color: kOnSurfaceVariant,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -417,7 +453,13 @@ class _SubmitApplicationReviewDialogState
         const SizedBox(width: 4),
         Text(
           label,
-          style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kPrimaryDark),
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 11,
+            color: kPrimaryDark,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     );
@@ -449,7 +491,13 @@ class _SubmitApplicationReviewDialogState
                     children: [
                       Text(
                         'AWARD VALUE',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: 0.5),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          fontSize: 10,
+                          color: kOnSurfaceVariant,
+                          letterSpacing: 0.5,
+                          height: 1.4,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       FittedBox(
@@ -458,11 +506,23 @@ class _SubmitApplicationReviewDialogState
                         child: RichText(
                           text: TextSpan(
                             text: _grantValue(widget.scholarship),
-                            style: AppTypography.style(AppTextRole.metric, fontSize: 20, color: kPrimaryDark),
+                            style: AppTypography.style(
+                              AppTextRole.metric,
+                              fontSize: 20,
+                              color: kPrimaryDark,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                             children: [
                               TextSpan(
                                 text: ' / semester',
-                                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOnSurfaceVariant),
+                                style: AppTypography.style(
+                                  AppTextRole.caption,
+                                  fontSize: 12,
+                                  color: kOnSurfaceVariant,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
@@ -502,7 +562,13 @@ class _SubmitApplicationReviewDialogState
                           const SizedBox(width: 4),
                           Text(
                             '98% Fit',
-                            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOnPrimaryFixedVariant),
+                            style: AppTypography.style(
+                              AppTextRole.badge,
+                              fontSize: 11,
+                              color: kOnPrimaryFixedVariant,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -510,7 +576,13 @@ class _SubmitApplicationReviewDialogState
                     const SizedBox(height: 3),
                     Text(
                       '4-Year Renewable',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOnSurfaceVariant),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        fontSize: 10,
+                        color: kOnSurfaceVariant,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -553,7 +625,13 @@ class _SubmitApplicationReviewDialogState
                           children: [
                             Text(
                               'Deadline',
-                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 10,
+                                color: kOnSurfaceVariant,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                             Text(
                               daysLeft > 0
@@ -561,7 +639,13 @@ class _SubmitApplicationReviewDialogState
                                   : deadlineLabel(widget.scholarship.deadline),
 
                               overflow: TextOverflow.ellipsis,
-                              style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kError),
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                fontSize: 12,
+                                color: kError,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ),
@@ -603,13 +687,25 @@ class _SubmitApplicationReviewDialogState
                           children: [
                             Text(
                               'Recipient',
-                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 10,
+                                color: kOnSurfaceVariant,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                             Text(
                               'UP Diliman',
 
                               overflow: TextOverflow.ellipsis,
-                              style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, color: kOnSurface),
+                              style: AppTypography.style(
+                                AppTextRole.bodyEmphasis,
+                                fontSize: 12,
+                                color: kOnSurface,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ),
@@ -643,7 +739,12 @@ class _SubmitApplicationReviewDialogState
         children: [
           Text(
             'Application Packet',
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 15,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -653,7 +754,7 @@ class _SubmitApplicationReviewDialogState
           if (documents == null)
             const Text('No supporting documents attached yet.'),
           if (_packetError != null)
-            Text(_packetError!, style: AppTypography.style(AppTextRole.caption, color: Colors.red)),
+            Text(_packetError!, style: const TextStyle(color: Colors.red)),
           if (documents != null)
             documents.when(
               loading: () => const CircularProgressIndicator(),
@@ -733,7 +834,13 @@ class _SubmitApplicationReviewDialogState
                   'Affirmations & Honor Code',
 
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOnSurface),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    fontSize: 15,
+                    color: kOnSurface,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -800,7 +907,13 @@ class _SubmitApplicationReviewDialogState
             Expanded(
               child: Text(
                 text,
-                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOnSurface, height: 1.4),
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  fontSize: 12,
+                  color: kOnSurface,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -825,7 +938,13 @@ class _SubmitApplicationReviewDialogState
             children: [
               Text(
                 'APPLICANT',
-                style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: 0.5),
+                style: AppTypography.style(
+                  AppTextRole.label,
+                  fontSize: 10,
+                  color: kOnSurfaceVariant,
+                  letterSpacing: 0.5,
+                  height: 1.4,
+                ),
               ),
               Row(
                 mainAxisSize: MainAxisSize.min,
@@ -838,7 +957,13 @@ class _SubmitApplicationReviewDialogState
                   const SizedBox(width: 4),
                   Text(
                     'Review Pending',
-                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimaryContainer),
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      fontSize: 11,
+                      color: kPrimaryContainer,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -864,14 +989,27 @@ class _SubmitApplicationReviewDialogState
                         children: [
                           Text(
                             'Applicant Name',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 10,
+                              color: kOnSurfaceVariant,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             studentName,
 
                             overflow: TextOverflow.ellipsis,
-                            style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 22, fontStyle: FontStyle.italic, color: kPrimaryDark, letterSpacing: 0.5),
+                            style: AppTypography.style(
+                              AppTextRole.bodyEmphasis,
+                              fontSize: 20,
+                              fontStyle: FontStyle.italic,
+                              color: kPrimaryDark,
+                              letterSpacing: 0.5,
+                              height: 1.4,
+                            ),
                           ),
                         ],
                       ),
@@ -892,13 +1030,25 @@ class _SubmitApplicationReviewDialogState
                         'Submission time is saved after successful submission.',
 
                         overflow: TextOverflow.ellipsis,
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOnSurfaceVariant),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 10,
+                          color: kOnSurfaceVariant,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       '',
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kPrimaryContainer),
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 11,
+                        color: kPrimaryContainer,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -920,7 +1070,13 @@ class _SubmitApplicationReviewDialogState
                 Expanded(
                   child: Text(
                     'A submission is complete only after it is saved successfully.',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurfaceVariant),
+                    style: AppTypography.style(
+                      AppTextRole.caption,
+                      fontSize: 11,
+                      color: kOnSurfaceVariant,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ],
@@ -976,8 +1132,8 @@ class _SubmitApplicationReviewDialogState
               ),
               onPressed: _allAffirmationsChecked && !_isSavingDraft
                   ? widget.tour != null
-                      ? widget.tour!.onSubmit ?? () {}
-                      : () => Navigator.of(context).pop(true)
+                        ? widget.tour!.onSubmit ?? () {}
+                        : () => Navigator.of(context).pop(true)
                   : null,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -989,7 +1145,12 @@ class _SubmitApplicationReviewDialogState
                     child: Text(
                       'Submit Application (Final)',
                       textAlign: TextAlign.center,
-                      style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ],
@@ -1013,13 +1174,21 @@ class _SubmitApplicationReviewDialogState
                     : () => Navigator.of(context).pop(false),
                 child: Text(
                   'Cancel',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 13, color: const Color(0xFF707971)),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 13,
+                    color: const Color(0xFF707971),
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
               // Save Progress Button
               TextButton(
                 key: const ValueKey('apply-save-draft'),
-                onPressed: widget.tour != null || _isSavingDraft ? null : _handleSaveDraftDirectly,
+                onPressed: widget.tour != null || _isSavingDraft
+                    ? null
+                    : _handleSaveDraftDirectly,
                 child: _isSavingDraft
                     ? const SizedBox(
                         width: 16,
@@ -1028,7 +1197,13 @@ class _SubmitApplicationReviewDialogState
                       )
                     : Text(
                         'Save Progress & Return to Grant Detail',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimaryContainer),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 13,
+                          color: kPrimaryContainer,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
               ),
             ],
@@ -1039,7 +1214,13 @@ class _SubmitApplicationReviewDialogState
             textAlign: TextAlign.center,
 
             overflow: TextOverflow.ellipsis,
-            style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOnSurfaceVariant, height: 1.3),
+            style: AppTypography.style(
+              AppTextRole.caption,
+              fontSize: 10,
+              color: kOnSurfaceVariant,
+              height: 1.3,
+              letterSpacing: 0,
+            ),
           ),
         ],
       ),

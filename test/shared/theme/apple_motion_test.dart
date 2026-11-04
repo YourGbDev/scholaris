@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
@@ -6,23 +7,26 @@ import 'package:scholaris/shared/theme/app_theme.dart';
 
 void main() {
   group('Apple WWDC Spring Physics Specification', () {
-    test('Calculates mass, stiffness, and damping from dampingRatio and response', () {
-      // Test critically damped spring with response 0.35s
-      final spring = AppleSpringDescription.fromDampingAndResponse(
-        dampingRatio: 1.0,
-        response: 0.35,
-      );
+    test(
+      'Calculates mass, stiffness, and damping from dampingRatio and response',
+      () {
+        // Test critically damped spring with response 0.35s
+        final spring = AppleSpringDescription.fromDampingAndResponse(
+          dampingRatio: 1.0,
+          response: 0.35,
+        );
 
-      final expectedOmega = (2 * math.pi) / 0.35;
-      final expectedStiffness = expectedOmega * expectedOmega;
-      final expectedDamping = 2 * 1.0 * expectedOmega;
+        final expectedOmega = (2 * math.pi) / 0.35;
+        final expectedStiffness = expectedOmega * expectedOmega;
+        final expectedDamping = 2 * 1.0 * expectedOmega;
 
-      expect(spring.mass, equals(1.0));
-      expect(spring.stiffness, closeTo(expectedStiffness, 0.01));
-      expect(spring.damping, closeTo(expectedDamping, 0.01));
-      expect(spring.dampingRatio, equals(1.0));
-      expect(spring.response, equals(0.35));
-    });
+        expect(spring.mass, equals(1.0));
+        expect(spring.stiffness, closeTo(expectedStiffness, 0.01));
+        expect(spring.damping, closeTo(expectedDamping, 0.01));
+        expect(spring.dampingRatio, equals(1.0));
+        expect(spring.response, equals(0.35));
+      },
+    );
 
     test('Apple Shipped Presets adhere to WWDC parameters', () {
       // 1. Critical UI: damping 1.0, response 0.35
@@ -54,18 +58,27 @@ void main() {
 
       // Formula: (x * d * 0.55) / (d + 0.55 * |x|)
       final expected = (150.0 * 800.0 * 0.55) / (800.0 + 0.55 * 150.0);
-      final result = appleRubberBand(overshoot: overshoot, dimension: dimension);
+      final result = appleRubberBand(
+        overshoot: overshoot,
+        dimension: dimension,
+      );
 
       expect(result, closeTo(expected, 0.001));
       // Sub-linear resistance: resisted displacement is far less than raw 150px
       expect(result, closeTo(74.787, 0.01));
 
       // Negative overshoot (scrolling past opposite edge) preserves direction
-      final negResult = appleRubberBand(overshoot: -overshoot, dimension: dimension);
+      final negResult = appleRubberBand(
+        overshoot: -overshoot,
+        dimension: dimension,
+      );
       expect(negResult, closeTo(-expected, 0.001));
 
       // Inverse formula round-trips correctly
-      final reconstructed = appleRubberBandInverse(resistedOffset: result, dimension: dimension);
+      final reconstructed = appleRubberBandInverse(
+        resistedOffset: result,
+        dimension: dimension,
+      );
       expect(reconstructed, closeTo(overshoot, 0.01));
     });
 
@@ -89,95 +102,107 @@ void main() {
   });
 
   group('PressableScale Spring & Interruptibility', () {
-    testWidgets('Interruptible mid-flight: releases cleanly without snapping or jumping', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: PressableScale(
-                scale: 0.97,
-                child: Container(
-                  key: const ValueKey('pressable_box'),
-                  width: 100,
-                  height: 100,
-                  color: Colors.blue,
+    testWidgets(
+      'Interruptible mid-flight: releases cleanly without snapping or jumping',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: PressableScale(
+                  scale: 0.97,
+                  child: Container(
+                    key: const ValueKey('pressable_box'),
+                    width: 100,
+                    height: 100,
+                    color: Colors.blue,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      final state = tester.state<PressableScaleState>(find.byType(PressableScale));
-      // Initial scale is 1.0
-      expect(state.currentScale, closeTo(1.0, 0.001));
+        final state = tester.state<PressableScaleState>(
+          find.byType(PressableScale),
+        );
+        // Initial scale is 1.0
+        expect(state.currentScale, closeTo(1.0, 0.001));
 
-      // 1. Pointer Down begins compression towards 0.97
-      final gesture = await tester.startGesture(tester.getCenter(find.byKey(const ValueKey('pressable_box'))));
-      await tester.pump(); // Register pointer down and initiate simulation
-      await tester.pump(const Duration(milliseconds: 60)); // Advance into compression
+        // 1. Pointer Down begins compression towards 0.97
+        final gesture = await tester.startGesture(
+          tester.getCenter(find.byKey(const ValueKey('pressable_box'))),
+        );
+        await tester.pump(); // Register pointer down and initiate simulation
+        await tester.pump(
+          const Duration(milliseconds: 60),
+        ); // Advance into compression
 
-      final midScale = state.currentScale;
-      // Mid-flight: scale has shrunk towards 0.97
-      expect(midScale, lessThan(1.0));
-      expect(midScale, greaterThanOrEqualTo(0.96));
+        final midScale = state.currentScale;
+        // Mid-flight: scale has shrunk towards 0.97
+        expect(midScale, lessThan(1.0));
+        expect(midScale, greaterThanOrEqualTo(0.96));
 
-      // 2. Interrupt mid-flight by lifting pointer
-      await gesture.up();
-      await tester.pump(); // Register pointer up and retarget spring back to 1.0 with inherited velocity
-      await tester.pump(const Duration(milliseconds: 30));
+        // 2. Interrupt mid-flight by lifting pointer
+        await gesture.up();
+        await tester.pump(); // Register pointer up and retarget spring back to 1.0 with inherited velocity
+        await tester.pump(const Duration(milliseconds: 30));
 
-      final reversingScale = state.currentScale;
-      expect(reversingScale, greaterThanOrEqualTo(0.96));
+        final reversingScale = state.currentScale;
+        expect(reversingScale, greaterThanOrEqualTo(0.96));
 
-      // Pump enough time for the spring simulation to come to a critically damped rest at 1.0
-      await tester.pumpAndSettle();
+        // Pump enough time for the spring simulation to come to a critically damped rest at 1.0
+        await tester.pumpAndSettle();
 
-      expect(state.currentScale, closeTo(1.0, 0.001));
-    });
+        expect(state.currentScale, closeTo(1.0, 0.001));
+      },
+    );
   });
 
   group('Apple Liquid Glass Material', () {
-    testWidgets('Renders BackdropFilter with blur, light-edge border, and tint', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: LiquidGlass(
-                blur: 20.0,
-                saturation: 1.8,
-                tintOpacity: 0.82,
-                borderRadius: 20.0,
-                showLightEdge: true,
-                child: SizedBox(
-                  width: 200,
-                  height: 60,
-                  child: Text('Liquid Glass Content'),
+    testWidgets(
+      'Renders BackdropFilter with blur, light-edge border, and tint',
+      (tester) async {
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: LiquidGlass(
+                  blur: 20.0,
+                  saturation: 1.8,
+                  tintOpacity: 0.82,
+                  borderRadius: 20.0,
+                  showLightEdge: true,
+                  child: SizedBox(
+                    width: 200,
+                    height: 60,
+                    child: Text('Liquid Glass Content'),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      // BackdropFilter must be present
-      expect(find.byType(BackdropFilter), findsOneWidget);
+        // BackdropFilter must be present
+        expect(find.byType(BackdropFilter), findsOneWidget);
 
-      // Outer glass border is uniform (avoids Flutter non-uniform border assertion)
-      final containers = tester.widgetList<Container>(
-        find.descendant(
-          of: find.byType(BackdropFilter),
-          matching: find.byType(Container),
-        ),
-      );
-      expect(containers.isNotEmpty, isTrue);
-      final mainContainer = containers.first;
-      final decoration = mainContainer.decoration as BoxDecoration;
-      expect(decoration.border, isNotNull);
+        // Outer glass border is uniform (avoids Flutter non-uniform border assertion)
+        final containers = tester.widgetList<Container>(
+          find.descendant(
+            of: find.byType(BackdropFilter),
+            matching: find.byType(Container),
+          ),
+        );
+        expect(containers.isNotEmpty, isTrue);
+        final mainContainer = containers.first;
+        final decoration = mainContainer.decoration as BoxDecoration;
+        expect(decoration.border, isNotNull);
 
-      // Specular light edge highlight is present
-      expect(find.byType(Positioned), findsOneWidget);
-    });
+        // Specular light edge highlight is present
+        expect(find.byType(Positioned), findsOneWidget);
+      },
+    );
   });
 
   group('Apple HIG Optical Typography System', () {
@@ -203,20 +228,19 @@ void main() {
       expect(opticalLeading(11), equals(1.30));
     });
 
-    test('ThemeData integrates optical typography', () {
+    test('ThemeData gives Geist the approved compact tracking and leading', () {
       final theme = scholarisTheme();
       final textTheme = theme.textTheme;
 
-      // Display text has negative letter spacing and tight leading
-      expect(textTheme.displayLarge?.letterSpacing, lessThan(0.0));
-      expect(textTheme.displayLarge?.height, inInclusiveRange(1.05, 1.15));
+      expect(textTheme.displayLarge?.letterSpacing, -.6);
+      expect(textTheme.displayLarge?.height, 1.25);
 
-      // Body text has neutral letter spacing and relaxed leading
-      expect(textTheme.bodyLarge?.letterSpacing, equals(0.0));
-      expect(textTheme.bodyLarge?.height, inInclusiveRange(1.45, 1.55));
+      // Body text uses natural spacing for readable prose.
+      expect(textTheme.bodyLarge?.letterSpacing, equals(0));
+      expect(textTheme.bodyLarge?.height, 1.4);
 
-      // Micro labels have positive letter spacing
-      expect(textTheme.labelSmall?.letterSpacing, greaterThan(0.0));
+      expect(textTheme.bodyLarge?.fontWeight, FontWeight.w400);
+      expect(textTheme.labelSmall?.letterSpacing, .6);
     });
   });
 }

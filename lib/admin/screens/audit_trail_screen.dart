@@ -6,8 +6,11 @@
 // Zero fabricated metrics, zero fake compliance stamps, zero fake log entries.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
@@ -80,8 +83,7 @@ class AuditLogEntry {
 // 2. Data Providers
 // =============================================================================
 
-final auditTrailLogsProvider =
-    FutureProvider<List<AuditLogEntry>>((ref) async {
+final auditTrailLogsProvider = FutureProvider<List<AuditLogEntry>>((ref) async {
   final supabase = Supabase.instance.client;
   final response = await supabase
       .from('audit_logs')
@@ -122,8 +124,18 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
 
   String _formatDateTime(DateTime dt) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     final local = dt.toLocal();
     final hour = local.hour == 0
@@ -136,8 +148,18 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
 
   String _formatDateShort(DateTime dt) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
@@ -183,12 +205,24 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'Failed to load audit logs',
-                    style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      color: kSeqOnSurface,
+                      fontSize: 17,
+                      height: 1.25,
+                      letterSpacing: -.15,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     err.toString(),
-                    style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      color: kSeqOnSurfaceVariant,
+                      fontSize: 14,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -206,133 +240,150 @@ class _AuditTrailScreenState extends ConsumerState<AuditTrailScreen> {
             ),
           ),
           data: (allLogs) {
-          // Dynamic roles and actions present in real data
-          final dynamicRoles = <String>{
-            for (final l in allLogs) l.actorRole
-          }.toList()
-            ..sort();
+            // Dynamic roles and actions present in real data
+            final dynamicRoles = <String>{
+              for (final l in allLogs) l.actorRole,
+            }.toList()..sort();
 
-          final dynamicActions = <String>{
-            for (final l in allLogs) l.action
-          }.toList()
-            ..sort();
+            final dynamicActions = <String>{
+              for (final l in allLogs) l.action,
+            }.toList()..sort();
 
-          // Client-side filtering
-          final filtered = allLogs.where((log) {
-            // Role filter
-            if (roleFilter != 'all' && log.actorRole != roleFilter) {
-              return false;
-            }
-
-            // Action filter
-            if (actionFilter != 'all' && log.action != actionFilter) {
-              return false;
-            }
-
-            // Search query filter
-            if (searchQuery.isNotEmpty) {
-              final q = searchQuery.toLowerCase();
-              final matchesAction = log.action.toLowerCase().contains(q);
-              final matchesTargetType =
-                  log.targetType.toLowerCase().contains(q);
-              final matchesTargetId =
-                  (log.targetId ?? '').toLowerCase().contains(q);
-              final matchesActor =
-                  (log.actorEmail ?? '').toLowerCase().contains(q);
-              final matchesIp =
-                  (log.ipAddress ?? '').toLowerCase().contains(q);
-
-              if (!matchesAction &&
-                  !matchesTargetType &&
-                  !matchesTargetId &&
-                  !matchesActor &&
-                  !matchesIp) {
+            // Client-side filtering
+            final filtered = allLogs.where((log) {
+              // Role filter
+              if (roleFilter != 'all' && log.actorRole != roleFilter) {
                 return false;
               }
-            }
 
-            // Date Range
-            if (dateFrom != null) {
-              final startOfDay =
-                  DateTime(dateFrom.year, dateFrom.month, dateFrom.day);
-              if (log.createdAt.isBefore(startOfDay)) return false;
-            }
-            if (dateTo != null) {
-              final endOfDay =
-                  DateTime(dateTo.year, dateTo.month, dateTo.day, 23, 59, 59);
-              if (log.createdAt.isAfter(endOfDay)) return false;
-            }
+              // Action filter
+              if (actionFilter != 'all' && log.action != actionFilter) {
+                return false;
+              }
 
-            return true;
-          }).toList();
+              // Search query filter
+              if (searchQuery.isNotEmpty) {
+                final q = searchQuery.toLowerCase();
+                final matchesAction = log.action.toLowerCase().contains(q);
+                final matchesTargetType = log.targetType.toLowerCase().contains(
+                  q,
+                );
+                final matchesTargetId = (log.targetId ?? '')
+                    .toLowerCase()
+                    .contains(q);
+                final matchesActor = (log.actorEmail ?? '')
+                    .toLowerCase()
+                    .contains(q);
+                final matchesIp = (log.ipAddress ?? '').toLowerCase().contains(
+                  q,
+                );
 
-          return RefreshIndicator(
-            color: kSeqPrimaryContainer,
-            onRefresh: () async {
-              ref.invalidate(auditTrailLogsProvider);
-              await ref.read(auditTrailLogsProvider.future);
-            },
-            child: ListView(
-              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-              children: [
-                _buildHeaderBar(
-                  context,
-                  totalCount: allLogs.length,
-                  filteredLogs: filtered,
+                if (!matchesAction &&
+                    !matchesTargetType &&
+                    !matchesTargetId &&
+                    !matchesActor &&
+                    !matchesIp) {
+                  return false;
+                }
+              }
+
+              // Date Range
+              if (dateFrom != null) {
+                final startOfDay = DateTime(
+                  dateFrom.year,
+                  dateFrom.month,
+                  dateFrom.day,
+                );
+                if (log.createdAt.isBefore(startOfDay)) return false;
+              }
+              if (dateTo != null) {
+                final endOfDay = DateTime(
+                  dateTo.year,
+                  dateTo.month,
+                  dateTo.day,
+                  23,
+                  59,
+                  59,
+                );
+                if (log.createdAt.isAfter(endOfDay)) return false;
+              }
+
+              return true;
+            }).toList();
+
+            return RefreshIndicator(
+              color: kSeqPrimaryContainer,
+              onRefresh: () async {
+                ref.invalidate(auditTrailLogsProvider);
+                await ref.read(auditTrailLogsProvider.future);
+              },
+              child: ListView(
+                physics: const AppleBouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
                 ),
-                const SizedBox(height: 16),
-                _buildFilterRow(
-                  context,
-                  dynamicRoles: dynamicRoles,
-                  dynamicActions: dynamicActions,
-                  activeRole: roleFilter,
-                  activeAction: actionFilter,
-                  dateFrom: dateFrom,
-                  dateTo: dateTo,
-                  searchQuery: searchQuery,
-                  hasActiveFilters: roleFilter != 'all' ||
-                      actionFilter != 'all' ||
-                      searchQuery.isNotEmpty ||
-                      dateFrom != null ||
-                      dateTo != null,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 20,
                 ),
-                const SizedBox(height: 16),
-                _buildLogList(context, logs: filtered),
-              ],
-            ),
-          );
-        },
-      ),
-    ),
-  );
-}
-
-Widget _buildSkeletonLoader(BuildContext context) {
-  return ListView(
-    physics: const NeverScrollableScrollPhysics(),
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          SkeletonBand(width: 180, height: 28),
-          SkeletonBand(width: 90, height: 28, borderRadius: 14),
-        ],
-      ),
-      const SizedBox(height: 16),
-      const SkeletonBand(height: 48, borderRadius: 12),
-      const SizedBox(height: 16),
-      ...List.generate(
-        6,
-        (i) => const Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: SkeletonBand(height: 56, borderRadius: 12),
+                children: [
+                  _buildHeaderBar(
+                    context,
+                    totalCount: allLogs.length,
+                    filteredLogs: filtered,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildFilterRow(
+                    context,
+                    dynamicRoles: dynamicRoles,
+                    dynamicActions: dynamicActions,
+                    activeRole: roleFilter,
+                    activeAction: actionFilter,
+                    dateFrom: dateFrom,
+                    dateTo: dateTo,
+                    searchQuery: searchQuery,
+                    hasActiveFilters:
+                        roleFilter != 'all' ||
+                        actionFilter != 'all' ||
+                        searchQuery.isNotEmpty ||
+                        dateFrom != null ||
+                        dateTo != null,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildLogList(context, logs: filtered),
+                ],
+              ),
+            );
+          },
         ),
       ),
-    ],
-  );
-}
+    );
+  }
+
+  Widget _buildSkeletonLoader(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            SkeletonBand(width: 180, height: 28),
+            SkeletonBand(width: 90, height: 28, borderRadius: 14),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const SkeletonBand(height: 48, borderRadius: 12),
+        const SizedBox(height: 16),
+        ...List.generate(
+          6,
+          (i) => const Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: SkeletonBand(height: 56, borderRadius: 12),
+          ),
+        ),
+      ],
+    );
+  }
 
   // --- Header Bar -----------------------------------------------------------
 
@@ -368,7 +419,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
               const SizedBox(width: 6),
               Text(
                 'Live data',
-                style: AppTypography.style(AppTextRole.badge, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: kSeqOnSurfaceVariant,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -378,14 +435,22 @@ Widget _buildSkeletonLoader(BuildContext context) {
         // Title
         Text(
           'System Audit Trail',
-          style: AppTypography.style(AppTextRole.screenTitle, color: kSeqOnSurface, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32),
+          style: seqPageTitle(context, color: kSeqOnSurface),
         ),
         const SizedBox(height: 4),
 
         // Subtitle: strictly live database count
         Text(
           '$totalCount audit events recorded',
-          style: seqTabularFigures(AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14)),
+          style: seqTabularFigures(
+            AppTypography.style(
+              AppTextRole.subtitle,
+              color: kSeqOnSurfaceVariant,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
+          ),
         ),
       ],
     );
@@ -397,12 +462,20 @@ Widget _buildSkeletonLoader(BuildContext context) {
           backgroundColor: kSeqPrimaryContainer,
           foregroundColor: kSeqOnPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         icon: const Icon(Icons.picture_as_pdf_rounded, size: 18),
         label: Text(
           'Export PDF Report (${filteredLogs.length})',
-          style: AppTypography.style(AppTextRole.button, color: Colors.white, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+          style: AppTypography.style(
+            AppTextRole.button,
+            color: Colors.white,
+            fontSize: 12,
+            height: 16 / 12,
+            letterSpacing: 0,
+          ),
         ),
       ),
     );
@@ -423,13 +496,10 @@ Widget _buildSkeletonLoader(BuildContext context) {
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            titleBlock,
-            const SizedBox(height: 14),
-            exportButton,
-          ],
+          children: [titleBlock, const SizedBox(height: 14), exportButton],
         );
-      },    );
+      },
+    );
   }
 
   void _exportPdf(BuildContext context, List<AuditLogEntry> logs) {
@@ -441,19 +511,24 @@ Widget _buildSkeletonLoader(BuildContext context) {
 
     final buffer = StringBuffer();
     buffer.writeln(
-        '================================================================================');
+      '================================================================================',
+    );
     buffer.writeln('SCHOLARIS - SYSTEM AUDIT TRAIL REPORT');
     buffer.writeln('Export Timestamp: $dateStr $timeStr UTC');
     buffer.writeln('Filtered Entries Count: ${logs.length}');
     buffer.writeln(
-        '================================================================================');
+      '================================================================================',
+    );
     buffer.writeln(
-        'DATE | ACTION | ACTOR | ROLE | TARGET TYPE | TARGET ID | IP ADDRESS');
+      'DATE | ACTION | ACTOR | ROLE | TARGET TYPE | TARGET ID | IP ADDRESS',
+    );
     buffer.writeln(
-        '--------------------------------------------------------------------------------');
+      '--------------------------------------------------------------------------------',
+    );
     for (final e in logs) {
       buffer.writeln(
-          '${_formatDateTime(e.createdAt)} | ${e.action} | ${e.actorEmail ?? "system"} | ${e.actorRole} | ${e.targetType} | ${e.targetId ?? "—"} | ${e.ipAddress ?? "—"}');
+        '${_formatDateTime(e.createdAt)} | ${e.action} | ${e.actorEmail ?? "system"} | ${e.actorRole} | ${e.targetType} | ${e.targetId ?? "—"} | ${e.ipAddress ?? "—"}',
+      );
     }
 
     Clipboard.setData(ClipboardData(text: buffer.toString()));
@@ -462,13 +537,22 @@ Widget _buildSkeletonLoader(BuildContext context) {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.picture_as_pdf_rounded,
-                color: kSeqPrimaryFixed, size: 20),
+            const Icon(
+              Icons.picture_as_pdf_rounded,
+              color: kSeqPrimaryFixed,
+              size: 20,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 'Exported ${logs.length} audit entries to PDF audit briefing clipboard.',
-                style: AppTypography.style(AppTextRole.body, color: kSeqOnPrimary, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  color: kSeqOnPrimary,
+                  fontSize: 14,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -508,11 +592,23 @@ Widget _buildSkeletonLoader(BuildContext context) {
               onChanged: (val) {
                 ref.read(auditSearchQueryProvider.notifier).state = val.trim();
               },
-              style: AppTypography.style(AppTextRole.input, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
+              style: AppTypography.style(
+                AppTextRole.input,
+                fontSize: 14,
+                height: 1.4,
+                color: kTextSupporting,
+                letterSpacing: 0,
+              ),
               decoration: InputDecoration(
                 hintText:
                     'Search by action, target, actor email, or IP address...',
-                hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                hintStyle: AppTypography.style(
+                  AppTextRole.placeholder,
+                  color: kSeqOutline,
+                  fontSize: 14,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 prefixIcon: const Icon(
                   Icons.search_rounded,
                   size: 20,
@@ -523,7 +619,8 @@ Widget _buildSkeletonLoader(BuildContext context) {
                         icon: const Icon(Icons.clear, size: 18),
                         onPressed: () {
                           _searchController.clear();
-                          ref.read(auditSearchQueryProvider.notifier).state = '';
+                          ref.read(auditSearchQueryProvider.notifier).state =
+                              '';
                         },
                       )
                     : null,
@@ -608,7 +705,8 @@ Widget _buildSkeletonLoader(BuildContext context) {
                     },
                   );
                   if (picked != null) {
-                    ref.read(auditDateFromProvider.notifier).state = picked.start;
+                    ref.read(auditDateFromProvider.notifier).state =
+                        picked.start;
                     ref.read(auditDateToProvider.notifier).state = picked.end;
                   }
                 },
@@ -617,10 +715,21 @@ Widget _buildSkeletonLoader(BuildContext context) {
                   dateFrom != null && dateTo != null
                       ? '${_formatDateShort(dateFrom)} – ${_formatDateShort(dateTo)}'
                       : 'Date range',
-                  style: AppTypography.style(AppTextRole.label, color: dateFrom != null ? kSeqPrimaryContainer : kSeqOnSurface, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: dateFrom != null
+                        ? kSeqPrimaryContainer
+                        : kSeqOnSurface,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   side: BorderSide(
                     color: dateFrom != null
                         ? kSeqPrimaryContainer
@@ -640,7 +749,10 @@ Widget _buildSkeletonLoader(BuildContext context) {
                   label: const Text('Clear filters'),
                   style: TextButton.styleFrom(
                     foregroundColor: kSeqError,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                   ),
                 ),
             ],
@@ -673,7 +785,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
           value: items.contains(value) ? value : 'all',
           isDense: true,
           isExpanded: true,
-          style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+          style: AppTypography.style(
+            AppTextRole.input,
+            color: kSeqOnSurface,
+            fontSize: 11,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
           icon: const Icon(Icons.arrow_drop_down, color: kSeqOutline),
           items: items.map((it) {
             final displayText = it == 'all'
@@ -700,7 +818,10 @@ Widget _buildSkeletonLoader(BuildContext context) {
 
   // --- Audit Log List -------------------------------------------------------
 
-  Widget _buildLogList(BuildContext context, {required List<AuditLogEntry> logs}) {
+  Widget _buildLogList(
+    BuildContext context, {
+    required List<AuditLogEntry> logs,
+  }) {
     if (logs.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(48),
@@ -709,20 +830,28 @@ Widget _buildSkeletonLoader(BuildContext context) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.search_off_rounded,
-              size: 48,
-              color: kSeqOutline,
-            ),
+            const Icon(Icons.search_off_rounded, size: 48, color: kSeqOutline),
             const SizedBox(height: 12),
             Text(
               'No audit events found',
-              style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                color: kSeqOnSurface,
+                fontSize: 17,
+                height: 1.25,
+                letterSpacing: -.15,
+              ),
             ),
             const SizedBox(height: 6),
             Text(
               'Try adjusting or clearing your filters to see more events.',
-              style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+              style: AppTypography.style(
+                AppTextRole.body,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 14,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -735,9 +864,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
           if (i > 0) const SizedBox(height: 8),
           StaggeredListItem(
             index: i,
-            child: PressableScale(
-              child: _buildLogRow(context, entry: logs[i]),
-            ),
+            child: PressableScale(child: _buildLogRow(context, entry: logs[i])),
           ),
         ],
       ],
@@ -765,9 +892,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
         decoration: BoxDecoration(
           color: kSeqSurfaceContainerLowest,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: kSeqOutlineVariant.withValues(alpha: 0.35),
-          ),
+          border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35)),
           boxShadow: [
             BoxShadow(
               color: actionColor.withValues(alpha: 0.04),
@@ -796,14 +921,26 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 children: [
                                   Text(
                                     entry.action,
-                                    style: AppTypography.style(AppTextRole.cardTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19).copyWith(fontSize: 14),
+                                    style: AppTypography.style(
+                                      AppTextRole.cardTitle,
+                                      color: kSeqOnSurface,
+                                      fontSize: 17,
+                                      height: 1.25,
+                                      letterSpacing: -.15,
+                                    ).copyWith(fontSize: 14),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kSeqOnSurfaceVariant),
+                                    style: AppTypography.style(
+                                      AppTextRole.caption,
+                                      fontSize: 12,
+                                      color: kSeqOnSurfaceVariant,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -820,7 +957,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                   Expanded(
                                     child: Text(
                                       entry.actorEmail ?? 'System',
-                                      style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                                      style: AppTypography.style(
+                                        AppTextRole.bodyEmphasis,
+                                        color: kSeqOnSurface,
+                                        fontSize: 13,
+                                        height: 1.4,
+                                        letterSpacing: 0,
+                                      ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -835,7 +978,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               width: 120,
                               child: Text(
                                 entry.ipAddress ?? '—',
-                                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kSeqOutline),
+                                style: AppTypography.style(
+                                  AppTextRole.caption,
+                                  fontSize: 12,
+                                  color: kSeqOutline,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -845,7 +994,15 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               width: 170,
                               child: Text(
                                 _formatDateTime(entry.createdAt),
-                                style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0)),
+                                style: seqTabularFigures(
+                                  AppTypography.style(
+                                    AppTextRole.caption,
+                                    color: kSeqOnSurfaceVariant,
+                                    fontSize: 13,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
+                                ),
                                 textAlign: TextAlign.end,
                               ),
                             ),
@@ -866,7 +1023,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 Expanded(
                                   child: Text(
                                     entry.action,
-                                    style: AppTypography.style(AppTextRole.cardTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19).copyWith(fontSize: 14),
+                                    style: AppTypography.style(
+                                      AppTextRole.cardTitle,
+                                      color: kSeqOnSurface,
+                                      fontSize: 17,
+                                      height: 1.25,
+                                      letterSpacing: -.15,
+                                    ).copyWith(fontSize: 14),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -877,7 +1040,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                             const SizedBox(height: 6),
                             Text(
                               '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                              style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kSeqOnSurfaceVariant),
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                fontSize: 12,
+                                color: kSeqOnSurfaceVariant,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                             const SizedBox(height: 6),
                             Row(
@@ -886,7 +1055,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 Flexible(
                                   child: Text(
                                     entry.actorEmail ?? 'System',
-                                    style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                                    style: AppTypography.style(
+                                      AppTextRole.bodyEmphasis,
+                                      color: kSeqOnSurface,
+                                      fontSize: 13,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -894,7 +1069,15 @@ Widget _buildSkeletonLoader(BuildContext context) {
                                 const SizedBox(width: 8),
                                 Text(
                                   _formatDateTime(entry.createdAt),
-                                  style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                                  style: seqTabularFigures(
+                                    AppTypography.style(
+                                      AppTextRole.caption,
+                                      color: kSeqOutline,
+                                      fontSize: 11,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
@@ -910,25 +1093,8 @@ Widget _buildSkeletonLoader(BuildContext context) {
   }
 
   Widget _buildRoleBadge(String role) {
-    Color bg;
-    Color fg;
-    switch (role.toLowerCase()) {
-      case 'admin':
-        bg = kSeqPrimaryFixed.withValues(alpha: 0.5);
-        fg = kSeqPrimaryContainer;
-        break;
-      case 'student':
-        bg = kSeqSecondaryFixed.withValues(alpha: 0.5);
-        fg = kSeqSecondary;
-        break;
-      case 'provider':
-        bg = kSeqTertiaryFixed.withValues(alpha: 0.5);
-        fg = kSeqTertiaryContainer;
-        break;
-      default:
-        bg = kSeqSurfaceContainerHigh;
-        fg = kSeqOnSurfaceVariant;
-    }
+    const bg = kWorkspaceSubtle;
+    const fg = kWorkspaceInk;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -938,7 +1104,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
       ),
       child: Text(
         role.toUpperCase(),
-        style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
+        style: AppTypography.style(
+          AppTextRole.badge,
+          color: fg,
+          fontSize: 11,
+          height: 1.4,
+          letterSpacing: 0,
+        ).copyWith(letterSpacing: 0.5),
       ),
     );
   }
@@ -988,12 +1160,24 @@ Widget _buildSkeletonLoader(BuildContext context) {
                             children: [
                               Text(
                                 'Audit Event Detail',
-                                style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
+                                style: AppTypography.style(
+                                  AppTextRole.sectionTitle,
+                                  color: kSeqOnSurface,
+                                  fontSize: 17,
+                                  height: 1.25,
+                                  letterSpacing: -.15,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Immutable ledger record',
-                                style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                                style: AppTypography.style(
+                                  AppTextRole.subtitle,
+                                  color: kSeqOutline,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
@@ -1011,24 +1195,54 @@ Widget _buildSkeletonLoader(BuildContext context) {
                   Expanded(
                     child: ListView(
                       controller: scrollController,
-                      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                      physics: const AppleBouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
                       padding: const EdgeInsets.all(24),
                       children: [
                         // Core Audit Fields
                         _buildDetailField('Action', entry.action, isBold: true),
-                        _buildDetailField('Event ID', entry.id, isMonospace: true),
-                        _buildDetailField('Timestamp', _formatDateTime(entry.createdAt)),
-                        _buildDetailField('Actor Email', entry.actorEmail ?? 'System'),
+                        _buildDetailField(
+                          'Event ID',
+                          entry.id,
+                          isMonospace: true,
+                        ),
+                        _buildDetailField(
+                          'Timestamp',
+                          _formatDateTime(entry.createdAt),
+                        ),
+                        _buildDetailField(
+                          'Actor Email',
+                          entry.actorEmail ?? 'System',
+                        ),
                         _buildDetailField('Actor Role', entry.actorRole),
-                        _buildDetailField('Actor ID', entry.actorId ?? '—', isMonospace: true),
+                        _buildDetailField(
+                          'Actor ID',
+                          entry.actorId ?? '—',
+                          isMonospace: true,
+                        ),
                         _buildDetailField('Target Type', entry.targetType),
-                        _buildDetailField('Target ID', entry.targetId ?? '—', isMonospace: true),
-                        _buildDetailField('IP Address', entry.ipAddress ?? '—', isMonospace: true),
+                        _buildDetailField(
+                          'Target ID',
+                          entry.targetId ?? '—',
+                          isMonospace: true,
+                        ),
+                        _buildDetailField(
+                          'IP Address',
+                          entry.ipAddress ?? '—',
+                          isMonospace: true,
+                        ),
 
                         const SizedBox(height: 16),
                         Text(
                           'EVENT DETAILS (JSONB)',
-                          style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
+                          style: AppTypography.style(
+                            AppTextRole.sectionTitle,
+                            color: kSeqOutline,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ).copyWith(letterSpacing: 0.5),
                         ),
                         const SizedBox(height: 8),
 
@@ -1040,7 +1254,9 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               color: kSeqSurfaceContainerLow,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: kSeqOutlineVariant.withValues(alpha: 0.6),
+                                color: kSeqOutlineVariant.withValues(
+                                  alpha: 0.6,
+                                ),
                               ),
                             ),
                             child: Column(
@@ -1048,21 +1264,36 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               children: [
                                 for (final kv in entry.details!.entries)
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(
                                           width: 140,
                                           child: Text(
                                             kv.key,
-                                            style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kSeqOnSurfaceVariant),
+                                            style: AppTypography.style(
+                                              AppTextRole.label,
+                                              fontSize: 12,
+                                              color: kSeqOnSurfaceVariant,
+                                              height: 1.4,
+                                              letterSpacing: 0,
+                                            ),
                                           ),
                                         ),
                                         Expanded(
                                           child: Text(
                                             kv.value?.toString() ?? 'null',
-                                            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kSeqOnSurface),
+                                            style: AppTypography.style(
+                                              AppTextRole.body,
+                                              fontSize: 12,
+                                              color: kSeqOnSurface,
+                                              height: 1.4,
+                                              letterSpacing: 0,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -1080,7 +1311,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                             ),
                             child: Text(
                               'No details',
-                              style: AppTypography.style(AppTextRole.body, color: kSeqOutline, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14).copyWith(fontStyle: FontStyle.italic),
+                              style: AppTypography.style(
+                                AppTextRole.body,
+                                color: kSeqOutline,
+                                fontSize: 14,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ).copyWith(fontStyle: FontStyle.italic),
                             ),
                           ),
                       ],
@@ -1095,8 +1332,12 @@ Widget _buildSkeletonLoader(BuildContext context) {
     );
   }
 
-  Widget _buildDetailField(String label, String value,
-      {bool isBold = false, bool isMonospace = false}) {
+  Widget _buildDetailField(
+    String label,
+    String value, {
+    bool isBold = false,
+    bool isMonospace = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -1106,15 +1347,35 @@ Widget _buildSkeletonLoader(BuildContext context) {
             width: 120,
             child: Text(
               label,
-              style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: isMonospace
-                  ? seqTabularFigures(AppTypography.style(AppTextRole.caption, fontSize: 13, color: kSeqOnSurface))
-                  : AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                  ? seqTabularFigures(
+                      AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 13,
+                        color: kSeqOnSurface,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    )
+                  : AppTypography.style(
+                      AppTextRole.bodyEmphasis,
+                      color: kSeqOnSurface,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
             ),
           ),
         ],

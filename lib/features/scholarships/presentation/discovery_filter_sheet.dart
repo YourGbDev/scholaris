@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/theme/app_motion.dart';
+import '../../../shared/theme/app_theme.dart';
 import '../../profile/models/student_profile.dart';
 import '../providers/discovery_provider.dart';
 import '../services/discovery_filters.dart';
@@ -61,231 +62,313 @@ class _DiscoveryFilterSheetState extends ConsumerState<DiscoveryFilterSheet> {
       child: SizedBox(
         height: MediaQuery.of(context).size.height * 0.85,
         child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 6, 12, 10),
-            child: Row(
-              children: [
-                Text(
-                  'Filters',
-                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
-                ),
-                const Spacer(),
-                PressableScale(
-                  child: TextButton(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 6, 12, 10),
+              child: Row(
+                children: [
+                  Text(
+                    'Filters',
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      fontSize: 17,
+                      color: const Color(0xFF161C27),
+                      height: 1.25,
+                      letterSpacing: -0.15,
+                    ),
+                  ),
+                  const Spacer(),
+                  PressableScale(
+                    child: TextButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                        notifier.reset();
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color(0xFF0F4D2E),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                      ),
+                      child: Text(
+                        'Reset',
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 13,
+                          color: const Color(0xFF0F4D2E),
+                          height: 1.25,
+                          letterSpacing: 0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Close filters',
+                    constraints: const BoxConstraints(
+                      minWidth: 44,
+                      minHeight: 44,
+                    ),
+                    padding: const EdgeInsets.all(10),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      size: 20,
+                      color: Color(0xFF404942),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1, color: Color(0xFFE2E8E5)),
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                children: [
+                  _sectionTitle('Sort'),
+                  const SizedBox(height: 10),
+                  SegmentedButton<DiscoverySort>(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.resolveWith((
+                        states,
+                      ) {
+                        if (states.contains(WidgetState.selected)) {
+                          return const Color(0xFF0F4D2E);
+                        }
+                        return Colors.white;
+                      }),
+                      foregroundColor: WidgetStateProperty.resolveWith((
+                        states,
+                      ) {
+                        if (states.contains(WidgetState.selected)) {
+                          return Colors.white;
+                        }
+                        return const Color(0xFF161C27);
+                      }),
+                      side: const WidgetStatePropertyAll(
+                        BorderSide(color: Color(0xFFE2E8E5)),
+                      ),
+                    ),
+                    segments: [
+                      ButtonSegment(
+                        value: DiscoverySort.defaultSort,
+                        label: Text(
+                          'Default',
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 13,
+                            height: 1.25,
+                            letterSpacing: 0,
+                          ),
+                        ),
+                      ),
+                      ButtonSegment(
+                        value: DiscoverySort.highestAmount,
+                        label: Text(
+                          'Highest amount',
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 13,
+                            height: 1.25,
+                            letterSpacing: 0,
+                          ),
+                        ),
+                      ),
+                    ],
+                    selected: {state.sort},
+                    onSelectionChanged: (selection) {
+                      HapticFeedback.selectionClick();
+                      notifier.setSort(selection.first);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  _sectionTitle('Income'),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    children: ['any', 'low', 'mid', 'high'].map((bracket) {
+                      final selected = bracket == 'any'
+                          ? state.incomeBracket == null
+                          : state.incomeBracket == bracket;
+                      return PressableScale(
+                        child: ChoiceChip(
+                          label: Text(
+                            incomeLabel(bracket == 'any' ? null : bracket),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 12.5,
+                              color: selected
+                                  ? Colors.white
+                                  : const Color(0xFF161C27),
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
+                          ),
+                          selected: selected,
+                          selectedColor: const Color(0xFF0F4D2E),
+                          backgroundColor: kStudentSurfaceSubtle,
+                          side: BorderSide(
+                            color: selected
+                                ? const Color(0xFF0F4D2E)
+                                : kStudentDivider,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          onSelected: (_) {
+                            HapticFeedback.selectionClick();
+                            notifier.setIncomeBracket(
+                              bracket == 'any' ? null : bracket,
+                            );
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 24),
+                  _sectionTitle('Deadline'),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      'Closing soon',
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        fontSize: 13,
+                        color: const Color(0xFF161C27),
+                        height: 1.25,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Within 14 days of the deadline',
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 12,
+                        color: const Color(0xFF404942),
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                    value: state.closingSoonOnly,
+                    activeThumbColor: const Color(0xFF0F4D2E),
+                    activeTrackColor: const Color(0xFFB3F1C6),
+                    onChanged: (value) {
+                      HapticFeedback.selectionClick();
+                      notifier.setClosingSoonOnly(value);
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  _sectionTitle('Region'),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: kPhilippineRegions.map((region) {
+                      final isSelected = state.regions.contains(region);
+                      return PressableScale(
+                        child: FilterChip(
+                          label: Text(
+                            region,
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 12,
+                              color: isSelected
+                                  ? Colors.white
+                                  : const Color(0xFF161C27),
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
+                          ),
+                          selected: isSelected,
+                          selectedColor: const Color(0xFF0F4D2E),
+                          backgroundColor: kStudentSurfaceSubtle,
+                          side: BorderSide(
+                            color: isSelected
+                                ? const Color(0xFF0F4D2E)
+                                : kStudentDivider,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          showCheckmark: false,
+                          onSelected: (_) {
+                            HapticFeedback.selectionClick();
+                            notifier.toggleRegion(region);
+                          },
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                10,
+                20,
+                MediaQuery.paddingOf(context).bottom + 16,
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: PressableScale(
+                  child: ElevatedButton(
                     onPressed: () {
                       HapticFeedback.lightImpact();
-                      notifier.reset();
+                      Navigator.of(context).pop();
                     },
-                    style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF0F4D2E),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(
+                        0xFF0F4D2E,
+                      ), // primary-container
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: Text(
-                      'Reset',
-                      style: AppTypography.style(AppTextRole.button, fontSize: 13, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  tooltip: 'Close filters',
-                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                  padding: const EdgeInsets.all(10),
-                  icon: const Icon(Icons.close_rounded, size: 20, color: Color(0xFF404942)),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1, color: Color(0xFFE2E8E5)),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-              children: [
-                _sectionTitle('Sort'),
-                const SizedBox(height: 10),
-                SegmentedButton<DiscoverySort>(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.resolveWith((states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return const Color(0xFF0F4D2E);
-                      }
-                      return Colors.white;
-                    }),
-                    foregroundColor: WidgetStateProperty.resolveWith((states) {
-                      if (states.contains(WidgetState.selected)) {
-                        return Colors.white;
-                      }
-                      return const Color(0xFF161C27);
-                    }),
-                    side: const WidgetStatePropertyAll(
-                      BorderSide(color: Color(0xFFE2E8E5)),
-                    ),
-                  ),
-                  segments: [
-                    ButtonSegment(
-                      value: DiscoverySort.defaultSort,
-                      label: Text(
-                        'Default',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                      'Done',
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 14.5,
+                        color: Colors.white,
+                        height: 1.25,
+                        letterSpacing: 0,
                       ),
                     ),
-                    ButtonSegment(
-                      value: DiscoverySort.highestAmount,
-                      label: Text(
-                        'Highest amount',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
-                      ),
-                    ),
-                  ],
-                  selected: {state.sort},
-                  onSelectionChanged: (selection) {
-                    HapticFeedback.selectionClick();
-                    notifier.setSort(selection.first);
-                  },
-                ),
-                const SizedBox(height: 24),
-                _sectionTitle('Income'),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  children: ['any', 'low', 'mid', 'high'].map((bracket) {
-                    final selected = bracket == 'any'
-                        ? state.incomeBracket == null
-                        : state.incomeBracket == bracket;
-                    return PressableScale(
-                      child: ChoiceChip(
-                        label: Text(
-                          incomeLabel(bracket == 'any' ? null : bracket),
-                          style: AppTypography.style(AppTextRole.label, fontSize: 12.5, color: selected ? Colors.white : const Color(0xFF161C27), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
-                        ),
-                        selected: selected,
-                        selectedColor: const Color(0xFF0F4D2E),
-                        backgroundColor: const Color(0xFFF1F3FF),
-                        side: BorderSide(
-                          color: selected ? const Color(0xFF0F4D2E) : const Color(0xFFDDE2F3),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        onSelected: (_) {
-                          HapticFeedback.selectionClick();
-                          notifier.setIncomeBracket(
-                            bracket == 'any' ? null : bracket,
-                          );
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 24),
-                _sectionTitle('Deadline'),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(
-                    'Closing soon',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-                  ),
-                  subtitle: Text(
-                    'Within 14 days of the deadline',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                  ),
-                  value: state.closingSoonOnly,
-                  activeThumbColor: const Color(0xFF0F4D2E),
-                  activeTrackColor: const Color(0xFFB3F1C6),
-                  onChanged: (value) {
-                    HapticFeedback.selectionClick();
-                    notifier.setClosingSoonOnly(value);
-                  },
-                ),
-                const SizedBox(height: 24),
-                _sectionTitle('Region'),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: kPhilippineRegions.map((region) {
-                    final isSelected = state.regions.contains(region);
-                    return PressableScale(
-                      child: FilterChip(
-                        label: Text(
-                          region,
-                          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: isSelected ? Colors.white : const Color(0xFF161C27), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
-                        ),
-                        selected: isSelected,
-                        selectedColor: const Color(0xFF0F4D2E),
-                        backgroundColor: const Color(0xFFF1F3FF),
-                        side: BorderSide(
-                          color: isSelected ? const Color(0xFF0F4D2E) : const Color(0xFFDDE2F3),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        showCheckmark: false,
-                        onSelected: (_) {
-                          HapticFeedback.selectionClick();
-                          notifier.toggleRegion(region);
-                        },
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              20,
-              10,
-              20,
-              MediaQuery.paddingOf(context).bottom + 16,
-            ),
-            child: SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: PressableScale(
-                child: ElevatedButton(
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF0F4D2E), // primary-container
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Done',
-                    style: AppTypography.style(AppTextRole.button, fontSize: 14.5, color: Colors.white, letterSpacing: opticalTracking(14.5), height: opticalLeading(14.5, isBody: false)),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 
   Widget _sectionTitle(String title) => Row(
-        children: [
-          Container(
-            width: 3.5,
-            height: 13,
-            margin: const EdgeInsets.only(right: 7),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0F4D2E),
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          Text(
-            title,
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-          ),
-        ],
-      );
+    children: [
+      Container(
+        width: 3.5,
+        height: 13,
+        margin: const EdgeInsets.only(right: 7),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0F4D2E),
+          borderRadius: BorderRadius.circular(2),
+        ),
+      ),
+      Text(
+        title,
+        style: AppTypography.style(
+          AppTextRole.sectionTitle,
+          fontSize: 13,
+          color: const Color(0xFF161C27),
+          height: 1.25,
+          letterSpacing: 0,
+        ),
+      ),
+    ],
+  );
 }

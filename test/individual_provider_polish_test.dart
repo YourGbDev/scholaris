@@ -40,7 +40,7 @@ void main() {
         addTearDown(tester.view.resetDevicePixelRatio);
         await tester.pumpWidget(preview.buildApp(individualPreview: true));
         await tester.pumpAndSettle();
-        expect(find.text('Hi, Elena — a little support. A new beginning.'), findsOneWidget);
+        expect(find.text('Hi, Elena'), findsOneWidget);
         await tester.tap(find.text('Applications').first);
         await tester.pumpAndSettle();
         expect(find.text('Your support summary'), findsOneWidget);

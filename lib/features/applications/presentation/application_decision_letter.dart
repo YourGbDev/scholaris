@@ -1,4 +1,3 @@
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:scholaris/features/applications/models/application.dart';
@@ -69,20 +68,37 @@ class ApplicationDecisionLetter extends StatelessWidget {
                           Text(
                             'SCHOLARIS',
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.label, fontSize: 14, color: const Color(0xFF0F4D2E), letterSpacing: 2, height: opticalLeading(14, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 13,
+                              color: const Color(0xFF0F4D2E),
+                              letterSpacing: 2,
+                              height: 1.25,
+                            ),
                           ),
                           const SizedBox(height: 24),
                           Text(
                             title,
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 28, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(28), height: opticalLeading(28, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.sectionTitle,
+                              fontSize: 20,
+                              color: const Color(0xFF0F4D2E),
+                              height: 1.25,
+                              letterSpacing: -0.3,
+                            ),
                           ),
                           const SizedBox(height: 24),
                           if (studentName?.trim().isNotEmpty == true) ...[
                             Text(
                               studentName!.trim(),
                               textAlign: TextAlign.center,
-                              style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 22, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.bodyEmphasis,
+                                fontSize: 20,
+                                height: 1.25,
+                                letterSpacing: -0.3,
+                              ),
                             ),
                             const SizedBox(height: 16),
                           ],
@@ -91,20 +107,37 @@ class ApplicationDecisionLetter extends StatelessWidget {
                                 ? 'Your scholarship has been awarded for'
                                 : 'Your application has been approved for',
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, color: const Color(0xFF404942), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 13,
+                              color: const Color(0xFF404942),
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 12),
                           Text(
                             scholarshipTitle,
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 21, letterSpacing: opticalTracking(21), height: opticalLeading(21, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 18,
+                              height: 1.25,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           if (providerName?.trim().isNotEmpty == true) ...[
                             const SizedBox(height: 12),
                             Text(
                               providerName!.trim(),
                               textAlign: TextAlign.center,
-                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, color: const Color(0xFF707971), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+                              style: AppTypography.style(
+                                AppTextRole.subtitle,
+                                fontSize: 13,
+                                color: const Color(0xFF707971),
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                           const Padding(
@@ -117,13 +150,25 @@ class ApplicationDecisionLetter extends StatelessWidget {
                                   ? 'Scholarship awarded on ${_date(application.decidedAt!.toLocal())}'
                                   : 'Application approved on ${_date(application.decidedAt!.toLocal())}',
                               textAlign: TextAlign.center,
-                              style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                fontSize: 13,
+                                color: const Color(0xFF404942),
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           const SizedBox(height: 12),
                           SelectableText(
                             'Application reference\n${application.id}',
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF707971), height: 1.4, letterSpacing: opticalTracking(13)),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              fontSize: 13,
+                              color: const Color(0xFF707971),
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 24),
                           Text(
@@ -131,7 +176,13 @@ class ApplicationDecisionLetter extends StatelessWidget {
                                 ? 'This record reflects your saved scholarship status in Scholaris. Contact your provider for the next steps and release schedule.'
                                 : 'This letter records your application approval in Scholaris. Contact your provider for the next steps. Approval does not confirm that funds have been released.',
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), height: 1.5, letterSpacing: opticalTracking(13)),
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              fontSize: 13,
+                              color: const Color(0xFF404942),
+                              height: 1.5,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       )

@@ -3,13 +3,11 @@
 // Reusable loading / empty / error views so every discovery surface presents
 // a consistent, polished state instead of a raw spinner or exception.
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
+
 import '../theme/app_theme.dart';
 import 'mascot_pose_view.dart';
-
-
 
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});
@@ -60,10 +58,7 @@ class _LoadingSpinnerState extends State<_LoadingSpinner>
 
   @override
   Widget build(BuildContext context) {
-    return RotationTransition(
-      turns: _rotation,
-      child: const _LoadingArc(),
-    );
+    return RotationTransition(turns: _rotation, child: const _LoadingArc());
   }
 }
 
@@ -72,10 +67,7 @@ class _LoadingArc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: const Size(32, 32),
-      painter: _LoadingArcPainter(),
-    );
+    return CustomPaint(size: const Size(32, 32), painter: _LoadingArcPainter());
   }
 }
 
@@ -223,42 +215,60 @@ class EmptyView extends StatelessWidget {
             children: [
               visualWidget,
               const SizedBox(height: 16),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.body, fontSize: 13.5, color: kTextSecondary, height: 1.45, letterSpacing: opticalTracking(13.5)),
-            ),
-            if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: onAction,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  actionLabel!,
-                  style: AppTypography.style(AppTextRole.button, fontSize: 13.5, color: Colors.white, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 17,
+                  color: kTextPrimary,
+                  height: 1.25,
+                  letterSpacing: -0.15,
                 ),
               ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  fontSize: 13.5,
+                  color: kTextSecondary,
+                  height: 1.45,
+                  letterSpacing: 0,
+                ),
+              ),
+              if (actionLabel != null && onAction != null) ...[
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: onAction,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimary,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    actionLabel!,
+                    style: AppTypography.style(
+                      AppTextRole.button,
+                      fontSize: 13.5,
+                      color: Colors.white,
+                      height: 1.25,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
-      ),
       ),
     );
   }
@@ -286,13 +296,11 @@ class _SearchIconAnimationState extends State<_SearchIconAnimation>
       duration: const Duration(seconds: 1, milliseconds: 400),
       vsync: this,
     )..repeat(reverse: true);
-    _tilt = TweenSequence<double>(
-      [
-        TweenSequenceItem(tween: Tween(begin: 0, end: 0.18), weight: 1),
-        TweenSequenceItem(tween: Tween(begin: 0.18, end: -0.18), weight: 1),
-        TweenSequenceItem(tween: Tween(begin: -0.18, end: 0), weight: 1),
-      ],
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _tilt = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0, end: 0.18), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: 0.18, end: -0.18), weight: 1),
+      TweenSequenceItem(tween: Tween(begin: -0.18, end: 0), weight: 1),
+    ]).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -308,7 +316,11 @@ class _SearchIconAnimationState extends State<_SearchIconAnimation>
       builder: (context, child) {
         return Transform.rotate(
           angle: _tilt.value,
-          child: Icon(widget.icon, size: 24, color: widget.color ?? Colors.white),
+          child: Icon(
+            widget.icon,
+            size: 24,
+            color: widget.color ?? Colors.white,
+          ),
         );
       },
     );
@@ -338,15 +350,18 @@ class ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const MascotPoseView(
-              pose: MascotPose.confused,
-              height: 100,
-            ),
+            const MascotPoseView(pose: MascotPose.confused, height: 100),
             const SizedBox(height: 16),
             Text(
               isOffline ? 'No internet connection' : title,
               textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 17,
+                color: kTextPrimary,
+                height: 1.25,
+                letterSpacing: -0.15,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -354,7 +369,13 @@ class ErrorView extends StatelessWidget {
                   ? 'Please check your Wi-Fi or cellular network settings and try again.'
                   : message,
               textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.body, fontSize: 13.5, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(13.5)),
+              style: AppTypography.style(
+                AppTextRole.body,
+                fontSize: 13.5,
+                color: kTextSecondary,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             if (onRetry != null) ...[
               const SizedBox(height: 20),
@@ -363,14 +384,24 @@ class ErrorView extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kPrimary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   elevation: 0,
                 ),
                 icon: const Icon(Icons.refresh_rounded, size: 18),
                 label: Text(
                   'Try again',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 13.5,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -420,13 +451,25 @@ class InlineFormErrorBanner extends StatelessWidget {
                 if (title != null) ...[
                   Text(
                     title!,
-                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13.5, color: kError, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      fontSize: 13.5,
+                      color: kError,
+                      height: 1.25,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 2),
                 ],
                 Text(
                   message,
-                  style: AppTypography.style(AppTextRole.body, fontSize: 12.5, color: kError, height: 1.35, letterSpacing: opticalTracking(12.5)),
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 12.5,
+                    color: kError,
+                    height: 1.35,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),

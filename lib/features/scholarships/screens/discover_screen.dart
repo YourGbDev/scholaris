@@ -42,10 +42,12 @@ class DiscoverScreen extends ConsumerStatefulWidget {
     super.key,
     this.scrollController,
     this.detailsGuideKey,
+    this.cardGuideKey,
     this.endGuideKey,
   });
   final ScrollController? scrollController;
   final GlobalKey? detailsGuideKey;
+  final GlobalKey? cardGuideKey;
   final GlobalKey? endGuideKey;
 
   @override
@@ -136,7 +138,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 StudentTabReveal(
                   order: 2,
                   structural: true,
-                  child: _buildFeedHeader(),
+                  child: _buildFeedHeader(filteredMatches),
                 ),
                 const SizedBox(height: 12),
 
@@ -183,56 +185,58 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
 
   // --- 1. Sticky Top Bar ---
   Widget _buildHeader(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Scholaris Brand Logo
-        Expanded(
-          child: StudentTabReveal(
-            order: 0,
-            immediate: true,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0F4D2E), // primary-container
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF0F4D2E)
-                              .withValues(alpha: 0.15),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.school_rounded,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Scholaris',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 20, color: const Color(0xFF161C27), letterSpacing: -0.5, height: opticalLeading(20, isBody: false)),
-                  ),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final brand = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: kPrimary,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.school_rounded,
+                color: Colors.white,
+                size: 20,
               ),
             ),
-          ),
-        ),
-
-        const StudentHeaderActions(),
-      ],
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                'Scholaris',
+                style: AppTypography.style(
+                  AppTextRole.screenTitle,
+                  fontSize: 18,
+                  height: 1.25,
+                  color: kTextPrimary,
+                  letterSpacing: -0.15,
+                ),
+              ),
+            ),
+          ],
+        );
+        if (MediaQuery.textScalerOf(context).scale(20) > 26) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              brand,
+              const Align(
+                alignment: Alignment.centerRight,
+                child: StudentHeaderActions(),
+              ),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: brand),
+            const StudentHeaderActions(),
+          ],
+        );
+      },
     );
   }
 
@@ -267,17 +271,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             label: 'All Matches ($totalMatches)',
             isActive: !state.isActive,
             onTap: () => notifier.reset(),
-          ),
-          const SizedBox(width: 8),
-
-          // Match >90% Chip with green dot
-          _StitchCarouselChip(
-            label: 'Match >90% • Demo',
-            hasDot: true,
-            isActive: state.highFitOnly,
-            onTap: () {
-              notifier.setHighFitOnly(!state.highFitOnly);
-            },
           ),
           const SizedBox(width: 8),
 
@@ -401,7 +394,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             onPressed: () => ref.read(discoveryFilterProvider.notifier).reset(),
             child: Text(
               'Clear all',
-              style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.button,
+                fontSize: 12,
+                color: const Color(0xFF0F4D2E),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ),
@@ -410,9 +409,36 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   // --- 5. Opportunity Feed Header ---
-  Widget _buildFeedHeader() => Text(
-    'Matched for you',
-    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: -0.3, height: opticalLeading(18, isBody: false)),
+  Widget _buildFeedHeader(AsyncValue<List<Scholarship>> matches) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Matched for you',
+        style: AppTypography.style(
+          AppTextRole.screenTitle,
+          fontSize: 17,
+          height: 1.25,
+          color: kTextPrimary,
+          letterSpacing: -0.15,
+        ),
+      ),
+      const SizedBox(height: 6),
+      Text(
+        matches.when(
+          data: (items) =>
+              '${items.length} ${items.length == 1 ? 'opportunity' : 'opportunities'} to explore',
+          loading: () => 'Finding opportunities…',
+          error: (_, _) => 'Matches unavailable',
+        ),
+        style: AppTypography.style(
+          AppTextRole.body,
+          fontSize: 13,
+          height: 1.4,
+          color: kTextSupporting,
+          letterSpacing: 0,
+        ),
+      ),
+    ],
   );
 
   // --- 6. Feed Cards Container ---
@@ -467,6 +493,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               order: 1 + index,
               child: ScholarshipCard(
                 viewDetailsKey: index == 0 ? widget.detailsGuideKey : null,
+                cardGuideKey: index == 0 ? widget.cardGuideKey : null,
                 scholarship: scholarship,
                 studentProfile: profile,
                 reasons: reasons,
@@ -553,7 +580,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               order: 0,
               child: Text(
                 'Showing ${browse.length} scholarships',
-                style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 13,
+                  color: const Color(0xFF404942),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -567,6 +600,15 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 order: 1 + i,
                 child: ScholarshipCard(
                   scholarship: browse[i],
+                  cardGuideKey:
+                      i == 0 &&
+                          (ref
+                                  .watch(filteredMatchesProvider)
+                                  .valueOrNull
+                                  ?.isEmpty ??
+                              false)
+                      ? widget.cardGuideKey
+                      : null,
                   viewDetailsKey:
                       i == 0 &&
                           (ref
@@ -627,13 +669,25 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           Text(
             'Looking for more niche grants?',
             textAlign: TextAlign.center,
-            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.cardTitle,
+              fontSize: 17,
+              color: const Color(0xFF161C27),
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             'Connect your local community college, regional foundation, or alumni affinity groups to unlock hyper-local aid.',
             textAlign: TextAlign.center,
-            style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), height: 1.4, letterSpacing: opticalTracking(13)),
+            style: AppTypography.style(
+              AppTextRole.caption,
+              fontSize: 13,
+              color: const Color(0xFF404942),
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 16),
           PressableScale(
@@ -662,7 +716,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'Update Eligibility Filters',
-                      style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -688,13 +747,25 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             Text(
               'No scholarships found',
               textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 17,
+                color: const Color(0xFF161C27),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               'No scholarships match your current search and filters. Try adjusting your filters to see more results.',
               textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.body, fontSize: 13.5, color: const Color(0xFF404942), height: 1.45, letterSpacing: opticalTracking(13.5)),
+              style: AppTypography.style(
+                AppTextRole.body,
+                fontSize: 13.5,
+                color: const Color(0xFF404942),
+                height: 1.45,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 18),
             ElevatedButton(
@@ -714,7 +785,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               ),
               child: Text(
                 'Clear search & filters',
-                style: AppTypography.style(AppTextRole.button, fontSize: 13.5, color: Colors.white, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 13.5,
+                  color: Colors.white,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -739,7 +816,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             decoration: BoxDecoration(
               color: const Color(0xFFF0F0F0),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFDDE2F3)),
+              border: Border.all(color: kSurfaceContainerHighest),
             ),
             child: Row(
               children: [
@@ -752,7 +829,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 Expanded(
                   child: Text(
                     'No scholarships in your matches match the current search and filters.',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), height: 1.35, letterSpacing: opticalTracking(13)),
+                    style: AppTypography.style(
+                      AppTextRole.caption,
+                      fontSize: 13,
+                      color: const Color(0xFF404942),
+                      height: 1.35,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ],
@@ -777,13 +860,25 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
               Text(
                 'No matches found for your profile yet',
                 textAlign: TextAlign.center,
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: const Color(0xFF161C27), letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 17,
+                  color: const Color(0xFF161C27),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
                 'Complete your profile with your course, university, and GWA to unlock targeted grants and scholarships.',
                 textAlign: TextAlign.center,
-                style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: const Color(0xFF404942), height: 1.4, letterSpacing: opticalTracking(13)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 13,
+                  color: const Color(0xFF404942),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
@@ -802,7 +897,13 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
                 ),
                 child: Text(
                   'Complete your profile',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 13.5, color: Colors.white, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 13.5,
+                    color: Colors.white,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -813,11 +914,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   }
 
   Future<void> _toggleBookmark(WidgetRef ref, String id) async {
-    try {
-      await ref.read(bookmarksProvider.notifier).toggle(id);
-    } on Exception {
-      // Silent on card
-    }
+    await ref.read(bookmarksProvider.notifier).toggle(id);
   }
 }
 
@@ -868,10 +965,22 @@ class _SearchFieldState extends ConsumerState<_SearchField> {
         onChanged: (value) =>
             ref.read(discoveryFilterProvider.notifier).setQuery(value),
         textInputAction: TextInputAction.search,
-        style: AppTypography.style(AppTextRole.input, fontSize: 14, color: const Color(0xFF161C27), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+        style: AppTypography.style(
+          AppTextRole.input,
+          fontSize: 15,
+          color: kTextPrimary,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
         decoration: InputDecoration(
           hintText: 'Search scholarships',
-          hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: const Color(0xFF707971), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+          hintStyle: AppTypography.style(
+            AppTextRole.placeholder,
+            fontSize: 15,
+            color: kTextSupporting,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
           prefixIcon: const Icon(
             Icons.search_rounded,
             color: Color(0xFF404942),
@@ -937,7 +1046,13 @@ class _FilterButton extends ConsumerWidget {
                   const SizedBox(width: 5),
                   Text(
                     'Filter',
-                    style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF436084), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.button,
+                      fontSize: 15,
+                      color: const Color(0xFF436084),
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   if (count > 0) ...[
                     const SizedBox(width: 5),
@@ -952,7 +1067,13 @@ class _FilterButton extends ConsumerWidget {
                       ),
                       child: Text(
                         '$count',
-                        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: Colors.white, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.badge,
+                          fontSize: 10,
+                          color: Colors.white,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ],
@@ -972,7 +1093,6 @@ class _StitchCarouselChip extends StatelessWidget {
     required this.onTap,
     this.isActive = false,
     this.isUrgent = false,
-    this.hasDot = false,
     this.icon,
   });
 
@@ -980,7 +1100,6 @@ class _StitchCarouselChip extends StatelessWidget {
   final VoidCallback onTap;
   final bool isActive;
   final bool isUrgent;
-  final bool hasDot;
   final IconData? icon;
 
   @override
@@ -1019,23 +1138,19 @@ class _StitchCarouselChip extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (hasDot) ...[
-                  Container(
-                    width: 6,
-                    height: 6,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFB3F1C6), // primary-fixed
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                ],
                 if (icon != null) ...[
                   Icon(icon, size: 14, color: fg),
                   const SizedBox(width: 4),
                 ],
                 Text(
                   label,
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: fg, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 12,
+                    color: fg,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -1073,7 +1188,13 @@ class _ActiveFilterChip extends StatelessWidget {
             padding: const EdgeInsets.only(left: 12),
             child: Text(
               label,
-              style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.label,
+                fontSize: 12,
+                color: const Color(0xFF0F4D2E),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
           Tooltip(

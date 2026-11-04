@@ -1,5 +1,5 @@
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import '../widgets/support_payment_times.dart';
 import '../widgets/support_payment_correction.dart';
 
@@ -13,6 +13,7 @@ import '../../models/support_ledger.dart';
 import '../../repositories/support_repository.dart';
 import '../../providers/provider_scholarships_provider.dart';
 import '../org/org_provider_theme.dart';
+import '../../../../shared/theme/app_theme.dart' show kSoftCardDecoration;
 
 class IndividualSupportTab extends ConsumerWidget {
   const IndividualSupportTab({super.key});
@@ -26,11 +27,29 @@ class IndividualSupportTab extends ConsumerWidget {
     return ListView(
       padding: EdgeInsets.all(MediaQuery.sizeOf(context).width < 600 ? 20 : 32),
       children: [
-        Text('Budget & support', style: AppTypography.style(AppTextRole.screenTitle, fontSize: 28, color: kOrgTextPrimary, letterSpacing: opticalTracking(28), height: opticalLeading(28, isBody: false))),
+        Text(
+          'Budget & support',
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: MediaQuery.sizeOf(context).width >= 900 ? 24 : 20,
+            height: 1.2,
+            color: kOrgTextPrimary,
+            letterSpacing:
+                ((MediaQuery.sizeOf(context).width >= 900 ? 24 : 20) >= 20
+                ? -.3
+                : -.15),
+          ),
+        ),
         const SizedBox(height: 8),
         Text(
           'Know what you have set aside, promised, and recorded as sent.',
-          style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            fontSize: 14,
+            color: kOrgTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 24),
         if (ledger.isLoading || programs.isLoading || applications.isLoading)
@@ -42,7 +61,13 @@ class IndividualSupportTab extends ConsumerWidget {
               children: [
                 Text(
                   'Support records could not load',
-                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 20, color: kOrgTextPrimary, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 17,
+                    height: 1.2,
+                    color: kOrgTextPrimary,
+                    letterSpacing: -0.15,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
@@ -78,13 +103,18 @@ class IndividualSupportTab extends ConsumerWidget {
         ],
         const SizedBox(height: 24),
         _panel(
-          color: const Color(0xFFEDF2E6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Safer ways to support students',
-                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 19, color: kOrgTextPrimary, letterSpacing: opticalTracking(19), height: opticalLeading(19, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.cardTitle,
+                  fontSize: 17,
+                  height: 1.2,
+                  color: kOrgTextPrimary,
+                  letterSpacing: -0.15,
+                ),
               ),
               const SizedBox(height: 10),
               const Text(
@@ -102,7 +132,16 @@ class IndividualSupportTab extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Your support assistant', style: AppTypography.style(AppTextRole.cardTitle, fontSize: 19, color: kOrgTextPrimary, letterSpacing: opticalTracking(19), height: opticalLeading(19, isBody: false))),
+              Text(
+                'Your support assistant',
+                style: AppTypography.style(
+                  AppTextRole.cardTitle,
+                  fontSize: 17,
+                  height: 1.2,
+                  color: kOrgTextPrimary,
+                  letterSpacing: -0.15,
+                ),
+              ),
               const SizedBox(height: 8),
               const Text(
                 'Budget insights above are calculated from your records. AI assistance is not connected yet. When enabled, it can help draft program details and explain recorded information; you will still approve every decision. Student private chats will not be shared here.',
@@ -150,7 +189,16 @@ class IndividualSupportTab extends ConsumerWidget {
               spacing: 16,
               runSpacing: 8,
               children: [
-                Text(program.title, style: AppTypography.style(AppTextRole.cardTitle, fontSize: 22, color: kOrgTextPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false))),
+                Text(
+                  program.title,
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 15,
+                    height: 1.2,
+                    color: kOrgTextPrimary,
+                    letterSpacing: -0.15,
+                  ),
+                ),
                 OutlinedButton.icon(
                   onPressed: () => _edit(
                     context,
@@ -169,7 +217,13 @@ class IndividualSupportTab extends ConsumerWidget {
             const SizedBox(height: 8),
             Text(
               budget?['cycle_label'] as String? ?? 'No cycle budget set',
-              style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                fontSize: 13,
+                color: kOrgTextSecondary,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 20),
             LayoutBuilder(
@@ -227,7 +281,13 @@ class IndividualSupportTab extends ConsumerWidget {
                 padding: const EdgeInsets.only(top: 12),
                 child: Text(
                   '$missing approved ${missing == 1 ? 'application has' : 'applications have'} no recorded commitment yet. Totals are incomplete until you record the agreed amounts.',
-                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOrgError, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 13,
+                    color: kOrgError,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             const SizedBox(height: 16),
@@ -237,7 +297,13 @@ class IndividualSupportTab extends ConsumerWidget {
             const Divider(height: 32),
             Text(
               'Students & payment records',
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kOrgTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 17,
+                height: 1.2,
+                color: kOrgTextPrimary,
+                letterSpacing: -0.15,
+              ),
             ),
             if (accepted.isEmpty)
               const Padding(
@@ -252,7 +318,13 @@ class IndividualSupportTab extends ConsumerWidget {
                 names[app.userId]?.isNotEmpty == true
                     ? names[app.userId]!
                     : 'Student application',
-                style: AppTypography.style(AppTextRole.label, fontSize: 16, color: kOrgTextSecondary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.label,
+                  fontSize: 16,
+                  height: 1.3,
+                  color: kOrgTextSecondary,
+                  letterSpacing: 0,
+                ),
               ),
               if (ledger.commitment(app.id) == null)
                 TextButton(
@@ -384,20 +456,34 @@ class IndividualSupportTab extends ConsumerWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true)))),
+        Text(
+          label,
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 12,
+            color: kOrgTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
+        ),
         const SizedBox(height: 8),
-        Text(value, style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kOrgTextPrimary, letterSpacing: opticalTracking(26), height: opticalLeading(26, isBody: false))),
+        Text(
+          value,
+          style: AppTypography.style(
+            AppTextRole.metric,
+            fontSize: 26,
+            height: 1.2,
+            color: kOrgTextPrimary,
+            letterSpacing: -0.3,
+          ),
+        ),
       ],
     ),
   );
   static Widget _panel({required Widget child, Color color = Colors.white}) =>
       Container(
         padding: const EdgeInsets.all(22),
-        decoration: BoxDecoration(
-          color: color,
-          border: Border.all(color: kOrgBorder),
-          borderRadius: BorderRadius.circular(16),
-        ),
+        decoration: kSoftCardDecoration.copyWith(color: color),
         child: child,
       );
   Future<void> _edit(
@@ -600,7 +686,7 @@ class _SupportRecordDialogState extends ConsumerState<_SupportRecordDialog> {
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(
                     _error!,
-                    style: AppTypography.style(AppTextRole.caption, color: kOrgError),
+                    style: const TextStyle(color: kOrgError),
                   ),
                 ),
             ],

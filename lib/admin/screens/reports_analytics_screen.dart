@@ -12,6 +12,7 @@ import 'package:scholaris/features/admin/presentation/admin_home_screen.dart';
 import 'package:scholaris/features/admin/presentation/admin_theme.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'audit_trail_screen.dart';
 
 // =============================================================================
@@ -38,8 +39,9 @@ class ReportsAnalyticsData {
 // 2. Data Provider
 // =============================================================================
 
-final reportsAnalyticsDataProvider =
-    FutureProvider<ReportsAnalyticsData>((ref) async {
+final reportsAnalyticsDataProvider = FutureProvider<ReportsAnalyticsData>((
+  ref,
+) async {
   final supabase = Supabase.instance.client;
 
   // Run all 4 queries concurrently in parallel
@@ -112,8 +114,18 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
 
   String _formatDateTime(DateTime dt) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     final local = dt.toLocal();
     final hour = local.hour == 0
@@ -151,17 +163,30 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
                   const SizedBox(height: 12),
                   Text(
                     'Failed to load analytics summaries',
-                    style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      color: kSeqOnSurface,
+                      fontSize: 17,
+                      height: 1.25,
+                      letterSpacing: -.15,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     err.toString(),
-                    style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      color: kSeqOnSurfaceVariant,
+                      fontSize: 14,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
-                    onPressed: () => ref.invalidate(reportsAnalyticsDataProvider),
+                    onPressed: () =>
+                        ref.invalidate(reportsAnalyticsDataProvider),
                     icon: const Icon(Icons.refresh),
                     label: const Text('Retry'),
                     style: ElevatedButton.styleFrom(
@@ -174,94 +199,107 @@ class ReportsAnalyticsScreen extends ConsumerWidget {
             ),
           ),
           data: (data) {
-          final width = MediaQuery.sizeOf(context).width;
-          final isDesktop = width >= 900;
+            final width = MediaQuery.sizeOf(context).width;
+            final isDesktop = width >= 900;
 
-          return RefreshIndicator(
-            color: kSeqPrimaryContainer,
-            onRefresh: () async {
-              ref.invalidate(reportsAnalyticsDataProvider);
-              await ref.read(reportsAnalyticsDataProvider.future);
-            },
-            child: ListView(
-              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-              children: [
-                _buildHeaderBar(context),
-                const SizedBox(height: 24),
-
-                // Section 3: Scholarship Coverage Card (Top Hero)
-                _buildScholarshipCoverageCard(context, data: data),
-                const SizedBox(height: 20),
-
-                // Side-by-side or stacked: Applications by Status & Profiles by Role
-                if (isDesktop)
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: _buildApplicationsStatusSection(context,
-                            counts: data.applicationStatusCounts),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _buildProfilesRoleSection(context,
-                            counts: data.profileRoleCounts),
-                      ),
-                    ],
-                  )
-                else ...[
-                  _buildApplicationsStatusSection(context,
-                      counts: data.applicationStatusCounts),
-                  const SizedBox(height: 16),
-                  _buildProfilesRoleSection(context,
-                      counts: data.profileRoleCounts),
-                ],
-                const SizedBox(height: 20),
-
-                // Section 4: Recent Activity (Last 5 Audit Events)
-                _buildRecentActivitySection(
-                  context,
-                  ref: ref,
-                  logs: data.recentAuditLogs,
+            return RefreshIndicator(
+              color: kSeqPrimaryContainer,
+              onRefresh: () async {
+                ref.invalidate(reportsAnalyticsDataProvider);
+                await ref.read(reportsAnalyticsDataProvider.future);
+              },
+              child: ListView(
+                physics: const AppleBouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
                 ),
-                const SizedBox(height: 24),
-              ],
-            ),
-          );
-        },
-      ),
-    ),
-  );
-}
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 20,
+                ),
+                children: [
+                  _buildHeaderBar(context),
+                  const SizedBox(height: 24),
 
-Widget _buildSkeletonLoader(BuildContext context) {
-  return ListView(
-    physics: const NeverScrollableScrollPhysics(),
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          SkeletonBand(width: 160, height: 28),
-          SkeletonBand(width: 80, height: 28, borderRadius: 14),
-        ],
+                  // Section 3: Scholarship Coverage Card (Top Hero)
+                  _buildScholarshipCoverageCard(context, data: data),
+                  const SizedBox(height: 20),
+
+                  // Side-by-side or stacked: Applications by Status & Profiles by Role
+                  if (isDesktop)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildApplicationsStatusSection(
+                            context,
+                            counts: data.applicationStatusCounts,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildProfilesRoleSection(
+                            context,
+                            counts: data.profileRoleCounts,
+                          ),
+                        ),
+                      ],
+                    )
+                  else ...[
+                    _buildApplicationsStatusSection(
+                      context,
+                      counts: data.applicationStatusCounts,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildProfilesRoleSection(
+                      context,
+                      counts: data.profileRoleCounts,
+                    ),
+                  ],
+                  const SizedBox(height: 20),
+
+                  // Section 4: Recent Activity (Last 5 Audit Events)
+                  _buildRecentActivitySection(
+                    context,
+                    ref: ref,
+                    logs: data.recentAuditLogs,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            );
+          },
+        ),
       ),
-      const SizedBox(height: 24),
-      const SkeletonBand(height: 140, borderRadius: 16),
-      const SizedBox(height: 20),
-      Row(
-        children: const [
-          Expanded(child: SkeletonBand(height: 200, borderRadius: 16)),
-          SizedBox(width: 16),
-          Expanded(child: SkeletonBand(height: 200, borderRadius: 16)),
-        ],
-      ),
-      const SizedBox(height: 24),
-      const SkeletonBand(height: 180, borderRadius: 16),
-    ],
-  );
-}
+    );
+  }
+
+  Widget _buildSkeletonLoader(BuildContext context) {
+    return ListView(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            SkeletonBand(width: 160, height: 28),
+            SkeletonBand(width: 80, height: 28, borderRadius: 14),
+          ],
+        ),
+        const SizedBox(height: 24),
+        const SkeletonBand(height: 140, borderRadius: 16),
+        const SizedBox(height: 20),
+        Row(
+          children: const [
+            Expanded(child: SkeletonBand(height: 200, borderRadius: 16)),
+            SizedBox(width: 16),
+            Expanded(child: SkeletonBand(height: 200, borderRadius: 16)),
+          ],
+        ),
+        const SizedBox(height: 24),
+        const SkeletonBand(height: 180, borderRadius: 16),
+      ],
+    );
+  }
 
   // --- Header Bar -----------------------------------------------------------
 
@@ -290,7 +328,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
               const SizedBox(width: 6),
               Text(
                 'Live data',
-                style: AppTypography.style(AppTextRole.badge, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: kSeqOnSurfaceVariant,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -298,16 +342,19 @@ Widget _buildSkeletonLoader(BuildContext context) {
         const SizedBox(height: 8),
 
         // Title
-        Text(
-          'Reports & Analytics',
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface),
-        ),
+        Text('Reports & Analytics', style: seqPageTitle(context)),
         const SizedBox(height: 4),
 
         // Subtitle: strictly live data summaries
         Text(
           'Live data summaries',
-          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            color: kSeqOnSurfaceVariant,
+            fontSize: 14,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     );
@@ -330,17 +377,29 @@ Widget _buildSkeletonLoader(BuildContext context) {
             children: [
               Text(
                 'SCHOLARSHIP COVERAGE',
-                style: AppTypography.style(AppTextRole.cardTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
+                style: AppTypography.style(
+                  AppTextRole.cardTitle,
+                  color: kSeqOutline,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ).copyWith(letterSpacing: 0.5),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: kSeqPrimaryFixed.withValues(alpha: 0.4),
+                  color: kWorkspaceSubtle,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   '${data.scholarshipCount} Active Grants',
-                  style: AppTypography.style(AppTextRole.badge, color: kSeqPrimaryContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    color: kSeqPrimaryContainer,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -352,19 +411,41 @@ Widget _buildSkeletonLoader(BuildContext context) {
             children: [
               Text(
                 '₱',
-                style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 26, color: kSeqPrimary)),
+                style: seqTabularFigures(
+                  AppTypography.style(
+                    AppTextRole.metric,
+                    fontSize: 20,
+                    color: kSeqPrimary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
+                ),
               ),
               const SizedBox(width: 3),
               Text(
                 _formatCurrencyValue(data.totalScholarshipValue),
-                style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 36, color: kSeqPrimary, height: 1.1, letterSpacing: -0.5)),
+                style: seqTabularFigures(
+                  AppTypography.style(
+                    AppTextRole.metric,
+                    fontSize: 28,
+                    color: kSeqPrimary,
+                    height: 1.1,
+                    letterSpacing: -0.5,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 6),
           Text(
             'Total Declared Scholarship Value',
-            style: AppTypography.style(AppTextRole.label, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+            style: AppTypography.style(
+              AppTextRole.label,
+              color: kSeqOnSurfaceVariant,
+              fontSize: 14,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ],
       ),
@@ -393,14 +474,38 @@ Widget _buildSkeletonLoader(BuildContext context) {
     final total = counts.values.fold<int>(0, (sum, val) => sum + val);
 
     final statusList = [
-      {'key': 'submitted', 'label': 'Submitted', 'color': const Color(0xFF2E7D32)},
-      {'key': 'approved', 'label': 'Approved', 'color': const Color(0xFF2E7D32)},
-      {'key': 'under_review', 'label': 'Under Review', 'color': const Color(0xFFE65100)},
-      {'key': 'shortlisted', 'label': 'Shortlisted', 'color': const Color(0xFFFFA000)},
+      {
+        'key': 'submitted',
+        'label': 'Submitted',
+        'color': const Color(0xFF2E7D32),
+      },
+      {
+        'key': 'approved',
+        'label': 'Approved',
+        'color': const Color(0xFF2E7D32),
+      },
+      {
+        'key': 'under_review',
+        'label': 'Under Review',
+        'color': const Color(0xFFE65100),
+      },
+      {
+        'key': 'shortlisted',
+        'label': 'Shortlisted',
+        'color': const Color(0xFFFFA000),
+      },
       {'key': 'awarded', 'label': 'Awarded', 'color': const Color(0xFF1B5E20)},
       {'key': 'draft', 'label': 'Draft', 'color': const Color(0xFF757575)},
-      {'key': 'withdrawn', 'label': 'Withdrawn', 'color': const Color(0xFFC62828)},
-      {'key': 'rejected', 'label': 'Rejected', 'color': const Color(0xFFC62828)},
+      {
+        'key': 'withdrawn',
+        'label': 'Withdrawn',
+        'color': const Color(0xFFC62828),
+      },
+      {
+        'key': 'rejected',
+        'label': 'Rejected',
+        'color': const Color(0xFFC62828),
+      },
     ];
 
     return Container(
@@ -414,11 +519,23 @@ Widget _buildSkeletonLoader(BuildContext context) {
             children: [
               Text(
                 'APPLICATIONS BY STATUS',
-                style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  color: kSeqOutline,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ).copyWith(letterSpacing: 0.5),
               ),
               Text(
                 '$total total',
-                style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  color: kSeqOutline,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -458,11 +575,23 @@ Widget _buildSkeletonLoader(BuildContext context) {
             children: [
               Text(
                 'PROFILES BY ROLE',
-                style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  color: kSeqOutline,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ).copyWith(letterSpacing: 0.5),
               ),
               Text(
                 '$total registered',
-                style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  color: kSeqOutline,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -515,14 +644,22 @@ Widget _buildSkeletonLoader(BuildContext context) {
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: count > 0 ? color : kSeqOutline.withValues(alpha: 0.35),
+                    color: count > 0
+                        ? color
+                        : kSeqOutline.withValues(alpha: 0.35),
                     shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   label,
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOnSurface,
+                    fontSize: 14,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -530,12 +667,28 @@ Widget _buildSkeletonLoader(BuildContext context) {
               children: [
                 Text(
                   '$count',
-                  style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 15, color: kSeqOnSurface)),
+                  style: seqTabularFigures(
+                    AppTypography.style(
+                      AppTextRole.metric,
+                      fontSize: 15,
+                      color: kSeqOnSurface,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 6),
                 Text(
                   '($pct%)',
-                  style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                  style: seqTabularFigures(
+                    AppTypography.style(
+                      AppTextRole.caption,
+                      color: kSeqOutline,
+                      fontSize: 11,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -595,7 +748,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
             children: [
               Text(
                 'RECENT ACTIVITY',
-                style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  color: kSeqOutline,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ).copyWith(letterSpacing: 0.5),
               ),
               TextButton.icon(
                 onPressed: () {
@@ -605,7 +764,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                 label: const Text('View full audit trail'),
                 style: TextButton.styleFrom(
                   foregroundColor: kSeqPrimaryContainer,
-                  textStyle: AppTypography.style(AppTextRole.button, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10, color: kSeqOnSurface),
+                  textStyle: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 11,
+                    height: 1.4,
+                    color: kSeqOnSurface,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -620,7 +785,10 @@ Widget _buildSkeletonLoader(BuildContext context) {
     );
   }
 
-  Widget _buildRecentLogRow(BuildContext context, {required AuditLogEntry entry}) {
+  Widget _buildRecentLogRow(
+    BuildContext context, {
+    required AuditLogEntry entry,
+  }) {
     final width = MediaQuery.sizeOf(context).width;
     final isDesktop = width >= 720;
 
@@ -638,9 +806,7 @@ Widget _buildSkeletonLoader(BuildContext context) {
       decoration: BoxDecoration(
         color: kSeqSurfaceContainerLowest,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: kSeqOutlineVariant.withValues(alpha: 0.35),
-        ),
+        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35)),
       ),
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(
@@ -650,7 +816,10 @@ Widget _buildSkeletonLoader(BuildContext context) {
             Container(width: 3.5, color: actionColor),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 child: isDesktop
                     ? Row(
                         children: [
@@ -661,13 +830,25 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               children: [
                                 Text(
                                   entry.action,
-                                  style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                                  style: AppTypography.style(
+                                    AppTextRole.bodyEmphasis,
+                                    color: kSeqOnSurface,
+                                    fontSize: 14,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 Text(
                                   '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kSeqOnSurfaceVariant),
+                                  style: AppTypography.style(
+                                    AppTextRole.caption,
+                                    fontSize: 11,
+                                    color: kSeqOnSurfaceVariant,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ],
                             ),
@@ -677,7 +858,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                             flex: 2,
                             child: Text(
                               entry.actorEmail ?? 'System',
-                              style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                color: kSeqOnSurface,
+                                fontSize: 13,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -685,7 +872,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                           const SizedBox(width: 12),
                           Text(
                             _formatDateTime(entry.createdAt),
-                            style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              color: kSeqOutline,
+                              fontSize: 11,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       )
@@ -694,12 +887,24 @@ Widget _buildSkeletonLoader(BuildContext context) {
                         children: [
                           Text(
                             entry.action,
-                            style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                            style: AppTypography.style(
+                              AppTextRole.bodyEmphasis,
+                              color: kSeqOnSurface,
+                              fontSize: 14,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             '${entry.targetType} · ${_truncateId(entry.targetId)}',
-                            style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kSeqOnSurfaceVariant),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              fontSize: 11,
+                              color: kSeqOnSurfaceVariant,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Row(
@@ -708,7 +913,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               Expanded(
                                 child: Text(
                                   entry.actorEmail ?? 'System',
-                                  style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                                  style: AppTypography.style(
+                                    AppTextRole.caption,
+                                    color: kSeqOnSurface,
+                                    fontSize: 13,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -716,7 +927,13 @@ Widget _buildSkeletonLoader(BuildContext context) {
                               const SizedBox(width: 8),
                               Text(
                                 _formatDateTime(entry.createdAt),
-                                style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                                style: AppTypography.style(
+                                  AppTextRole.caption,
+                                  color: kSeqOutline,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),

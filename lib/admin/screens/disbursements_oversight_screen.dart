@@ -1,3 +1,4 @@
+import 'package:scholaris/shared/theme/app_theme.dart' show kTextSupporting;
 // lib/admin/screens/disbursements_oversight_screen.dart
 //
 // Admin Console: Disbursements Oversight (Screen 7)
@@ -111,54 +112,58 @@ class DisbursementRecord {
 
 final adminDisbursementsProvider =
     FutureProvider.autoDispose<List<DisbursementRecord>>((ref) async {
-  final supabase = Supabase.instance.client;
+      final supabase = Supabase.instance.client;
 
-  // Step 1: Fetch disbursements with embedded scholarships join
-  final response = await supabase
-      .from('disbursements')
-      .select('*, scholarships:scholarship_id(id, title)')
-      .order('created_at', ascending: false);
+      // Step 1: Fetch disbursements with embedded scholarships join
+      final response = await supabase
+          .from('disbursements')
+          .select('*, scholarships:scholarship_id(id, title)')
+          .order('created_at', ascending: false);
 
-  final rawList = response as List<dynamic>;
-  if (rawList.isEmpty) return <DisbursementRecord>[];
+      final rawList = response as List<dynamic>;
+      if (rawList.isEmpty) return <DisbursementRecord>[];
 
-  // Step 2: Two-step fetch for recipient profiles & released_by profiles
-  final userIds = <String>{};
-  for (final row in rawList) {
-    final map = row as Map<String, dynamic>;
-    final rId = map['recipient_id'] as String?;
-    if (rId != null && rId.isNotEmpty) userIds.add(rId);
-    final relBy = map['released_by'] as String?;
-    if (relBy != null && relBy.isNotEmpty) userIds.add(relBy);
-  }
+      // Step 2: Two-step fetch for recipient profiles & released_by profiles
+      final userIds = <String>{};
+      for (final row in rawList) {
+        final map = row as Map<String, dynamic>;
+        final rId = map['recipient_id'] as String?;
+        if (rId != null && rId.isNotEmpty) userIds.add(rId);
+        final relBy = map['released_by'] as String?;
+        if (relBy != null && relBy.isNotEmpty) userIds.add(relBy);
+      }
 
-  final profilesMap = <String, Map<String, dynamic>>{};
-  if (userIds.isNotEmpty) {
-    final profilesRes = await supabase
-        .from('profiles')
-        .select('id, full_name, email')
-        .filter('id', 'in', userIds.toList());
-    for (final p in (profilesRes as List<dynamic>)) {
-      final pMap = p as Map<String, dynamic>;
-      profilesMap[pMap['id'] as String] = pMap;
-    }
-  }
+      final profilesMap = <String, Map<String, dynamic>>{};
+      if (userIds.isNotEmpty) {
+        final profilesRes = await supabase
+            .from('profiles')
+            .select('id, full_name, email')
+            .filter('id', 'in', userIds.toList());
+        for (final p in (profilesRes as List<dynamic>)) {
+          final pMap = p as Map<String, dynamic>;
+          profilesMap[pMap['id'] as String] = pMap;
+        }
+      }
 
-  return rawList.map((row) {
-    final map = row as Map<String, dynamic>;
-    final recipientId = map['recipient_id'] as String?;
-    final releasedById = map['released_by'] as String?;
-    return DisbursementRecord.fromMap(
-      map,
-      recipientProfile: recipientId != null ? profilesMap[recipientId] : null,
-      releasedByProfile:
-          releasedById != null ? profilesMap[releasedById] : null,
-    );
-  }).toList();
-});
+      return rawList.map((row) {
+        final map = row as Map<String, dynamic>;
+        final recipientId = map['recipient_id'] as String?;
+        final releasedById = map['released_by'] as String?;
+        return DisbursementRecord.fromMap(
+          map,
+          recipientProfile: recipientId != null
+              ? profilesMap[recipientId]
+              : null,
+          releasedByProfile: releasedById != null
+              ? profilesMap[releasedById]
+              : null,
+        );
+      }).toList();
+    });
 
-final adminDisbursementFilterProvider =
-    StateProvider.autoDispose<String>((ref) => 'all');
+final adminDisbursementFilterProvider = StateProvider.autoDispose<String>(
+  (ref) => 'all',
+);
 
 // =============================================================================
 // 3. Screen Widget
@@ -191,8 +196,18 @@ class _DisbursementsOversightScreenState
   String _formatDate(DateTime? dt) {
     if (dt == null) return '—';
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
@@ -258,7 +273,9 @@ class _DisbursementsOversightScreenState
               ref.invalidate(adminDisbursementsProvider);
             },
             child: SingleChildScrollView(
-              physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+              physics: const AppleBouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,7 +321,7 @@ class _DisbursementsOversightScreenState
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
           decoration: BoxDecoration(
-            color: kSeqPrimaryFixed,
+            color: kWorkspaceSubtle,
             borderRadius: BorderRadius.circular(999),
           ),
           child: Row(
@@ -321,7 +338,13 @@ class _DisbursementsOversightScreenState
               const SizedBox(width: 5),
               Text(
                 'Live data',
-                style: AppTypography.style(AppTextRole.badge, color: kSeqOnPrimaryFixedVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: kWorkspaceInk,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -329,12 +352,18 @@ class _DisbursementsOversightScreenState
         const SizedBox(height: 8),
         Text(
           'Disbursements Oversight',
-          style: AppTypography.style(AppTextRole.screenTitle, color: kSeqOnSurface, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32),
+          style: seqPageTitle(context, color: kSeqOnSurface),
         ),
         const SizedBox(height: 4),
         Text(
           '$totalCount disbursements on platform',
-          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            color: kSeqOnSurfaceVariant,
+            fontSize: 14,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     );
@@ -374,19 +403,22 @@ class _DisbursementsOversightScreenState
                 label: Text('$label ($count)'),
                 selected: isSelected,
                 onSelected: (_) {
-                  ref
-                      .read(adminDisbursementFilterProvider.notifier)
-                      .state = key;
+                  ref.read(adminDisbursementFilterProvider.notifier).state =
+                      key;
                 },
                 backgroundColor: kSeqSurfaceContainerLow,
-                selectedColor: kSeqPrimaryContainer,
-                labelStyle: AppTypography.style(AppTextRole.navigation, color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                selectedColor: kWorkspaceSelected,
+                labelStyle: AppTypography.style(
+                  AppTextRole.label,
+                  color: isSelected ? kSeqOnPrimary : kSeqOnSurfaceVariant,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
-                    color: isSelected
-                        ? kSeqPrimaryContainer
-                        : kSeqOutlineVariant.withValues(alpha: 0.35),
+                    color: isSelected ? kWorkspaceSelected : kWorkspaceBorder,
                   ),
                 ),
                 showCheckmark: false,
@@ -426,14 +458,26 @@ class _DisbursementsOversightScreenState
           const SizedBox(height: 18),
           Text(
             'No disbursements yet',
-            style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              color: kSeqOnSurface,
+              fontSize: 17,
+              height: 1.25,
+              letterSpacing: -.15,
+            ),
           ),
           const SizedBox(height: 8),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: Text(
               'Disbursements appear here once authorized and created from an approved scholarship application.',
-              style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+              style: AppTypography.style(
+                AppTextRole.body,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 14,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -452,7 +496,8 @@ class _DisbursementsOversightScreenState
     final amountStr = _formatCurrency(record.amount);
     final dateStr = _formatDate(record.createdAt);
     final paymentMethodStr = _formatPaymentMethod(record.paymentMethod);
-    final refStr = record.referenceNumber != null &&
+    final refStr =
+        record.referenceNumber != null &&
             record.referenceNumber!.trim().isNotEmpty
         ? record.referenceNumber!
         : '—';
@@ -477,14 +522,26 @@ class _DisbursementsOversightScreenState
                       children: [
                         Text(
                           recipient,
-                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+                          style: AppTypography.style(
+                            AppTextRole.cardTitle,
+                            fontSize: 17,
+                            height: 1.25,
+                            color: kSeqOnSurface,
+                            letterSpacing: -.15,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 2),
                         Text(
                           scholarship,
-                          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                          style: AppTypography.style(
+                            AppTextRole.subtitle,
+                            color: kSeqOnSurfaceVariant,
+                            fontSize: 13,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -496,7 +553,10 @@ class _DisbursementsOversightScreenState
                 ],
               ),
               const SizedBox(height: 12),
-              Divider(height: 1, color: kSeqOutlineVariant.withValues(alpha: 0.2)),
+              Divider(
+                height: 1,
+                color: kSeqOutlineVariant.withValues(alpha: 0.2),
+              ),
               const SizedBox(height: 10),
               Row(
                 children: [
@@ -506,11 +566,25 @@ class _DisbursementsOversightScreenState
                       children: [
                         Text(
                           'AMOUNT',
-                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            color: kSeqOutline,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         Text(
                           amountStr,
-                          style: seqTabularFigures(AppTypography.style(AppTextRole.metric, color: kSeqPrimary, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19)),
+                          style: seqTabularFigures(
+                            AppTypography.style(
+                              AppTextRole.metric,
+                              color: kSeqPrimary,
+                              fontSize: 17,
+                              height: 1.25,
+                              letterSpacing: -.15,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -521,11 +595,23 @@ class _DisbursementsOversightScreenState
                       children: [
                         Text(
                           'METHOD',
-                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            color: kSeqOutline,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         Text(
                           paymentMethodStr,
-                          style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, height: 16 / 12, letterSpacing: 0, color: kSeqOnSurface),
+                          style: AppTypography.style(
+                            AppTextRole.bodyEmphasis,
+                            fontSize: 13,
+                            height: 1.4,
+                            color: kTextSupporting,
+                            letterSpacing: 0,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -538,13 +624,25 @@ class _DisbursementsOversightScreenState
                       children: [
                         Text(
                           'REF NO.',
-                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            color: kSeqOutline,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         refStr != '—'
                             ? adminIdPill(refStr)
                             : Text(
                                 refStr,
-                                style: AppTypography.style(AppTextRole.caption, fontSize: 12, height: 16 / 12, letterSpacing: 0, color: kSeqOnSurface),
+                                style: AppTypography.style(
+                                  AppTextRole.caption,
+                                  fontSize: 13,
+                                  height: 1.4,
+                                  color: kTextSupporting,
+                                  letterSpacing: 0,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -553,7 +651,15 @@ class _DisbursementsOversightScreenState
                   ),
                   Text(
                     dateStr,
-                    style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                    style: seqTabularFigures(
+                      AppTypography.style(
+                        AppTextRole.caption,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -622,7 +728,13 @@ class _DisbursementsOversightScreenState
           const SizedBox(width: 5),
           Text(
             label,
-            style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+            style: AppTypography.style(
+              AppTextRole.badge,
+              color: fg,
+              fontSize: 11,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ],
       ),
@@ -630,7 +742,10 @@ class _DisbursementsOversightScreenState
   }
 
   // --- Detail Drawer / Dialog ---
-  void _showDisbursementDetail(BuildContext context, DisbursementRecord record) {
+  void _showDisbursementDetail(
+    BuildContext context,
+    DisbursementRecord record,
+  ) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
     final recipient = record.recipientName ?? 'Name not set';
     final scholarship = record.scholarshipTitle ?? 'General Bursary';
@@ -658,7 +773,13 @@ class _DisbursementsOversightScreenState
             Expanded(
               child: Text(
                 'Disbursement Details',
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 17,
+                  height: 1.25,
+                  color: kSeqOnSurface,
+                  letterSpacing: -.15,
+                ),
               ),
             ),
             _buildStatusChip(record.status),
@@ -680,23 +801,24 @@ class _DisbursementsOversightScreenState
                   'Payment Method',
                   _formatPaymentMethod(record.paymentMethod),
                 ),
-                _detailRow(
-                  'Reference Number',
-                  record.referenceNumber ?? '—',
-                ),
+                _detailRow('Reference Number', record.referenceNumber ?? '—'),
                 _detailRow('Created At', dateStr),
                 _detailRow('Released At', releasedAtStr),
                 _detailRow('Released By', releasedByStr),
                 _detailRow('Disbursement ID', record.id),
                 _detailRow('Application ID', record.applicationId),
                 const SizedBox(height: 12),
-                Divider(
-                  color: kSeqOutlineVariant.withValues(alpha: 0.25),
-                ),
+                Divider(color: kSeqOutlineVariant.withValues(alpha: 0.25)),
                 const SizedBox(height: 8),
                 Text(
                   'INTERNAL NOTES',
-                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Container(
@@ -711,10 +833,22 @@ class _DisbursementsOversightScreenState
                   ),
                   child: Text(
                     notesStr,
-                    style: record.notes != null &&
-                            record.notes!.trim().isNotEmpty
-                        ? AppTypography.style(AppTextRole.body, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0)
-                        : AppTypography.style(AppTextRole.body, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                    style:
+                        record.notes != null && record.notes!.trim().isNotEmpty
+                        ? AppTypography.style(
+                            AppTextRole.body,
+                            color: kSeqOnSurface,
+                            fontSize: 13,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          )
+                        : AppTypography.style(
+                            AppTextRole.body,
+                            color: kSeqOutline,
+                            fontSize: 13,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                   ),
                 ),
               ],
@@ -726,7 +860,13 @@ class _DisbursementsOversightScreenState
             onPressed: () => Navigator.of(dContext).pop(),
             child: Text(
               'Close',
-              style: AppTypography.style(AppTextRole.button, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -736,7 +876,8 @@ class _DisbursementsOversightScreenState
 
   Widget _detailRow(String label, String value) {
     final lower = label.toLowerCase();
-    final isMono = lower.contains('id') || lower.contains('ref') || lower.contains('date');
+    final isMono =
+        lower.contains('id') || lower.contains('ref') || lower.contains('date');
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -746,16 +887,33 @@ class _DisbursementsOversightScreenState
             width: 150,
             child: Text(
               label,
-              style:
-                  AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
           Expanded(
             child: Text(
               value,
               style: isMono
-                  ? AppTypography.style(AppTextRole.caption, fontSize: 12, color: kSeqOnSurface)
-                  : AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                  ? AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 12,
+                      color: kSeqOnSurface,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    )
+                  : AppTypography.style(
+                      AppTextRole.body,
+                      color: kSeqOnSurface,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
             ),
           ),
         ],
@@ -788,10 +946,7 @@ class _DisbursementsOversightScreenState
             ),
           ),
           const SizedBox(height: 24),
-          Container(
-            height: 120,
-            decoration: kAdminCardDecoration,
-          ),
+          Container(height: 120, decoration: kAdminCardDecoration),
         ],
       ),
     );

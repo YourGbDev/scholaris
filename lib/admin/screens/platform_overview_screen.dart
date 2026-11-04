@@ -215,7 +215,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.8),
+      style: AppTypography.style(
+        AppTextRole.sectionTitle,
+        color: kSeqOutline,
+        fontSize: 11,
+        height: 1.4,
+        letterSpacing: 0,
+      ).copyWith(letterSpacing: 0.8),
     );
   }
 
@@ -246,7 +252,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
               const SizedBox(width: 6),
               Text(
                 'SUPER ADMIN',
-                style: AppTypography.style(AppTextRole.badge, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: kSeqOnSurfaceVariant,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -256,14 +268,20 @@ class PlatformOverviewScreen extends ConsumerWidget {
         // Title
         Text(
           'Platform overview',
-          style: AppTypography.style(AppTextRole.screenTitle, color: kSeqOnSurface, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32),
+          style: seqPageTitle(context, color: kSeqOnSurface),
         ),
         const SizedBox(height: 4),
 
         // Subtitle
         Text(
           'Provider approvals, student safety and platform oversight.',
-          style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            color: kSeqOnSurfaceVariant,
+            fontSize: 14,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     );
@@ -281,8 +299,8 @@ class PlatformOverviewScreen extends ConsumerWidget {
         label: 'REGISTERED USERS',
         targetValue: data.registeredUsers,
         icon: Icons.people_alt_outlined,
-        accentColor: kSeqPrimaryContainer,
-        containerBg: kSeqPrimaryFixed.withValues(alpha: 0.4),
+        accentColor: kSeqOnSurfaceVariant,
+        containerBg: kWorkspaceSubtle,
         subtitle: 'Registered platform accounts',
         isCurrency: false,
       ),
@@ -290,8 +308,8 @@ class PlatformOverviewScreen extends ConsumerWidget {
         label: 'LISTED SCHOLARSHIPS',
         targetValue: data.activeScholarships,
         icon: Icons.school_outlined,
-        accentColor: kSeqSecondary,
-        containerBg: kSeqSecondaryFixed.withValues(alpha: 0.4),
+        accentColor: kSeqOnSurfaceVariant,
+        containerBg: kWorkspaceSubtle,
         subtitle: 'All program records, including closed listings',
         isCurrency: false,
       ),
@@ -299,8 +317,8 @@ class PlatformOverviewScreen extends ConsumerWidget {
         label: 'LISTED AWARD VALUE',
         targetValue: data.totalScholarshipValue.round(),
         icon: Icons.payments_outlined,
-        accentColor: const Color(0xFF1B5E20),
-        containerBg: const Color(0xFFD4EBD9),
+        accentColor: kSeqOnSurfaceVariant,
+        containerBg: kWorkspaceSubtle,
         subtitle: 'Sum of listed amounts; not funding held or money sent',
         isCurrency: true,
       ),
@@ -350,7 +368,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
               Expanded(
                 child: Text(
                   item.label,
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.6),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ).copyWith(letterSpacing: 0.6),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -375,7 +399,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
                     Text(
                       '₱',
                       style: seqTabularFigures(
-                        AppTypography.style(AppTextRole.metric, fontSize: 26, color: kSeqOnSurface),
+                        AppTypography.style(
+                          AppTextRole.metric,
+                          fontSize: 20,
+                          color: kSeqOnSurface,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 2),
@@ -384,7 +414,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
                         targetValue: item.targetValue,
                         duration: const Duration(milliseconds: 800),
                         style: seqTabularFigures(
-                          AppTypography.style(AppTextRole.metric, fontSize: 36, height: 1.0, color: kSeqOnSurface, letterSpacing: -0.5),
+                          AppTypography.style(
+                            AppTextRole.metric,
+                            fontSize: 28,
+                            height: 1.0,
+                            color: kSeqOnSurface,
+                            letterSpacing: -0.5,
+                          ),
                         ),
                       ),
                     ),
@@ -394,13 +430,25 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   targetValue: item.targetValue,
                   duration: const Duration(milliseconds: 800),
                   style: seqTabularFigures(
-                    AppTypography.style(AppTextRole.metric, fontSize: 38, height: 1.0, color: kSeqOnSurface, letterSpacing: -0.5),
+                    AppTypography.style(
+                      AppTextRole.metric,
+                      fontSize: 28,
+                      height: 1.0,
+                      color: kSeqOnSurface,
+                      letterSpacing: -0.5,
+                    ),
                   ),
                 ),
           const SizedBox(height: 10),
           Text(
             item.subtitle,
-            style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              color: kSeqOnSurfaceVariant,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -421,16 +469,16 @@ class PlatformOverviewScreen extends ConsumerWidget {
         label: 'APPLICATIONS',
         count: data.applications,
         icon: Icons.assignment_outlined,
-        accentColor: kSeqTertiaryContainer,
-        containerBg: kSeqTertiaryFixed.withValues(alpha: 0.4),
+        accentColor: kSeqOnSurfaceVariant,
+        containerBg: kWorkspaceSubtle,
         subtitle: 'Submitted for review across all grants',
       ),
       _SecondaryCardItem(
         label: 'PROVIDER VERIFICATIONS',
         count: data.providerVerifications,
         icon: Icons.verified_user_outlined,
-        accentColor: const Color(0xFF2E6B4E),
-        containerBg: const Color(0xFFD4EBD9),
+        accentColor: kSeqOnSurfaceVariant,
+        containerBg: kWorkspaceSubtle,
         subtitle: 'Organization and individual submissions across all statuses',
       ),
     ];
@@ -491,7 +539,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
               children: [
                 Text(
                   item.label,
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.6),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ).copyWith(letterSpacing: 0.6),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -500,13 +554,25 @@ class PlatformOverviewScreen extends ConsumerWidget {
                   targetValue: item.count,
                   duration: const Duration(milliseconds: 800),
                   style: seqTabularFigures(
-                    AppTypography.style(AppTextRole.metric, fontSize: 28, height: 1.1, color: kSeqOnSurface),
+                    AppTypography.style(
+                      AppTextRole.metric,
+                      fontSize: 28,
+                      height: 1.1,
+                      color: kSeqOnSurface,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   item.subtitle,
-                  style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                  style: AppTypography.style(
+                    AppTextRole.subtitle,
+                    color: kSeqOnSurfaceVariant,
+                    fontSize: 13,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -530,22 +596,22 @@ class PlatformOverviewScreen extends ConsumerWidget {
         label: 'AUDIT EVENTS',
         count: data.auditEvents,
         icon: Icons.history_rounded,
-        accentColor: const Color(0xFF6B4C1B),
-        containerBg: const Color(0xFFF7E6CC),
+        accentColor: kSeqOnSurfaceVariant,
+        containerBg: kWorkspaceSubtle,
       ),
       _SystemCardItem(
         label: 'LOGIN ATTEMPTS',
         count: data.loginAttempts,
         icon: Icons.login_rounded,
-        accentColor: const Color(0xFF1E5280),
-        containerBg: const Color(0xFFD1E4F5),
+        accentColor: kSeqOnSurfaceVariant,
+        containerBg: kWorkspaceSubtle,
       ),
       _SystemCardItem(
         label: 'ACTIVE BOOKMARKS',
         count: data.bookmarks,
         icon: Icons.bookmark_border_rounded,
-        accentColor: kSeqOutline,
-        containerBg: kSeqSurfaceContainerHigh,
+        accentColor: kSeqOnSurfaceVariant,
+        containerBg: kWorkspaceSubtle,
       ),
     ];
 
@@ -612,7 +678,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
               Expanded(
                 child: Text(
                   item.label,
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ).copyWith(letterSpacing: 0.5),
                 ),
               ),
             ],
@@ -622,7 +694,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
             targetValue: item.count,
             duration: const Duration(milliseconds: 800),
             style: seqTabularFigures(
-              AppTypography.style(AppTextRole.metric, fontSize: 20, color: kSeqOnSurface),
+              AppTypography.style(
+                AppTextRole.metric,
+                fontSize: 20,
+                color: kSeqOnSurface,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -647,7 +725,13 @@ class PlatformOverviewScreen extends ConsumerWidget {
           Expanded(
             child: Text(
               'Data reflects current platform state. Historical trends will appear as the platform grows.',
-              style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 13,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],

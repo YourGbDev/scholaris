@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'helpers/load_app_fonts.dart';
 // Focused tests for the shared ScholarshipCard bookmark toggle: which icon
 // renders for the saved/unsaved state, that tapping fires the toggle callback,
 // and that the touch target meets the 44x44 accessibility minimum. Also covers
@@ -6,32 +9,32 @@
 // deadline is "Closed" — never "Closing soon — Closed".
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/features/profile/models/student_profile.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 
 Map<String, dynamic> _row() => {
-      'id': 'sch-dost',
-      'title': 'DOST-SEI Undergraduate Scholarship',
-      'provider': 'Department of Science and Technology',
-      'description': 'Supports students in priority STEM programs.',
-      'min_gpa': 2.0,
-      'required_year_levels': [1, 2, 3, 4, 5],
-      'required_courses': <String>[],
-      'location_restriction': null,
-      'max_monthly_income': null,
-      'for_pwd': false,
-      'for_indigenous': false,
-      'slots': 8000,
-      'deadline': '2099-10-15',
-      'application_url': 'https://ched.gov.ph/scholarships',
-      'is_active': true,
-    };
+  'id': 'sch-dost',
+  'title': 'DOST-SEI Undergraduate Scholarship',
+  'provider': 'Department of Science and Technology',
+  'description': 'Supports students in priority STEM programs.',
+  'min_gpa': 2.0,
+  'required_year_levels': [1, 2, 3, 4, 5],
+  'required_courses': <String>[],
+  'location_restriction': null,
+  'max_monthly_income': null,
+  'for_pwd': false,
+  'for_indigenous': false,
+  'slots': 8000,
+  'deadline': '2099-10-15',
+  'application_url': 'https://ched.gov.ph/scholarships',
+  'is_active': true,
+};
 
 Scholarship _scholarship({String? deadline}) {
   final row = {..._row()};
@@ -43,136 +46,398 @@ Widget _wrap({required ScholarshipCard card}) =>
     MaterialApp(home: Scaffold(body: card));
 
 void main() {
-  testWidgets('deadline and Applied remain adjacent on a phone with a bookmark', (tester) async {
-    final fonts = FontLoader('Inter')
-      ..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/inter/Inter-SemiBold.ttf'))
-      ..addFont(rootBundle.load('assets/fonts/inter/Inter-Bold.ttf'));
-    await fonts.load();
-    tester.view.physicalSize = const Size(390, 1100);
+  testWidgets('pending removal immediately shows an unsaved bookmark', (
+    tester,
+  ) async {
+    final pending = Completer<void>();
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          isBookmarked: true,
+          onToggleBookmark: () => pending.future,
+        ),
+      ),
+    );
+    await tester.tap(find.byTooltip('Remove from saved'));
+    await tester.pump();
+    expect(find.byTooltip('Save this scholarship'), findsOneWidget);
+    pending.complete();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('failed save restores the unsaved bookmark', (tester) async {
+    final pending = Completer<void>();
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          onToggleBookmark: () => pending.future,
+        ),
+      ),
+    );
+    await tester.tap(find.byTooltip('Save this scholarship'));
+    await tester.pump();
+    expect(find.byTooltip('Remove from saved'), findsOneWidget);
+    pending.completeError(Exception('offline'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('Save this scholarship'), findsOneWidget);
+  });
+
+  testWidgets('large text stacks card actions without shrinking their labels', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 1100);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(MaterialApp(home: Scaffold(body: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: ScholarshipCard(scholarship: _scholarship(deadline: '2099-12-18'),
-        matchPercentage: 98, isApplied: true, onToggleBookmark: () {}),
-    ))));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(2)),
+          child: Scaffold(
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: ScholarshipCard(
+                  scholarship: _scholarship(),
+                  matchPercentage: 98,
+                  studentProfile: const StudentProfile(
+                    id: 'student',
+                    fullName: 'Student',
+                    gpa: 3,
+                    yearLevel: 1,
+                    setupComplete: true,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
-    final deadline = tester.getRect(find.text('Closes Dec 18'));
-    final applied = tester.getRect(find.text('Applied'));
-    expect(applied.center.dy, closeTo(deadline.center.dy, 2));
-    expect(applied.left, greaterThan(deadline.right));
+    final apply = find.text('Apply Now');
+    expect(
+      find.ancestor(of: apply, matching: find.byType(FittedBox)),
+      findsNothing,
+    );
+    expect(
+      tester.getTopLeft(apply).dy,
+      greaterThan(tester.getBottomLeft(find.text('View Details')).dy),
+    );
     expect(tester.takeException(), isNull);
   });
-  testWidgets('award sits beside title when wide and below on a narrow screen', (tester) async {
-    const profile = StudentProfile(id: 'student', fullName: 'Student', gpa: 3.0, yearLevel: 1, setupComplete: true);
-    Future<void> renderAt(double width) async {
-      tester.view.physicalSize = Size(width, 900);
-      tester.view.devicePixelRatio = 1;
-      await tester.pumpWidget(_wrap(card: ScholarshipCard(scholarship: _scholarship(), studentProfile: profile)));
+  testWidgets(
+    'card title and supporting text keep the approved visual hierarchy',
+    (tester) async {
+      await tester.pumpWidget(
+        _wrap(
+          card: ScholarshipCard(
+            scholarship: _scholarship(),
+            matchPercentage: 98,
+            isApplied: true,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
-    }
-    addTearDown(tester.view.reset);
-    await renderAt(600);
-    expect(tester.getTopLeft(find.text('₱50,000')).dx, greaterThan(tester.getTopLeft(find.text('DOST-SEI Undergraduate Scholarship')).dx + 100));
-    expect(find.text('Apply Now'), findsOneWidget);
-    await renderAt(320);
-    expect(tester.getTopLeft(find.text('₱50,000')).dy, greaterThan(tester.getBottomLeft(find.text('DOST-SEI Undergraduate Scholarship')).dy));
-    expect(tester.takeException(), isNull);
-  });
-  testWidgets('Apply Now carries the application intent, View Details does not', (tester) async {
-    final scholarship = _scholarship();
-    final router = GoRouter(routes: [
-      GoRoute(path: '/', builder: (_, _) => Scaffold(body: ScholarshipCard(
-        scholarship: scholarship,
-        studentProfile: const StudentProfile(id: 'student', fullName: 'Student', gpa: 3.0, yearLevel: 1, setupComplete: true),
-      ))),
-      GoRoute(path: '/scholarship/:id', builder: (_, state) => Scaffold(body: Text(state.uri.queryParameters['apply'] ?? 'details'))),
-    ]);
-    addTearDown(router.dispose);
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-    await tester.tap(find.text('Apply Now'));
-    await tester.pumpAndSettle();
-    expect(find.text('1'), findsOneWidget);
-    router.pop();
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('View Details'));
-    await tester.pumpAndSettle();
-    expect(find.text('details'), findsOneWidget);
-  });
+      final title = tester.widget<Text>(find.text(_scholarship().title));
+      final provider = tester.widget<Text>(
+        find.text('Department of Science and Technology'),
+      );
+      expect(title.style?.fontSize, 15);
+      expect(title.style?.fontWeight, FontWeight.w600);
+      expect(provider.style?.fontSize, 13);
+      expect(provider.style?.fontWeight, FontWeight.w500);
+      expect(provider.style?.color, const Color(0xFF404942));
+      final fit = tester.widget<Text>(find.text('Check eligibility'));
+      final attribute = tester.widget<Text>(find.text('Tuition + Allowance'));
+      expect(fit.style?.fontSize, 12);
+      expect(fit.style?.fontWeight, FontWeight.w500);
+      expect(attribute.style?.fontWeight, FontWeight.w500);
+      expect(attribute.style?.letterSpacing, -.1);
+      final award = tester.widget<Text>(find.textContaining('₱50,000'));
+      final suffix = (award.textSpan! as TextSpan).children!.last as TextSpan;
+      expect(award.style?.fontWeight, FontWeight.w700);
+      expect(suffix.style?.fontWeight, FontWeight.w400);
+      expect(suffix.style?.color, kTextSupporting);
+    },
+  );
+  testWidgets(
+    'deadline and Applied remain adjacent on a phone with a bookmark',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 1100);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: ScholarshipCard(
+                scholarship: _scholarship(deadline: '2099-12-18'),
+                matchPercentage: 98,
+                isApplied: true,
+                onToggleBookmark: () {},
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final deadline = tester.getRect(find.text('Closes Dec 18'));
+      final applied = tester.getRect(find.text('Applied'));
+      expect(applied.center.dy, closeTo(deadline.center.dy, 2));
+      expect(applied.left, greaterThan(deadline.right));
+      expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets(
+    'award sits beside title when wide and below on a narrow screen',
+    (tester) async {
+      const profile = StudentProfile(
+        id: 'student',
+        fullName: 'Student',
+        gpa: 3.0,
+        yearLevel: 1,
+        setupComplete: true,
+      );
+      Future<void> renderAt(double width) async {
+        tester.view.physicalSize = Size(width, 900);
+        tester.view.devicePixelRatio = 1;
+        await tester.pumpWidget(
+          _wrap(
+            card: ScholarshipCard(
+              scholarship: _scholarship(),
+              studentProfile: profile,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      addTearDown(tester.view.reset);
+      await renderAt(600);
+      expect(
+        tester.getTopLeft(find.textContaining('₱50,000')).dx,
+        greaterThan(
+          tester
+                  .getTopLeft(find.text('DOST-SEI Undergraduate Scholarship'))
+                  .dx +
+              100,
+        ),
+      );
+      expect(find.text('Apply Now'), findsOneWidget);
+      await renderAt(320);
+      expect(
+        tester.getTopLeft(find.textContaining('₱50,000')).dy,
+        greaterThan(
+          tester
+              .getBottomLeft(find.text('DOST-SEI Undergraduate Scholarship'))
+              .dy,
+        ),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+  testWidgets(
+    'Apply Now carries the application intent, View Details does not',
+    (tester) async {
+      final scholarship = _scholarship();
+      final router = GoRouter(
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, _) => Scaffold(
+              body: ScholarshipCard(
+                scholarship: scholarship,
+                studentProfile: const StudentProfile(
+                  id: 'student',
+                  fullName: 'Student',
+                  gpa: 3.0,
+                  yearLevel: 1,
+                  setupComplete: true,
+                ),
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/scholarship/:id',
+            builder: (_, state) => Scaffold(
+              body: Text(state.uri.queryParameters['apply'] ?? 'details'),
+            ),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.tap(find.text('Apply Now'));
+      await tester.pumpAndSettle();
+      expect(find.text('1'), findsOneWidget);
+      router.pop();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('View Details'));
+      await tester.pumpAndSettle();
+      expect(find.text('details'), findsOneWidget);
+    },
+  );
   testWidgets('only a qualifying high match offers Apply Now', (tester) async {
-    const qualified = StudentProfile(id: 'student', fullName: 'Student', gpa: 3.0, yearLevel: 1, setupComplete: true);
-    const unqualified = StudentProfile(id: 'student', fullName: 'Student', gpa: 1.0, yearLevel: 1, setupComplete: true);
-    await tester.pumpWidget(_wrap(card: ScholarshipCard(scholarship: _scholarship(), studentProfile: qualified, matchPercentage: 98)));
+    const qualified = StudentProfile(
+      id: 'student',
+      fullName: 'Student',
+      gpa: 3.0,
+      yearLevel: 1,
+      setupComplete: true,
+    );
+    const unqualified = StudentProfile(
+      id: 'student',
+      fullName: 'Student',
+      gpa: 1.0,
+      yearLevel: 1,
+      setupComplete: true,
+    );
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          studentProfile: qualified,
+          matchPercentage: 98,
+        ),
+      ),
+    );
     expect(find.text('Apply Now'), findsOneWidget);
-    expect(find.text('98% Fit'), findsOneWidget);
-    await tester.pumpWidget(_wrap(card: ScholarshipCard(scholarship: _scholarship(), studentProfile: unqualified, matchPercentage: 98)));
+    expect(find.text('Profile match'), findsOneWidget);
+    expect(find.text('98% Fit'), findsNothing);
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          studentProfile: unqualified,
+          matchPercentage: 98,
+        ),
+      ),
+    );
     expect(find.text('Apply Now'), findsNothing);
-    expect(find.text('69% Fit'), findsOneWidget);
+    expect(find.text('Review criteria'), findsOneWidget);
     expect(find.text('View Details'), findsOneWidget);
   });
-  testWidgets('a closed scholarship does not offer quick apply', (tester) async {
-    await tester.pumpWidget(_wrap(card: ScholarshipCard(
-      scholarship: _scholarship(deadline: '2020-01-01'), matchPercentage: 98,
-      studentProfile: const StudentProfile(id: 'student', fullName: 'Student', gpa: 3.0, yearLevel: 1, setupComplete: true),
-    )));
+  testWidgets('a closed scholarship does not offer quick apply', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(deadline: '2020-01-01'),
+          matchPercentage: 98,
+          studentProfile: const StudentProfile(
+            id: 'student',
+            fullName: 'Student',
+            gpa: 3.0,
+            yearLevel: 1,
+            setupComplete: true,
+          ),
+        ),
+      ),
+    );
     expect(find.text('Closed'), findsOneWidget);
     expect(find.text('Apply Now'), findsNothing);
     expect(find.text('View Details'), findsOneWidget);
   });
-  testWidgets('an applied scholarship does not offer quick apply', (tester) async {
+  testWidgets('an applied scholarship does not offer quick apply', (
+    tester,
+  ) async {
     var appliedAgain = false;
-    await tester.pumpWidget(_wrap(card: ScholarshipCard(
-      scholarship: _scholarship(), matchPercentage: 98, isApplied: true,
-      studentProfile: const StudentProfile(id: 'student', fullName: 'Student', gpa: 3.0, yearLevel: 1, setupComplete: true),
-      onQuickApply: () => appliedAgain = true,
-    )));
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          matchPercentage: 98,
+          isApplied: true,
+          studentProfile: const StudentProfile(
+            id: 'student',
+            fullName: 'Student',
+            gpa: 3.0,
+            yearLevel: 1,
+            setupComplete: true,
+          ),
+          onQuickApply: () => appliedAgain = true,
+        ),
+      ),
+    );
     expect(find.text('Applied'), findsOneWidget);
     expect(find.text('Apply Now'), findsNothing);
     expect(find.text('View Details'), findsOneWidget);
     expect(appliedAgain, isFalse);
   });
-  testWidgets('award amount stays readable on narrow enlarged-text cards', (tester) async {
+  testWidgets('award amount stays readable on narrow enlarged-text cards', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(320, 700);
     tester.view.devicePixelRatio = 1;
     tester.platformDispatcher.textScaleFactorTestValue = 1.4;
     addTearDown(tester.view.reset);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    await tester.pumpWidget(MaterialApp(home: Scaffold(body: SingleChildScrollView(
-      child: ScholarshipCard(scholarship: _scholarship()),
-    ))));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: ScholarshipCard(scholarship: _scholarship()),
+          ),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
-    final amount = find.text('₱50,000');
-    expect(tester.getBottomRight(amount).dy - tester.getTopLeft(amount).dy, greaterThanOrEqualTo(18));
+    final amount = find.textContaining('₱50,000');
+    expect(
+      tester.getBottomRight(amount).dy - tester.getTopLeft(amount).dy,
+      greaterThanOrEqualTo(18),
+    );
     expect(tester.takeException(), isNull);
   });
-  testWidgets('card title follows badges closely without shrinking bookmark target', (tester) async {
-    tester.view.physicalSize = const Size(390, 900);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    final scholarship = Scholarship.fromJson(_row());
-    await tester.pumpWidget(_wrap(card: ScholarshipCard(scholarship: scholarship, onToggleBookmark: () {})));
-    await tester.pumpAndSettle();
-    final gap = tester.getTopLeft(find.text(scholarship.title)).dy - tester.getBottomRight(find.text('94% Fit')).dy;
-    expect(gap, lessThanOrEqualTo(16));
-    expect(tester.getTopLeft(find.text(scholarship.title)).dy,
-      greaterThanOrEqualTo(tester.getBottomRight(find.byType(IconButton)).dy));
-  });
-  setUpAll(() {
+  testWidgets(
+    'card title follows badges closely without shrinking bookmark target',
+    (tester) async {
+      tester.view.physicalSize = const Size(390, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final scholarship = Scholarship.fromJson(_row());
+      await tester.pumpWidget(
+        _wrap(
+          card: ScholarshipCard(
+            scholarship: scholarship,
+            onToggleBookmark: () {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final gap =
+          tester.getTopLeft(find.text(scholarship.title)).dy -
+          tester.getBottomRight(find.text('Check eligibility')).dy;
+      expect(gap, lessThanOrEqualTo(16));
+      expect(
+        tester.getTopLeft(find.text(scholarship.title)).dy,
+        greaterThanOrEqualTo(tester.getBottomRight(find.byType(IconButton)).dy),
+      );
+    },
+  );
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    await loadAppFonts();
   });
 
-  testWidgets('unsaved card shows the outline icon and tapping calls back',
-      (tester) async {
+  testWidgets('unsaved card shows the outline icon and tapping calls back', (
+    tester,
+  ) async {
     var toggled = false;
 
-    await tester.pumpWidget(_wrap(
-      card: ScholarshipCard(
-        scholarship: _scholarship(),
-        isBookmarked: false,
-        onToggleBookmark: () => toggled = true,
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          isBookmarked: false,
+          onToggleBookmark: () => toggled = true,
+        ),
       ),
-    ));
+    );
 
     expect(find.byIcon(Icons.bookmark_border_rounded), findsOneWidget);
     expect(find.byIcon(Icons.bookmark_rounded), findsNothing);
@@ -182,37 +447,43 @@ void main() {
   });
 
   testWidgets('saved card shows the filled icon', (tester) async {
-    await tester.pumpWidget(_wrap(
-      card: ScholarshipCard(
-        scholarship: _scholarship(),
-        isBookmarked: true,
-        onToggleBookmark: () {},
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          isBookmarked: true,
+          onToggleBookmark: () {},
+        ),
       ),
-    ));
+    );
 
     expect(find.byIcon(Icons.bookmark_rounded), findsOneWidget);
     expect(find.byIcon(Icons.bookmark_border_rounded), findsNothing);
   });
 
-  testWidgets('card without a toggle handler renders no bookmark control',
-      (tester) async {
-    await tester.pumpWidget(_wrap(
-      card: ScholarshipCard(scholarship: _scholarship()),
-    ));
+  testWidgets('card without a toggle handler renders no bookmark control', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(card: ScholarshipCard(scholarship: _scholarship())),
+    );
 
     expect(find.byIcon(Icons.bookmark_border_rounded), findsNothing);
     expect(find.byIcon(Icons.bookmark_rounded), findsNothing);
   });
 
-  testWidgets('bookmark control meets the 44x44 touch target minimum',
-      (tester) async {
-    await tester.pumpWidget(_wrap(
-      card: ScholarshipCard(
-        scholarship: _scholarship(),
-        isBookmarked: false,
-        onToggleBookmark: () {},
+  testWidgets('bookmark control meets the 44x44 touch target minimum', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        card: ScholarshipCard(
+          scholarship: _scholarship(),
+          isBookmarked: false,
+          onToggleBookmark: () {},
+        ),
       ),
-    ));
+    );
 
     final button = find.byType(IconButton);
     expect(button, findsOneWidget);
@@ -222,50 +493,57 @@ void main() {
     expect(size.height, greaterThanOrEqualTo(44));
   });
 
-  testWidgets('card actions provide a comfortable 44px touch target',
-      (tester) async {
-    await tester.pumpWidget(_wrap(
-      card: ScholarshipCard(scholarship: _scholarship()),
-    ));
+  testWidgets('card actions provide a comfortable 44px touch target', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(card: ScholarshipCard(scholarship: _scholarship())),
+    );
 
-    expect(tester.getSize(find.widgetWithText(TextButton, 'View Details')).height,
-        greaterThanOrEqualTo(44));
+    expect(
+      tester.getSize(find.widgetWithText(TextButton, 'View Details')).height,
+      greaterThanOrEqualTo(44),
+    );
     expect(find.text('Apply Now'), findsNothing);
   });
 
   group('applied indicator', () {
-    testWidgets('applied card shows a compact Applied indicator',
-        (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(
-          scholarship: _scholarship(),
-          isApplied: true,
+    testWidgets('applied card shows a compact Applied indicator', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          card: ScholarshipCard(scholarship: _scholarship(), isApplied: true),
         ),
-      ));
+      );
 
       expect(find.text('Applied'), findsOneWidget);
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
     });
 
-    testWidgets('non-applied card renders no Applied indicator',
-        (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(scholarship: _scholarship()),
-      ));
+    testWidgets('non-applied card renders no Applied indicator', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(card: ScholarshipCard(scholarship: _scholarship())),
+      );
 
       expect(find.text('Applied'), findsNothing);
     });
 
-    testWidgets('applied indicator coexists with the bookmark control',
-        (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(
-          scholarship: _scholarship(),
-          isApplied: true,
-          isBookmarked: true,
-          onToggleBookmark: () {},
+    testWidgets('applied indicator coexists with the bookmark control', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          card: ScholarshipCard(
+            scholarship: _scholarship(),
+            isApplied: true,
+            isBookmarked: true,
+            onToggleBookmark: () {},
+          ),
         ),
-      ));
+      );
 
       expect(find.text('Applied'), findsOneWidget);
       expect(find.byIcon(Icons.bookmark_rounded), findsOneWidget);
@@ -273,14 +551,21 @@ void main() {
   });
 
   group('deadline display', () {
-    String isoInDays(int days) =>
-        DateTime.now().add(Duration(days: days)).toIso8601String().split('T').first;
+    String isoInDays(int days) => DateTime.now()
+        .add(Duration(days: days))
+        .toIso8601String()
+        .split('T')
+        .first;
 
     testWidgets('a future deadline inside the threshold shows the urgent '
         'closing-soon label', (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(scholarship: _scholarship(deadline: isoInDays(10))),
-      ));
+      await tester.pumpWidget(
+        _wrap(
+          card: ScholarshipCard(
+            scholarship: _scholarship(deadline: isoInDays(10)),
+          ),
+        ),
+      );
 
       // 10 days out → "10 days left" on an urgent chip, never "Closed".
       expect(find.text('10 days left'), findsOneWidget);
@@ -289,9 +574,13 @@ void main() {
 
     testWidgets('a future deadline outside the threshold shows the normal '
         'deadline label', (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(scholarship: _scholarship(deadline: isoInDays(40))),
-      ));
+      await tester.pumpWidget(
+        _wrap(
+          card: ScholarshipCard(
+            scholarship: _scholarship(deadline: isoInDays(40)),
+          ),
+        ),
+      );
 
       // 40 days out → plain "Closes <Mon d>", never urgent, never "Closed".
       expect(find.text('Closed'), findsNothing);
@@ -301,9 +590,13 @@ void main() {
 
     testWidgets('an expired deadline shows Closed — never Closing soon '
         '(regression: Closing soon — Closed)', (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(scholarship: _scholarship(deadline: isoInDays(-1))),
-      ));
+      await tester.pumpWidget(
+        _wrap(
+          card: ScholarshipCard(
+            scholarship: _scholarship(deadline: isoInDays(-1)),
+          ),
+        ),
+      );
 
       expect(find.text('Closed'), findsOneWidget);
       expect(find.textContaining('Closing soon'), findsNothing);
@@ -312,26 +605,53 @@ void main() {
 
   group('Provider type color mapping', () {
     test('maps government agencies to Navy Trust', () {
-      expect(providerTypeColor('Department of Science and Technology'), const Color(0xFF1B3A5C));
-      expect(providerTypeColor('Commission on Higher Education'), const Color(0xFF1B3A5C));
-      expect(providerTypeColor('City Government of Manila'), const Color(0xFF1B3A5C));
-      expect(providerTypeColor('BARMM Ministry of Basic Education'), const Color(0xFF1B3A5C));
+      expect(
+        providerTypeColor('Department of Science and Technology'),
+        const Color(0xFF1B3A5C),
+      );
+      expect(
+        providerTypeColor('Commission on Higher Education'),
+        const Color(0xFF1B3A5C),
+      );
+      expect(
+        providerTypeColor('City Government of Manila'),
+        const Color(0xFF1B3A5C),
+      );
+      expect(
+        providerTypeColor('BARMM Ministry of Basic Education'),
+        const Color(0xFF1B3A5C),
+      );
     });
 
     test('maps NGOs and foundations to Coral Connect', () {
       expect(providerTypeColor('Ayala Foundation'), const Color(0xFFFF6F59));
-      expect(providerTypeColor('Philippine Women\'s Technology Alliance'), const Color(0xFFFF6F59));
-      expect(providerTypeColor('Philippine Nurses Association'), const Color(0xFFFF6F59));
+      expect(
+        providerTypeColor('Philippine Women\'s Technology Alliance'),
+        const Color(0xFFFF6F59),
+      );
+      expect(
+        providerTypeColor('Philippine Nurses Association'),
+        const Color(0xFFFF6F59),
+      );
     });
 
     test('maps university and academic institutions to Bridge Green', () {
-      expect(providerTypeColor('University of the Philippines'), const Color(0xFF0F4D2E));
-      expect(providerTypeColor('De La Salle College of Saint Benilde'), const Color(0xFF0F4D2E));
+      expect(
+        providerTypeColor('University of the Philippines'),
+        const Color(0xFF0F4D2E),
+      );
+      expect(
+        providerTypeColor('De La Salle College of Saint Benilde'),
+        const Color(0xFF0F4D2E),
+      );
     });
 
     test('maps private and corporate entities to Golden Opportunity', () {
       expect(providerTypeColor('BPI Bank'), const Color(0xFFF1B41E));
-      expect(providerTypeColor('San Miguel Corporation'), const Color(0xFFF1B41E));
+      expect(
+        providerTypeColor('San Miguel Corporation'),
+        const Color(0xFFF1B41E),
+      );
     });
 
     test('defaults unknown or null provider to Navy Trust', () {
@@ -340,29 +660,39 @@ void main() {
     });
 
     testWidgets('provider icon uses the provider accent color', (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(
-          scholarship: _scholarship(),
-        ),
-      ));
+      await tester.pumpWidget(
+        _wrap(card: ScholarshipCard(scholarship: _scholarship())),
+      );
 
-      final icon = tester.widget<Icon>(find.byIcon(Icons.account_balance_outlined));
+      final icon = tester.widget<Icon>(
+        find.byIcon(Icons.account_balance_outlined),
+      );
       expect(icon.color, const Color(0xFF1B3A5C));
     });
   });
 
   group('Stitch V2 Discover Card fidelity', () {
-    testWidgets('qualified high fit card shows fit and both actions', (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(
-          scholarship: _scholarship(),
-          matchPercentage: 96,
-          studentProfile: const StudentProfile(id: 'student', fullName: 'Student', gpa: 3.0, yearLevel: 1, setupComplete: true),
+    testWidgets('qualified high fit card shows fit and both actions', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          card: ScholarshipCard(
+            scholarship: _scholarship(),
+            matchPercentage: 96,
+            studentProfile: const StudentProfile(
+              id: 'student',
+              fullName: 'Student',
+              gpa: 3.0,
+              yearLevel: 1,
+              setupComplete: true,
+            ),
+          ),
         ),
-      ));
+      );
 
       // 1. Fit badge
-      expect(find.text('96% Fit'), findsOneWidget);
+      expect(find.text('Profile match'), findsOneWidget);
       expect(find.textContaining('Match'), findsNothing);
 
       // 2. Both actions are available for a qualified student.
@@ -375,24 +705,29 @@ void main() {
       expect(find.textContaining('STEM Exam Qualifier'), findsOneWidget);
     });
 
-    testWidgets('lower fit card (<90%) shows single full-width View Details button only', (tester) async {
-      await tester.pumpWidget(_wrap(
-        card: ScholarshipCard(
-          scholarship: _scholarship(),
-          matchPercentage: 88,
-        ),
-      ));
+    testWidgets(
+      'lower fit card (<90%) shows single full-width View Details button only',
+      (tester) async {
+        await tester.pumpWidget(
+          _wrap(
+            card: ScholarshipCard(
+              scholarship: _scholarship(),
+              matchPercentage: 88,
+            ),
+          ),
+        );
 
-      // 1. Fit badge
-      expect(find.text('88% Fit'), findsOneWidget);
-      expect(find.textContaining('Match'), findsNothing);
+        // 1. Fit badge
+        expect(find.text('Check eligibility'), findsOneWidget);
+        expect(find.textContaining('Match'), findsNothing);
 
-      // 2. Only View Details button present; Apply Now is omitted
-      expect(find.text('View Details'), findsOneWidget);
-      expect(find.text('Apply Now'), findsNothing);
-      expect(find.byIcon(Icons.arrow_forward_rounded), findsNothing);
+        // 2. Only View Details button present; Apply Now is omitted
+        expect(find.text('View Details'), findsOneWidget);
+        expect(find.text('Apply Now'), findsNothing);
+        expect(find.byIcon(Icons.arrow_forward_rounded), findsNothing);
 
-      expect(find.textContaining('STEM Exam Qualifier'), findsOneWidget);
-    });
+        expect(find.textContaining('STEM Exam Qualifier'), findsOneWidget);
+      },
+    );
   });
 }

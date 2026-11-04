@@ -1,4 +1,5 @@
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -93,7 +94,13 @@ class StudentActionSheet extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Quick Actions',
-                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: const Color(0xFF59635D)),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      fontSize: 13,
+                      color: const Color(0xFF59635D),
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
                 IconButton(
@@ -167,7 +174,13 @@ class StudentActionSheet extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppTypography.style(AppTextRole.button, fontSize: 16, color: kOnSurface, height: 1.25),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 15,
+                    color: kOnSurface,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),

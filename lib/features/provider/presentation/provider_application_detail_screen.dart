@@ -5,7 +5,9 @@
 
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
+
 import 'widgets/applicant_review_drawer.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/applications/models/application.dart';
@@ -65,7 +67,11 @@ class _ProviderApplicationDetailScreenState
           _isSavingRemark = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Draft remark added. Use Application Review to submit.')),
+          const SnackBar(
+            content: Text(
+              'Draft remark added. Use Application Review to submit.',
+            ),
+          ),
         );
       }
     });
@@ -76,21 +82,22 @@ class _ProviderApplicationDetailScreenState
     final incomingAppsAsync = ref.watch(incomingApplicationsProvider);
     final scholarshipsAsync = ref.watch(scholarshipsProvider);
 
-    final app = widget.initialApplication ??
+    final app =
+        widget.initialApplication ??
         incomingAppsAsync.valueOrNull?.cast<Application?>().firstWhere(
-              (a) => a?.id == widget.applicationId,
-              orElse: () => null,
-            );
+          (a) => a?.id == widget.applicationId,
+          orElse: () => null,
+        );
 
     if (app == null) {
       if (incomingAppsAsync.isLoading) {
         return const Scaffold(
-          backgroundColor: kBackground,
+          backgroundColor: Colors.white,
           body: Center(child: LoadingView()),
         );
       }
       return Scaffold(
-        backgroundColor: kBackground,
+        backgroundColor: Colors.white,
         appBar: AppBar(title: const Text('Application Review')),
         body: const Center(
           child: EmptyView(
@@ -102,18 +109,25 @@ class _ProviderApplicationDetailScreenState
       );
     }
 
-    final scholarship = widget.initialScholarship ??
+    final scholarship =
+        widget.initialScholarship ??
         scholarshipsAsync.valueOrNull?.cast<Scholarship?>().firstWhere(
-              (s) => s?.id == app.scholarshipId,
-              orElse: () => null,
-            );
+          (s) => s?.id == app.scholarshipId,
+          orElse: () => null,
+        );
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           'Application Review',
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 18, color: kPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: 18,
+            color: kPrimary,
+            height: 1.2,
+            letterSpacing: -0.15,
+          ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -136,7 +150,13 @@ class _ProviderApplicationDetailScreenState
             alignment: Alignment.center,
             child: Text(
               'DO',
-              style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.label,
+                fontSize: 12,
+                color: kPrimary,
+                height: 1.2,
+                letterSpacing: -0.15,
+              ),
             ),
           ),
         ],
@@ -149,7 +169,12 @@ class _ProviderApplicationDetailScreenState
         ),
       ),
       body: widget.initialProfile != null
-          ? _buildReviewContent(context, app, scholarship, widget.initialProfile!)
+          ? _buildReviewContent(
+              context,
+              app,
+              scholarship,
+              widget.initialProfile!,
+            )
           : FutureBuilder<ApplicantProfile?>(
               future: ref
                   .read(profileRepositoryProvider)
@@ -158,10 +183,12 @@ class _ProviderApplicationDetailScreenState
                 if (snapshot.connectionState != ConnectionState.done) {
                   return const Center(child: LoadingView());
                 }
-                final profile = snapshot.data ??
+                final profile =
+                    snapshot.data ??
                     ApplicantProfile(
                       id: app.userId,
-                      fullName: 'Applicant #${app.id.length >= 5 ? app.id.substring(0, 5).toUpperCase() : app.id}',
+                      fullName:
+                          'Applicant #${app.id.length >= 5 ? app.id.substring(0, 5).toUpperCase() : app.id}',
                       course: 'Degree Program Pending',
                       yearLevel: 1,
                       gpa: 0.0,
@@ -183,8 +210,7 @@ class _ProviderApplicationDetailScreenState
   ) {
     final refCode =
         '#SCH-2024-${app.id.hashCode.abs().toString().padLeft(4, '0').substring(0, 4)}';
-    final programTitle =
-        scholarship?.title ?? 'Scholarship Grant';
+    final programTitle = scholarship?.title ?? 'Scholarship Grant';
     final gpa = profile.gpa;
     final cutoffGpa = scholarship?.minGpa;
 
@@ -203,12 +229,21 @@ class _ProviderApplicationDetailScreenState
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.arrow_back_rounded,
-                        size: 16, color: kNavyTrust),
+                    const Icon(
+                      Icons.arrow_back_rounded,
+                      size: 16,
+                      color: kNavyTrust,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Back to Console',
-                      style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kNavyTrust, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 12,
+                        color: kNavyTrust,
+                        height: 1.2,
+                        letterSpacing: -0.15,
+                      ),
                     ),
                   ],
                 ),
@@ -222,7 +257,13 @@ class _ProviderApplicationDetailScreenState
                 ),
                 child: Text(
                   'Ref: $refCode',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 11,
+                    color: Colors.black54,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -239,20 +280,34 @@ class _ProviderApplicationDetailScreenState
                   children: [
                     Text(
                       profile.fullName,
-                      style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: Colors.black87, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.screenTitle,
+                        fontSize: 17,
+                        color: Colors.black87,
+                        height: 1.2,
+                        letterSpacing: -0.15,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       programTitle,
-                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: Colors.black54, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                      style: AppTypography.style(
+                        AppTextRole.subtitle,
+                        fontSize: 13,
+                        color: Colors.black54,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: kPrimarySoft,
                   borderRadius: BorderRadius.circular(16),
@@ -272,7 +327,13 @@ class _ProviderApplicationDetailScreenState
                     const SizedBox(width: 5),
                     Text(
                       'Insufficient Pool Data',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        fontSize: 12,
+                        color: kPrimary,
+                        height: 1.2,
+                        letterSpacing: -0.15,
+                      ),
                     ),
                   ],
                 ),
@@ -285,8 +346,7 @@ class _ProviderApplicationDetailScreenState
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: kNavyTrust,
                 borderRadius: BorderRadius.circular(8),
@@ -298,7 +358,13 @@ class _ProviderApplicationDetailScreenState
                   const SizedBox(width: 6),
                   Text(
                     'STAGE: ${ApplicationStatusUi.of(app.status).label.toUpperCase()}',
-                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: Colors.white, letterSpacing: 0.5, height: opticalLeading(11, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      fontSize: 11,
+                      color: Colors.white,
+                      letterSpacing: 0.5,
+                      height: 1.2,
+                    ),
                   ),
                 ],
               ),
@@ -325,7 +391,13 @@ class _ProviderApplicationDetailScreenState
                     profile.setupComplete
                         ? 'Profile Complete'
                         : 'Pending Setup',
-                    style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: profile.setupComplete ? kPrimary : Colors.black54, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      fontSize: 10,
+                      color: profile.setupComplete ? kPrimary : Colors.black54,
+                      height: 1.2,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                 ],
               ),
@@ -349,7 +421,13 @@ class _ProviderApplicationDetailScreenState
                           children: [
                             Text(
                               'CUMULATIVE GWA',
-                              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 10, color: Colors.black54, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.sectionTitle,
+                                fontSize: 10,
+                                color: Colors.black54,
+                                letterSpacing: 0.5,
+                                height: 1.2,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Row(
@@ -358,12 +436,24 @@ class _ProviderApplicationDetailScreenState
                               children: [
                                 Text(
                                   gpa > 0 ? gpa.toStringAsFixed(2) : 'N/A',
-                                  style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: gpa > 0 ? kPrimary : Colors.black45, letterSpacing: opticalTracking(26), height: opticalLeading(26, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.metric,
+                                    fontSize: 26,
+                                    color: gpa > 0 ? kPrimary : Colors.black45,
+                                    height: 1.2,
+                                    letterSpacing: -0.4,
+                                  ),
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
                                   '/ 1.0–5.0 Scale',
-                                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: Colors.black45, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                                  style: AppTypography.style(
+                                    AppTextRole.label,
+                                    fontSize: 12,
+                                    color: Colors.black45,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ],
                             ),
@@ -379,12 +469,23 @@ class _ProviderApplicationDetailScreenState
                                 Text(
                                   gpa > 0 && cutoffGpa != null
                                       ? (gpa <= cutoffGpa
-                                          ? 'Meets ${cutoffGpa.toStringAsFixed(2)} Cutoff'
-                                          : 'Below ${cutoffGpa.toStringAsFixed(2)} Cutoff')
+                                            ? 'Meets ${cutoffGpa.toStringAsFixed(2)} Cutoff'
+                                            : 'Below ${cutoffGpa.toStringAsFixed(2)} Cutoff')
                                       : (gpa > 0
-                                          ? 'GWA on File'
-                                          : 'GWA Record Pending'),
-                                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: gpa > 0 && (cutoffGpa == null || gpa <= cutoffGpa) ? kPrimary : Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                                            ? 'GWA on File'
+                                            : 'GWA Record Pending'),
+                                  style: AppTypography.style(
+                                    AppTextRole.badge,
+                                    fontSize: 11,
+                                    color:
+                                        gpa > 0 &&
+                                            (cutoffGpa == null ||
+                                                gpa <= cutoffGpa)
+                                        ? kPrimary
+                                        : Colors.black54,
+                                    height: 1.2,
+                                    letterSpacing: -0.15,
+                                  ),
                                 ),
                               ],
                             ),
@@ -398,7 +499,8 @@ class _ProviderApplicationDetailScreenState
                           color: Colors.white,
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: kPrimary.withValues(alpha: 0.2)),
+                            color: kPrimary.withValues(alpha: 0.2),
+                          ),
                         ),
                         child: const Icon(
                           Icons.workspace_premium_rounded,
@@ -426,10 +528,7 @@ class _ProviderApplicationDetailScreenState
                       : 'Degree Program Pending',
                 ),
                 const SizedBox(height: 8),
-                _infoRow(
-                  'Academic Standing',
-                  'Year ${profile.yearLevel}',
-                ),
+                _infoRow('Academic Standing', 'Year ${profile.yearLevel}'),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.all(10),
@@ -444,7 +543,9 @@ class _ProviderApplicationDetailScreenState
                             ? Icons.verified_user_rounded
                             : Icons.info_outline_rounded,
                         size: 16,
-                        color: profile.setupComplete ? kPrimary : Colors.black45,
+                        color: profile.setupComplete
+                            ? kPrimary
+                            : Colors.black45,
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -452,7 +553,13 @@ class _ProviderApplicationDetailScreenState
                           profile.setupComplete
                               ? 'Profile Setup Completed by Candidate'
                               : 'Self-Reported Student Academic Record',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 12,
+                            color: Colors.black87,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ],
@@ -476,18 +583,29 @@ class _ProviderApplicationDetailScreenState
                   decoration: BoxDecoration(
                     color: Colors.amber.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.amber.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: Colors.amber.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.shield_outlined,
-                          size: 16, color: Colors.amber),
+                      const Icon(
+                        Icons.shield_outlined,
+                        size: 16,
+                        color: Colors.amber,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'RA 10173 Compliance: Specific peso earnings are shielded. Verified financial tiers and DSWD indicators are provided to prevent socio-demographic bias.',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black87, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 11,
+                            color: Colors.black87,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ],
@@ -501,7 +619,9 @@ class _ProviderApplicationDetailScreenState
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.02),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
+                    border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.06),
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -511,18 +631,32 @@ class _ProviderApplicationDetailScreenState
                         children: [
                           Text(
                             'HOUSEHOLD INCOME TIER',
-                            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 10, color: Colors.black54, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.sectionTitle,
+                              fontSize: 10,
+                              color: Colors.black54,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: kNavyTrust.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               'Need Priority',
-                              style: AppTypography.style(AppTextRole.badge, fontSize: 9, color: kNavyTrust, letterSpacing: opticalTracking(9), height: opticalLeading(9, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.badge,
+                                fontSize: 9,
+                                color: kNavyTrust,
+                                height: 1.2,
+                                letterSpacing: -0.15,
+                              ),
                             ),
                           ),
                         ],
@@ -532,16 +666,28 @@ class _ProviderApplicationDetailScreenState
                         profile.incomeBracket != null
                             ? '${profile.incomeBracket!.toUpperCase()} Income Tier'
                             : (profile.monthlyFamilyIncome != null
-                                ? '₱${((profile.monthlyFamilyIncome!) / 1000).toStringAsFixed(0)}k Monthly Family Income'
-                                : 'Income Record Pending'),
-                        style: AppTypography.style(AppTextRole.label, fontSize: 14, color: Colors.black87, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                  ? '₱${((profile.monthlyFamilyIncome!) / 1000).toStringAsFixed(0)}k Monthly Family Income'
+                                  : 'Income Record Pending'),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          fontSize: 14,
+                          color: Colors.black87,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         profile.monthlyFamilyIncome != null
                             ? 'Self-declared household earnings.'
                             : 'Applicant has not declared household earnings for this cycle.',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11,
+                          color: Colors.black54,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -575,7 +721,13 @@ class _ProviderApplicationDetailScreenState
               ),
               child: Text(
                 'Awaiting Uploads',
-                style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  fontSize: 11,
+                  color: Colors.black54,
+                  height: 1.2,
+                  letterSpacing: -0.15,
+                ),
               ),
             ),
             child: Column(
@@ -586,7 +738,9 @@ class _ProviderApplicationDetailScreenState
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.02),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
+                    border: Border.all(
+                      color: Colors.black.withValues(alpha: 0.06),
+                    ),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -608,13 +762,25 @@ class _ProviderApplicationDetailScreenState
                       const SizedBox(height: 10),
                       Text(
                         'No verification documents on file',
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.cardTitle,
+                          fontSize: 13,
+                          color: Colors.black87,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'The applicant has not uploaded digital attachments (such as certified Form 5, BIR 2316, or personal statement PDF) for this application cycle.',
                         textAlign: TextAlign.center,
-                        style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: Colors.black54, height: 1.4, letterSpacing: opticalTracking(11.5)),
+                        style: AppTypography.style(
+                          AppTextRole.body,
+                          fontSize: 11.5,
+                          color: Colors.black54,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -628,19 +794,32 @@ class _ProviderApplicationDetailScreenState
                       color: kPrimarySoft.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                          color: kPrimary.withValues(alpha: 0.15)),
+                        color: kPrimary.withValues(alpha: 0.15),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Applicant Statement / Note',
-                          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.sectionTitle,
+                            fontSize: 11,
+                            color: kPrimary,
+                            height: 1.2,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           app.notes!,
-                          style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.body,
+                            fontSize: 12,
+                            color: Colors.black87,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -666,13 +845,17 @@ class _ProviderApplicationDetailScreenState
                       color: Colors.black.withValues(alpha: 0.02),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                          color: Colors.black.withValues(alpha: 0.06)),
+                        color: Colors.black.withValues(alpha: 0.06),
+                      ),
                     ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.rate_review_outlined,
-                            color: Colors.black45, size: 18),
+                        const Icon(
+                          Icons.rate_review_outlined,
+                          color: Colors.black45,
+                          size: 18,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Column(
@@ -680,12 +863,24 @@ class _ProviderApplicationDetailScreenState
                             children: [
                               Text(
                                 'No committee remarks recorded yet',
-                                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.cardTitle,
+                                  fontSize: 12,
+                                  color: Colors.black87,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 'Remarks entered below will be recorded with your application review decisions.',
-                                style: AppTypography.style(AppTextRole.body, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                style: AppTypography.style(
+                                  AppTextRole.body,
+                                  fontSize: 11,
+                                  color: Colors.black54,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
@@ -703,7 +898,8 @@ class _ProviderApplicationDetailScreenState
                       color: kPrimarySoft.withValues(alpha: 0.4),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                          color: kPrimary.withValues(alpha: 0.15)),
+                        color: kPrimary.withValues(alpha: 0.15),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -720,25 +916,49 @@ class _ProviderApplicationDetailScreenState
                               alignment: Alignment.center,
                               child: Text(
                                 'DO',
-                                style: AppTypography.style(AppTextRole.label, fontSize: 10, color: Colors.white, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
                             Text(
                               'Review Committee Remark',
-                              style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 12,
+                                color: kPrimary,
+                                height: 1.2,
+                                letterSpacing: -0.15,
+                              ),
                             ),
                             const Spacer(),
                             Text(
                               'Just now',
-                              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black45, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                fontSize: 11,
+                                color: Colors.black45,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Text(
                           remark,
-                          style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.body,
+                            fontSize: 12,
+                            color: Colors.black87,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -752,16 +972,31 @@ class _ProviderApplicationDetailScreenState
                   children: [
                     Text(
                       'NEW DELIBERATION NOTE',
-                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 10, color: Colors.black54, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.sectionTitle,
+                        fontSize: 10,
+                        color: Colors.black54,
+                        height: 1.2,
+                        letterSpacing: -0.15,
+                      ),
                     ),
                     Row(
                       children: [
-                        const Icon(Icons.lock_rounded,
-                            size: 11, color: Colors.black45),
+                        const Icon(
+                          Icons.lock_rounded,
+                          size: 11,
+                          color: Colors.black45,
+                        ),
                         const SizedBox(width: 3),
                         Text(
                           'Private to Committee',
-                          style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: Colors.black45, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.badge,
+                            fontSize: 10,
+                            color: Colors.black45,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -771,23 +1006,34 @@ class _ProviderApplicationDetailScreenState
                 TextField(
                   controller: _noteController,
                   maxLines: 3,
-                  style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.input,
+                    fontSize: 13,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   decoration: InputDecoration(
-                    hintText:
-                        'Add internal reviewer evaluation or conditional remarks...',
-                    hintStyle:
-                        AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: Colors.black38, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                    hintText: 'Add internal reviewer evaluation or conditional remarks...',
+                    hintStyle: AppTypography.style(
+                      AppTextRole.placeholder,
+                      fontSize: 12,
+                      color: Colors.black38,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                     filled: true,
                     fillColor: Colors.black.withValues(alpha: 0.02),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          BorderSide(color: Colors.black.withValues(alpha: 0.08)),
+                      borderSide: BorderSide(
+                        color: Colors.black.withValues(alpha: 0.08),
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide:
-                          BorderSide(color: Colors.black.withValues(alpha: 0.08)),
+                      borderSide: BorderSide(
+                        color: Colors.black.withValues(alpha: 0.08),
+                      ),
                     ),
                     contentPadding: const EdgeInsets.all(12),
                   ),
@@ -801,7 +1047,9 @@ class _ProviderApplicationDetailScreenState
                       backgroundColor: kPrimary,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -817,7 +1065,12 @@ class _ProviderApplicationDetailScreenState
                           )
                         : Text(
                             'Save Remark',
-                            style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.button,
+                              fontSize: 12,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                   ),
                 ),
@@ -863,17 +1116,20 @@ class _ProviderApplicationDetailScreenState
                     Expanded(
                       child: Text(
                         title,
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: Colors.black87, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.cardTitle,
+                          fontSize: 15,
+                          color: Colors.black87,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
               ),
-              if (badge != null) ...[
-                const SizedBox(width: 8),
-                badge,
-              ],
+              if (badge != null) ...[const SizedBox(width: 8), badge],
             ],
           ),
           const SizedBox(height: 14),
@@ -896,12 +1152,24 @@ class _ProviderApplicationDetailScreenState
         children: [
           Text(
             label,
-            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 11,
+              color: Colors.black54,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
             value,
-            style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.bodyEmphasis,
+              fontSize: 13,
+              color: Colors.black87,
+              height: 1.2,
+              letterSpacing: -0.15,
+            ),
           ),
         ],
       ),
@@ -928,22 +1196,30 @@ class _ProviderApplicationDetailScreenState
         Expanded(
           child: Text(
             text,
-            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.body,
+              fontSize: 12,
+              color: Colors.black87,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],
     );
   }
 
-
   Widget _buildStickyActionBar(BuildContext context, Application app) {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: FilledButton.icon(
-          onPressed: () => ApplicantReviewDrawer.show(context,
-            application: app, scholarship: widget.initialScholarship,
-            applicantProfile: widget.initialProfile),
+          onPressed: () => ApplicantReviewDrawer.show(
+            context,
+            application: app,
+            scholarship: widget.initialScholarship,
+            applicantProfile: widget.initialProfile,
+          ),
           icon: const Icon(Icons.rate_review_outlined),
           label: const Text('Open Application Review'),
         ),

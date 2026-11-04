@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../features/admin/presentation/admin_analytics_provider.dart';
-import '../../features/admin/presentation/admin_theme.dart' show kAdminCardDecoration;
+import '../../features/admin/presentation/admin_theme.dart'
+    show kAdminCardDecoration;
 import '../../features/provider/repositories/support_concern_repository.dart';
 import '../../features/safety/data/safety_report_repository.dart';
 import '../../features/safety/models/safety_report.dart';
@@ -24,13 +25,13 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
   String _search = '', _filter = 'Unresolved', _provider = '';
 
   void _support() => Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => Scaffold(
-            appBar: AppBar(title: const Text('Payment & support')),
-            body: const SupportConcernsScreen(),
-          ),
-        ),
-      );
+    MaterialPageRoute<void>(
+      builder: (_) => Scaffold(
+        appBar: AppBar(title: const Text('Payment & support')),
+        body: const SupportConcernsScreen(),
+      ),
+    ),
+  );
 
   void _openSafetyReviewDialog(BuildContext parentCtx, String reportId) {
     final noteController = TextEditingController();
@@ -50,7 +51,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
+                  Text(
                     'Select review outcome:',
                     style: AppTypography.style(AppTextRole.label),
                   ),
@@ -59,7 +60,10 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                     initialValue: selectedStatus,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                     ),
                     items: const [
                       DropdownMenuItem(
@@ -80,7 +84,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                   Text(
+                  Text(
                     'Review explanation note (required, 10–1000 characters):',
                     style: AppTypography.style(AppTextRole.label),
                   ),
@@ -90,8 +94,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                     minLines: 3,
                     maxLines: 5,
                     decoration: const InputDecoration(
-                      hintText:
-                          'Explain the inquiry findings, registrar verification, or resolution for this report.',
+                      hintText: 'Explain the inquiry findings, registrar verification, or resolution for this report.',
                       border: OutlineInputBorder(),
                     ),
                   ),
@@ -99,7 +102,10 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                     const SizedBox(height: 8),
                     Text(
                       error!,
-                      style: AppTypography.style(AppTextRole.caption, color: Color(0xFF93000A), fontSize: 13),
+                      style: const TextStyle(
+                        color: Color(0xFF93000A),
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                   if (saving) ...[
@@ -125,8 +131,7 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                       final note = noteController.text.trim();
                       if (note.length < 10 || note.length > 1000) {
                         setDlgState(
-                          () => error =
-                              'A review explanation between 10 and 1000 characters is required.',
+                          () => error = 'A review explanation between 10 and 1000 characters is required.',
                         );
                         return;
                       }
@@ -168,152 +173,150 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
   }
 
   void _detail(SafetyReportGroup group) => showDialog<void>(
-        animationStyle: isReducedMotion(context)
-            ? AnimationStyle.noAnimation
-            : null,
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(group.scholarshipTitle),
-          content: SizedBox(
-            width: 600,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(group.providerName),
-                  if (group.providerId != null)
-                    SelectableText('Provider ID: ${group.providerId}'),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Private admin review. Counts indicate review priorities, not findings of wrongdoing.',
+    animationStyle: isReducedMotion(context)
+        ? AnimationStyle.noAnimation
+        : null,
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(
+        group.scholarshipTitle,
+        style: AppTypography.style(AppTextRole.cardTitle),
+      ),
+      content: SizedBox(
+        width: 600,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(group.providerName),
+              if (group.providerId != null)
+                SelectableText('Provider ID: ${group.providerId}'),
+              const SizedBox(height: 12),
+              const Text(
+                'Private admin review. Counts indicate review priorities, not findings of wrongdoing.',
+              ),
+              for (final row in group.reports) ...[
+                const Divider(height: 32),
+                Text(
+                  _categoryLabels[row['category']] ??
+                      supportConcernCategories[row['category']] ??
+                      'Support concern',
+                  style: Theme.of(ctx).textTheme.titleMedium,
+                ),
+                Text(
+                  'Status: ${row['status']?.toString().replaceAll('_', ' ') ?? 'Unavailable'}',
+                ),
+                Text('Reported: ${_date(safetyReportDate(row))}'),
+                Text(
+                  'Relationship: ${_relationshipLabels[row['relationship']] ?? 'Not recorded'}',
+                ),
+                SelectableText(
+                  'Application: ${row['application_id'] ?? 'Direct scholarship concern (no application)'}',
+                ),
+                const SizedBox(height: 8),
+                SelectableText(
+                  row['description']?.toString() ?? 'Description unavailable',
+                ),
+                if (row['resolution_note'] != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      'Latest update: ${row['resolution_note']}',
+                      style: AppTypography.style(AppTextRole.bodyEmphasis),
+                    ),
                   ),
-                  for (final row in group.reports) ...[
-                    const Divider(height: 32),
-                    Text(
-                      _categoryLabels[row['category']] ??
-                          supportConcernCategories[row['category']] ??
-                          'Support concern',
-                      style: AppTypography.style(AppTextRole.cardTitle, base: Theme.of(ctx).textTheme.titleMedium),
-                    ),
-                    Text(
-                      'Status: ${row['status']?.toString().replaceAll('_', ' ') ?? 'Unavailable'}',
-                    ),
-                    Text('Reported: ${_date(safetyReportDate(row))}'),
-                    Text(
-                      'Relationship: ${_relationshipLabels[row['relationship']] ?? 'Not recorded'}',
-                    ),
-                    SelectableText(
-                      'Application: ${row['application_id'] ?? 'Direct scholarship concern (no application)'}',
-                    ),
-                    const SizedBox(height: 8),
-                    SelectableText(
-                      row['description']?.toString() ??
-                          'Description unavailable',
-                    ),
-                    if (row['resolution_note'] != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 6),
-                        child: Text(
-                          'Latest update: ${row['resolution_note']}',
-                          style: AppTypography.style(AppTextRole.bodyEmphasis),
-                        ),
-                      ),
-                    if (row['evidence'] is List &&
-                        (row['evidence'] as List).isNotEmpty) ...[
-                      const SizedBox(height: 10),
-                       Text(
-                        'Attached evidence:',
-                        style: AppTypography.style(AppTextRole.sectionTitle),
-                      ),
-                      const SizedBox(height: 4),
-                      for (final ev in (row['evidence'] as List)) ...[
-                        Builder(
-                          builder: (btnCtx) {
-                            final fileName = ev is SafetyReportEvidence
-                                ? ev.fileName
-                                : (ev is Map ? ev['file_name'] : 'Evidence file');
-                            final filePath = ev is SafetyReportEvidence
-                                ? ev.filePath
-                                : (ev is Map ? ev['file_path'] : '');
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: OutlinedButton.icon(
-                                icon: const Icon(Icons.attach_file, size: 16),
-                                label: Text(fileName.toString()),
-                                onPressed: filePath == null ||
-                                        filePath.toString().isEmpty
-                                    ? null
-                                    : () async {
-                                        try {
-                                          final repo = ref.read(
-                                            safetyReportRepositoryProvider,
-                                          );
-                                          final url = await repo
-                                              .getEvidenceSignedUrl(
+                if (row['evidence'] is List &&
+                    (row['evidence'] as List).isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    'Attached evidence:',
+                    style: AppTypography.style(AppTextRole.sectionTitle),
+                  ),
+                  const SizedBox(height: 4),
+                  for (final ev in (row['evidence'] as List)) ...[
+                    Builder(
+                      builder: (btnCtx) {
+                        final fileName = ev is SafetyReportEvidence
+                            ? ev.fileName
+                            : (ev is Map ? ev['file_name'] : 'Evidence file');
+                        final filePath = ev is SafetyReportEvidence
+                            ? ev.filePath
+                            : (ev is Map ? ev['file_path'] : '');
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: OutlinedButton.icon(
+                            icon: const Icon(Icons.attach_file, size: 16),
+                            label: Text(fileName.toString()),
+                            onPressed:
+                                filePath == null || filePath.toString().isEmpty
+                                ? null
+                                : () async {
+                                    try {
+                                      final repo = ref.read(
+                                        safetyReportRepositoryProvider,
+                                      );
+                                      final url = await repo
+                                          .getEvidenceSignedUrl(
                                             filePath.toString(),
                                           );
-                                          await launchUrl(
-                                            Uri.parse(url),
-                                            mode:
-                                                LaunchMode.externalApplication,
-                                          );
-                                        } catch (e) {
-                                          if (ctx.mounted) {
-                                            ScaffoldMessenger.of(ctx)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Could not open evidence: $e',
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      },
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ],
-                    if (row['is_safety_report'] == true &&
-                        row['id'] != null &&
-                        !['resolved', 'dismissed'].contains(row['status'])) ...[
-                      const SizedBox(height: 10),
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.rate_review_outlined, size: 16),
-                        label: const Text('Update report status'),
-                        onPressed: () => _openSafetyReviewDialog(
-                          ctx,
-                          row['id'].toString(),
-                        ),
-                      ),
-                    ],
+                                      await launchUrl(
+                                        Uri.parse(url),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    } catch (e) {
+                                      if (ctx.mounted) {
+                                        ScaffoldMessenger.of(ctx).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              'Could not open evidence: $e',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                          ),
+                        );
+                      },
+                    ),
                   ],
-                  const Divider(height: 32),
-                  const Text(
-                    'Relationships are shown only when recorded. Student reports and attached evidence are strictly confidential to authorized administrators.',
+                ],
+                if (row['is_safety_report'] == true &&
+                    row['id'] != null &&
+                    !['resolved', 'dismissed'].contains(row['status'])) ...[
+                  const SizedBox(height: 10),
+                  OutlinedButton.icon(
+                    icon: const Icon(Icons.rate_review_outlined, size: 16),
+                    label: const Text('Update report status'),
+                    onPressed: () =>
+                        _openSafetyReviewDialog(ctx, row['id'].toString()),
                   ),
                 ],
+              ],
+              const Divider(height: 32),
+              const Text(
+                'Relationships are shown only when recorded. Student reports and attached evidence are strictly confidential to authorized administrators.',
               ),
-            ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Close'),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                _support();
-              },
-              child: const Text('Open supported review'),
-            ),
-          ],
         ),
-      );
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Close'),
+        ),
+        FilledButton(
+          onPressed: () {
+            Navigator.pop(ctx);
+            _support();
+          },
+          child: const Text('Open supported review'),
+        ),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -322,11 +325,13 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
     final apps = ref.watch(adminAllApplicationsProvider);
     final programs = ref.watch(scholarshipsProvider);
 
-    final failed = safetyReportsAsync.hasError ||
+    final failed =
+        safetyReportsAsync.hasError ||
         concerns.hasError ||
         apps.hasError ||
         programs.hasError;
-    final loading = safetyReportsAsync.isLoading ||
+    final loading =
+        safetyReportsAsync.isLoading ||
         concerns.isLoading ||
         apps.isLoading ||
         programs.isLoading;
@@ -361,9 +366,8 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
       children: [
         Text(
           'Reports & safety',
-          style: AppTypography.style(AppTextRole.screenTitle,
-            base: Theme.of(context).textTheme.headlineMedium,
-            color: const Color(0xFF0F4D2E)),
+          style: Theme.of(context).textTheme.headlineMedium
+              ?.copyWith(color: const Color(0xFF0F4D2E)),
         ),
         const SizedBox(height: 8),
         const Text(
@@ -494,14 +498,18 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-               Text(
+              Text(
                 'No reports match these filters.',
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 15, color: Color(0xFF1D2939)),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 15,
+                  color: Color(0xFF1D2939),
+                ),
               ),
               const SizedBox(height: 4),
-               Text(
+              const Text(
                 'Try clearing your search query or selecting a different review status.',
-                style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Color(0xFF667085)),
+                style: TextStyle(fontSize: 13, color: Color(0xFF667085)),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -516,16 +524,19 @@ class _ReportsSafetyScreenState extends ConsumerState<ReportsSafetyScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (g.urgent)
-                   Padding(
+                  Padding(
                     padding: EdgeInsets.only(bottom: 8),
                     child: Text(
                       'Needs urgent review',
-                      style: AppTypography.style(AppTextRole.badge, color: Color(0xFF9A3412)),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        color: Color(0xFF9A3412),
+                      ),
                     ),
                   ),
                 Text(
                   g.scholarshipTitle,
-                  style: AppTypography.style(AppTextRole.sectionTitle, base: Theme.of(context).textTheme.titleLarge),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(),
                 ),
                 const SizedBox(height: 4),
                 Text(g.providerName),

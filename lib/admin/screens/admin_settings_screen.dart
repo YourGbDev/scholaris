@@ -26,12 +26,18 @@ class AdminSettingsScreen extends StatelessWidget {
             // --- Header (No Live data tag per instructions) ---
             Text(
               'Admin Settings',
-              style: AppTypography.style(AppTextRole.screenTitle, color: kSeqOnSurface, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32),
+              style: seqPageTitle(context, color: kSeqOnSurface),
             ),
             const SizedBox(height: 4),
             Text(
               'Platform configuration',
-              style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 14,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 24),
 
@@ -96,10 +102,7 @@ class AdminSettingsScreen extends StatelessWidget {
                   subtitle: 'Coming in v2',
                 ),
                 _buildDivider(),
-                _buildToggleRow(
-                  title: 'SMS Alerts',
-                  subtitle: 'Coming in v2',
-                ),
+                _buildToggleRow(title: 'SMS Alerts', subtitle: 'Coming in v2'),
                 _buildDivider(),
                 _buildControlRow(
                   title: 'Digest Frequency',
@@ -159,7 +162,13 @@ class AdminSettingsScreen extends StatelessWidget {
                   Flexible(
                     child: Text(
                       'Settings configuration will be available once the platform_settings table is provisioned. These controls are planned for v2.',
-                      style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        color: kSeqOutline,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -192,15 +201,18 @@ class AdminSettingsScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   title.toUpperCase(),
-                  style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.8),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ).copyWith(letterSpacing: 0.8),
                 ),
               ],
             ),
           ),
-          Divider(
-            height: 1,
-            color: kSeqOutlineVariant.withValues(alpha: 0.2),
-          ),
+          Divider(height: 1, color: kSeqOutlineVariant.withValues(alpha: 0.2)),
           ...children,
         ],
       ),
@@ -208,10 +220,7 @@ class AdminSettingsScreen extends StatelessWidget {
   }
 
   // --- Toggle Row (Disabled, Opacity 0.5) ---
-  Widget _buildToggleRow({
-    required String title,
-    required String subtitle,
-  }) {
+  Widget _buildToggleRow({required String title, required String subtitle}) {
     return Opacity(
       opacity: 0.5,
       child: Padding(
@@ -225,18 +234,33 @@ class AdminSettingsScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: AppTypography.style(AppTextRole.label, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      color: kSeqOnSurface,
+                      fontSize: 14,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: kSeqSurfaceContainerLow,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       subtitle,
-                      style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                      style: AppTypography.style(
+                        AppTextRole.subtitle,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ],
@@ -279,18 +303,33 @@ class AdminSettingsScreen extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: AppTypography.style(AppTextRole.label, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      color: kSeqOnSurface,
+                      fontSize: 14,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: kSeqSurfaceContainerLow,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       subtitle,
-                      style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                      style: AppTypography.style(
+                        AppTextRole.subtitle,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ],
@@ -309,7 +348,13 @@ class AdminSettingsScreen extends StatelessWidget {
               ),
               child: Text(
                 controlText,
-                style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.label,
+                  color: kSeqOutline,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],

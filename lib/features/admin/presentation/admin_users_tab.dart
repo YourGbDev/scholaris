@@ -6,6 +6,7 @@
 // Zero fabricated content: 100% wired to live Supabase profiles & provider_verifications.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +16,8 @@ import 'package:scholaris/features/provider/models/provider_verification.dart';
 import 'package:scholaris/features/provider/providers/provider_verification_provider.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+import 'package:scholaris/core/security/login_lockout_service.dart';
+import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 
 import 'admin_theme.dart';
 import 'admin_users_provider.dart';
@@ -37,9 +40,14 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     super.dispose();
   }
 
-  void _exportCsv(List<StudentProfile> list, Map<String, ProviderVerification> verifMap) {
+  void _exportCsv(
+    List<StudentProfile> list,
+    Map<String, ProviderVerification> verifMap,
+  ) {
     final buffer = StringBuffer();
-    buffer.writeln('ID,Full Name,Email,Role,Account Status,Verification / Setup Status,Region,School,Course,GPA');
+    buffer.writeln(
+      'ID,Full Name,Email,Role,Account Status,Verification / Setup Status,Region,School,Course,GPA',
+    );
     for (final u in list) {
       final v = verifMap[u.id];
       final verifStatus = u.role == 'provider'
@@ -52,7 +60,9 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     Clipboard.setData(ClipboardData(text: buffer.toString()));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Exported ${list.length} user records to clipboard as CSV.'),
+        content: Text(
+          'Exported ${list.length} user records to clipboard as CSV.',
+        ),
         backgroundColor: kSeqPrimaryContainer,
         behavior: SnackBarBehavior.floating,
       ),
@@ -87,24 +97,35 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             ),
           ),
           data: (users) {
-            final verifications = verificationsAsync.valueOrNull ?? <ProviderVerification>[];
+            final verifications =
+                verificationsAsync.valueOrNull ?? <ProviderVerification>[];
             final verifMap = {for (final v in verifications) v.userId: v};
 
             // Calculate live header metrics
             final totalCount = users.length;
-            final studentUsers = users.where((u) => u.role == 'student').toList();
-            final providerUsers = users.where((u) => u.role == 'provider').toList();
+            final studentUsers = users
+                .where((u) => u.role == 'student')
+                .toList();
+            final providerUsers = users
+                .where((u) => u.role == 'provider')
+                .toList();
             final adminUsers = users.where((u) => u.role == 'admin').toList();
 
             final studentCount = studentUsers.length;
             final providerCount = providerUsers.length;
             final adminCount = adminUsers.length;
 
-            final setupCompleteCount = studentUsers.where((u) => u.setupComplete).length;
+            final setupCompleteCount = studentUsers
+                .where((u) => u.setupComplete)
+                .length;
             final studentPendingCount = studentCount - setupCompleteCount;
 
-            final approvedProvidersCount = verifications.where((v) => v.status == 'approved').length;
-            final pendingProvidersCount = verifications.where((v) => v.status == 'pending').length;
+            final approvedProvidersCount = verifications
+                .where((v) => v.status == 'approved')
+                .length;
+            final pendingProvidersCount = verifications
+                .where((v) => v.status == 'pending')
+                .length;
 
             // Apply filters
             var filtered = users;
@@ -131,12 +152,16 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             }
 
             if (_selectedRegion != 'all') {
-              filtered = filtered.where((u) => u.region == _selectedRegion).toList();
+              filtered = filtered
+                  .where((u) => u.region == _selectedRegion)
+                  .toList();
             }
 
             if (_selectedStatus != 'all') {
               if (_selectedStatus == 'deactivated') {
-                filtered = filtered.where((u) => u.status == 'deactivated').toList();
+                filtered = filtered
+                    .where((u) => u.status == 'deactivated')
+                    .toList();
               } else if (_selectedStatus == 'active') {
                 filtered = filtered.where((u) {
                   if (u.status == 'deactivated') return false;
@@ -196,7 +221,9 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final paddingH = isDesktop ? 32.0 : 16.0;
 
     return SingleChildScrollView(
-      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics: const AppleBouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       padding: EdgeInsets.symmetric(horizontal: paddingH, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -276,10 +303,14 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    isMobile
-                        ? 'REGISTRY & GOVERNANCE'
-                        : 'REGISTRY & GOVERNANCE • LIVE PLATFORM USER DIRECTORY',
-                    style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10).copyWith(letterSpacing: 0.5),
+                    isMobile ? 'REGISTRY & GOVERNANCE' : 'REGISTRY & GOVERNANCE • LIVE PLATFORM USER DIRECTORY',
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      color: kSeqOutline,
+                      fontSize: 11,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ).copyWith(letterSpacing: 0.5),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -290,15 +321,33 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             Text(
               'User Directory & Access Control',
               style: isMobile
-                  ? AppTypography.style(AppTextRole.screenTitle, fontSize: 24, height: 30 / 24, letterSpacing: -0.019 * 24, color: kSeqOnSurface)
-                  : AppTypography.style(AppTextRole.screenTitle, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface),
+                  ? AppTypography.style(
+                      AppTextRole.screenTitle,
+                      fontSize: 20,
+                      height: 1.2,
+                      color: kSeqOnSurface,
+                      letterSpacing: -.4,
+                    )
+                  : AppTypography.style(
+                      AppTextRole.screenTitle,
+                      fontSize: 24,
+                      height: 1.2,
+                      color: kSeqOnSurface,
+                      letterSpacing: -.4,
+                    ),
             ),
             const SizedBox(height: 6),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 680),
               child: Text(
                 'Central identity directory across student scholars, accredited grant providers, and platform administrators.',
-                style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                style: AppTypography.style(
+                  AppTextRole.subtitle,
+                  color: kSeqOnSurfaceVariant,
+                  fontSize: 14,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -314,15 +363,28 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                   backgroundColor: kSeqSurfaceContainerLowest,
                   foregroundColor: kSeqOnSurface,
                   side: const BorderSide(color: kSeqOutlineVariant, width: 1),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
                 ),
-                icon: const Icon(Icons.ios_share_rounded, size: 18, color: kSeqOnSurfaceVariant),
+                icon: const Icon(
+                  Icons.ios_share_rounded,
+                  size: 18,
+                  color: kSeqOnSurfaceVariant,
+                ),
                 label: Text(
                   'Export Registry (CSV)',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 14, height: 18 / 14, letterSpacing: -0.008 * 14, color: kSeqOnSurface),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 13,
+                    height: 1.4,
+                    color: kSeqOnSurface,
+                    letterSpacing: 0,
+                  ),
                 ),
                 onPressed: () => _exportCsv(filtered, verifMap),
               ),
@@ -332,7 +394,10 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 style: FilledButton.styleFrom(
                   backgroundColor: kSeqPrimaryContainer,
                   foregroundColor: kSeqOnPrimary,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
@@ -342,7 +407,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 icon: const Icon(Icons.person_add_rounded, size: 18),
                 label: Text(
                   'Provision Identity',
-                  style: AppTypography.style(AppTextRole.button, color: kSeqOnPrimary, fontSize: 14, height: 18 / 14, letterSpacing: -0.008 * 14),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    color: kSeqOnPrimary,
+                    fontSize: 13,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 onPressed: () => _showCreateUserModal(context),
               ),
@@ -353,11 +424,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         if (isMobile || constraints.maxWidth < 640) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              titleBlock,
-              const SizedBox(height: 16),
-              actionButtons,
-            ],
+            children: [titleBlock, const SizedBox(height: 16), actionButtons],
           );
         }
 
@@ -394,18 +461,28 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final card1 = _buildMetricCard(
       title: 'Total Users',
       badge: '+$totalCount registered',
-      badgeBg: kSeqPrimaryFixed,
+      badgeBg: kWorkspaceSubtle,
       badgeFg: kSeqOnPrimaryFixed,
       value: '$totalCount',
       subtext: 'registered',
       bottomContent: Row(
         children: [
-          const Icon(Icons.badge_outlined, size: 15, color: kSeqPrimaryContainer),
+          const Icon(
+            Icons.badge_outlined,
+            size: 15,
+            color: kSeqPrimaryContainer,
+          ),
           const SizedBox(width: 6),
           Flexible(
             child: Text(
               'Active accounts in platform registry',
-              style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -417,7 +494,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final card2 = _buildMetricCard(
       title: 'Student Scholars',
       badge: '$studentRate% rate',
-      badgeBg: kSeqPrimaryFixedDim.withValues(alpha: 0.45),
+      badgeBg: kWorkspaceSubtle,
       badgeFg: kSeqOnPrimaryFixedVariant,
       value: '$studentCount',
       subtext: 'of $totalCount',
@@ -435,7 +512,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       ),
       bottomContent: Text(
         '$setupCompleteCount completed • $studentPendingCount setup pending',
-        style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+        style: AppTypography.style(
+          AppTextRole.caption,
+          color: kSeqOutline,
+          fontSize: 11,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -448,7 +531,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       subtext: 'fiduciaries',
       bottomContent: Text(
         '$approvedProvidersCount Accredited • $pendingProvidersCount Pending Review',
-        style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+        style: AppTypography.style(
+          AppTextRole.caption,
+          color: kSeqOnSurfaceVariant,
+          fontSize: 11,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
@@ -457,7 +546,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     final card4 = _buildMetricCard(
       title: 'Platform Admins',
       badge: 'Admin Role',
-      badgeBg: kSeqSecondaryFixed,
+      badgeBg: kWorkspaceSubtle,
       badgeFg: kSeqOnSecondaryFixedVariant,
       value: '$adminCount',
       subtext: 'clearances',
@@ -468,7 +557,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           Flexible(
             child: Text(
               'Executive administrative access',
-              style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -548,7 +643,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               Expanded(
                 child: Text(
                   title,
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOnSurfaceVariant,
+                    fontSize: 12,
+                    height: 16 / 12,
+                    letterSpacing: 0,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -556,14 +657,23 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               if (badge != null) ...[
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: badgeBg ?? kSeqSurfaceContainer,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
                     badge,
-                    style: AppTypography.style(AppTextRole.badge, color: badgeFg ?? kSeqOnSurface, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      color: badgeFg ?? kSeqOnSurface,
+                      fontSize: 11,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ] else if (topRightIcon != null)
@@ -573,7 +683,11 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     color: kSeqSurfaceContainer,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(topRightIcon, size: 16, color: kSeqOnSurfaceVariant),
+                  child: Icon(
+                    topRightIcon,
+                    size: 16,
+                    color: kSeqOnSurfaceVariant,
+                  ),
                 ),
             ],
           ),
@@ -584,12 +698,28 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             children: [
               Text(
                 value,
-                style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 40, height: 48 / 40, letterSpacing: -0.022 * 40, color: kSeqOnSurface)),
+                style: seqTabularFigures(
+                  AppTypography.style(
+                    AppTextRole.metric,
+                    fontSize: 28,
+                    height: 1.15,
+                    color: kSeqOnSurface,
+                    letterSpacing: -.5,
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
-              Text(
-                subtext,
-                style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+              Flexible(
+                child: Text(
+                  subtext,
+                  style: AppTypography.style(
+                    AppTextRole.subtitle,
+                    color: kTextSupporting,
+                    fontSize: 13,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
+                ),
               ),
             ],
           ),
@@ -650,10 +780,22 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 Expanded(
                   child: TextField(
                     controller: _searchController,
-                    style: AppTypography.style(AppTextRole.input, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
+                    style: AppTypography.style(
+                      AppTextRole.input,
+                      fontSize: 14,
+                      height: 1.4,
+                      color: kTextSupporting,
+                      letterSpacing: 0,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'Search by Name, Email, Role, or ID...',
-                      hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                      hintStyle: AppTypography.style(
+                        AppTextRole.placeholder,
+                        color: kSeqOutline,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -666,24 +808,38 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 ),
                 if (searchQuery.isNotEmpty)
                   IconButton(
-                    icon: const Icon(Icons.close_rounded, size: 16, color: kSeqOutline),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      size: 16,
+                      color: kSeqOutline,
+                    ),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () {
                       _searchController.clear();
-                      ref.read(adminUserSearchQueryProvider.notifier).state = '';
+                      ref.read(adminUserSearchQueryProvider.notifier).state =
+                          '';
                     },
                   )
                 else
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: kSeqSurfaceContainer,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       '⌘K',
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
               ],
@@ -704,10 +860,26 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildRolePill('all', 'All Users ($totalCount)', roleFilter == 'all'),
-            _buildRolePill('student', 'Students ($studentCount)', roleFilter == 'student'),
-            _buildRolePill('provider', 'Grant Providers ($providerCount)', roleFilter == 'provider'),
-            _buildRolePill('admin', 'Platform Admins ($adminCount)', roleFilter == 'admin'),
+            _buildRolePill(
+              'all',
+              'All Users ($totalCount)',
+              roleFilter == 'all',
+            ),
+            _buildRolePill(
+              'student',
+              'Students ($studentCount)',
+              roleFilter == 'student',
+            ),
+            _buildRolePill(
+              'provider',
+              'Grant Providers ($providerCount)',
+              roleFilter == 'provider',
+            ),
+            _buildRolePill(
+              'admin',
+              'Platform Admins ($adminCount)',
+              roleFilter == 'admin',
+            ),
           ],
         ),
       ),
@@ -725,19 +897,38 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             decoration: BoxDecoration(
               color: kSeqSurfaceContainerLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.25), width: 1),
+              border: Border.all(
+                color: kSeqOutlineVariant.withValues(alpha: 0.25),
+                width: 1,
+              ),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _selectedRegion,
                 isDense: true,
                 isExpanded: true,
-                style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
-                icon: const Icon(Icons.expand_more_rounded, size: 16, color: kSeqOutline),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  color: kSeqOnSurface,
+                  fontSize: 12,
+                  height: 16 / 12,
+                  letterSpacing: 0,
+                ),
+                icon: const Icon(
+                  Icons.expand_more_rounded,
+                  size: 16,
+                  color: kSeqOutline,
+                ),
                 items: [
-                  const DropdownMenuItem(value: 'all', child: Text('All Regions', overflow: TextOverflow.ellipsis)),
+                  const DropdownMenuItem(
+                    value: 'all',
+                    child: Text('All Regions', overflow: TextOverflow.ellipsis),
+                  ),
                   ...kPhilippineRegions.map(
-                    (r) => DropdownMenuItem(value: r, child: Text(r, overflow: TextOverflow.ellipsis)),
+                    (r) => DropdownMenuItem(
+                      value: r,
+                      child: Text(r, overflow: TextOverflow.ellipsis),
+                    ),
                   ),
                 ],
                 onChanged: (val) {
@@ -753,19 +944,41 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           decoration: BoxDecoration(
             color: kSeqSurfaceContainerLow,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.25), width: 1),
+            border: Border.all(
+              color: kSeqOutlineVariant.withValues(alpha: 0.25),
+              width: 1,
+            ),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               isDense: true,
               value: _selectedStatus,
-              style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
-              icon: const Icon(Icons.expand_more_rounded, size: 16, color: kSeqOutline),
+              style: AppTypography.style(
+                AppTextRole.input,
+                color: kSeqOnSurface,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
+              icon: const Icon(
+                Icons.expand_more_rounded,
+                size: 16,
+                color: kSeqOutline,
+              ),
               items: const [
                 DropdownMenuItem(value: 'all', child: Text('Status: All')),
-                DropdownMenuItem(value: 'active', child: Text('Active / Complete')),
-                DropdownMenuItem(value: 'pending', child: Text('Pending Setup')),
-                DropdownMenuItem(value: 'deactivated', child: Text('Deactivated')),
+                DropdownMenuItem(
+                  value: 'active',
+                  child: Text('Active / Complete'),
+                ),
+                DropdownMenuItem(
+                  value: 'pending',
+                  child: Text('Pending Setup'),
+                ),
+                DropdownMenuItem(
+                  value: 'deactivated',
+                  child: Text('Deactivated'),
+                ),
               ],
               onChanged: (val) {
                 if (val != null) setState(() => _selectedStatus = val);
@@ -789,10 +1002,7 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             runSpacing: 10,
             alignment: WrapAlignment.spaceBetween,
             crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              segmentedPills,
-              dropdownFilters,
-            ],
+            children: [segmentedPills, dropdownFilters],
           ),
         ],
       ),
@@ -817,13 +1027,19 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                       color: Color(0x14000000),
                       blurRadius: 3,
                       offset: Offset(0, 1),
-                    )
+                    ),
                   ]
                 : null,
           ),
           child: Text(
             label,
-            style: AppTypography.style(AppTextRole.navigation, color: isSelected ? kSeqOnSurface : kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+            style: AppTypography.style(
+              AppTextRole.navigation,
+              color: isSelected ? kSeqOnSurface : kSeqOnSurfaceVariant,
+              fontSize: 11,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ),
@@ -853,16 +1069,32 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.group_off_rounded, size: 40, color: kSeqOutline),
+                    const Icon(
+                      Icons.group_off_rounded,
+                      size: 40,
+                      color: kSeqOutline,
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       'No matching platform users found',
-                      style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
+                      style: AppTypography.style(
+                        AppTextRole.sectionTitle,
+                        color: kSeqOnSurface,
+                        fontSize: 17,
+                        height: 1.25,
+                        letterSpacing: -.15,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Try adjusting your search criteria or role filters.',
-                      style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                      style: AppTypography.style(
+                        AppTextRole.body,
+                        color: kSeqOnSurfaceVariant,
+                        fontSize: 14,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -879,40 +1111,65 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     flex: 4,
                     child: Text(
                       'IDENTITY & INSTITUTIONAL REGISTRY',
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)
-                          .copyWith(letterSpacing: 0.5),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ).copyWith(letterSpacing: 0.5),
                     ),
                   ),
                   Expanded(
                     flex: 3,
                     child: Text(
                       'AFFILIATION / SCOPE',
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)
-                          .copyWith(letterSpacing: 0.5),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ).copyWith(letterSpacing: 0.5),
                     ),
                   ),
                   Expanded(
                     flex: 2,
                     child: Text(
                       'ACCESS ROLE',
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)
-                          .copyWith(letterSpacing: 0.5),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ).copyWith(letterSpacing: 0.5),
                     ),
                   ),
                   Expanded(
                     flex: 2,
                     child: Text(
                       'STATUS & VERIFICATION',
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)
-                          .copyWith(letterSpacing: 0.5),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ).copyWith(letterSpacing: 0.5),
                     ),
                   ),
                   Expanded(
                     flex: 2,
                     child: Text(
                       'ATTRIBUTES',
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)
-                          .copyWith(letterSpacing: 0.5),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ).copyWith(letterSpacing: 0.5),
                     ),
                   ),
                   SizedBox(
@@ -920,8 +1177,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     child: Text(
                       'ACTIONS',
                       textAlign: TextAlign.right,
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)
-                          .copyWith(letterSpacing: 0.5),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ).copyWith(letterSpacing: 0.5),
                     ),
                   ),
                 ],
@@ -976,7 +1238,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     children: [
                       Text(
                         'Showing 1 to ${filtered.length} of ${filtered.length} registered platform identities',
-                        style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          color: kSeqOnSurfaceVariant,
+                          fontSize: 11,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -996,7 +1264,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                           Flexible(
                             child: Text(
                               'Supabase PostgreSQL Database Connected',
-                              style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                color: kSeqOutline,
+                                fontSize: 11,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -1015,13 +1289,28 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                             Flexible(
                               child: Text(
                                 'Showing 1 to ${filtered.length} of ${filtered.length} registered platform identities',
-                                style: AppTypography.style(AppTextRole.caption, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                                style: AppTypography.style(
+                                  AppTextRole.caption,
+                                  color: kSeqOnSurfaceVariant,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Text('•', style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                            Text(
+                              '•',
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                color: kSeqOutline,
+                                fontSize: 11,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
+                            ),
                             const SizedBox(width: 8),
                             Container(
                               width: 6,
@@ -1035,7 +1324,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                             Flexible(
                               child: Text(
                                 'Supabase PostgreSQL Database Connected',
-                                style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                                style: AppTypography.style(
+                                  AppTextRole.caption,
+                                  color: kSeqOutline,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -1046,7 +1341,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                       const SizedBox(width: 12),
                       Text(
                         'Page 1 of 1',
-                        style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          color: kSeqOutline,
+                          fontSize: 11,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -1087,14 +1388,25 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                           Flexible(
                             child: Text(
                               displayName,
-                              style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, height: 18 / 14, letterSpacing: -0.008 * 14, color: kSeqOnSurface),
+                              style: AppTypography.style(
+                                AppTextRole.bodyEmphasis,
+                                fontSize: 13,
+                                height: 1.4,
+                                color: kSeqOnSurface,
+                                letterSpacing: 0,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          if (u.role == 'provider' && v?.status == 'approved') ...[
+                          if (u.role == 'provider' &&
+                              v?.status == 'approved') ...[
                             const SizedBox(width: 4),
-                            const Icon(Icons.verified_rounded, size: 14, color: kSeqPrimaryContainer),
+                            const Icon(
+                              Icons.verified_rounded,
+                              size: 14,
+                              color: kSeqPrimaryContainer,
+                            ),
                           ],
                         ],
                       ),
@@ -1102,7 +1414,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                       Text(
                         u.email ??
                             'ID: ${u.id.length >= 10 ? u.id.substring(0, 10) : u.id}...',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kSeqOutline),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11,
+                          color: kSeqOutline,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -1121,13 +1439,25 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               children: [
                 Text(
                   _getAffiliationPrimary(u, v),
-                  style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
+                  style: AppTypography.style(
+                    AppTextRole.bodyEmphasis,
+                    fontSize: 14,
+                    height: 1.4,
+                    color: kTextSupporting,
+                    letterSpacing: 0,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   _getAffiliationSecondary(u, v),
-                  style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.subtitle,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1159,11 +1489,25 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               children: [
                 Text(
                   _getAttributeLabel(u),
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 Text(
                   _getAttributeValue(u, v),
-                  style: seqTabularFigures(AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12, color: kSeqOnSurface)),
+                  style: seqTabularFigures(
+                    AppTypography.style(
+                      AppTextRole.bodyEmphasis,
+                      fontSize: 12,
+                      height: 16 / 12,
+                      color: kSeqOnSurface,
+                      letterSpacing: 0,
+                    ),
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1179,14 +1523,23 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 PressableScale(
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       minimumSize: const Size(0, 36),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () => _showUserDetails(context, u, v),
                     child: Text(
                       'Inspect',
-                      style: AppTypography.style(AppTextRole.button, color: kSeqPrimaryContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        color: kSeqPrimaryContainer,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ),
@@ -1214,7 +1567,10 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: kSeqOutlineVariant.withValues(alpha: 0.3), width: 1),
+        side: BorderSide(
+          color: kSeqOutlineVariant.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: Container(
         padding: const EdgeInsets.all(14),
@@ -1232,13 +1588,25 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     children: [
                       Text(
                         displayName,
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, height: 18 / 14, letterSpacing: -0.008 * 14, color: kSeqOnSurface),
+                        style: AppTypography.style(
+                          AppTextRole.cardTitle,
+                          fontSize: 13,
+                          height: 1.4,
+                          color: kSeqOnSurface,
+                          letterSpacing: 0,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         u.email ?? u.id,
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kSeqOutline),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 10,
+                          color: kSeqOutline,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -1261,7 +1629,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             const SizedBox(height: 8),
             Text(
               '${_getAffiliationPrimary(u, v)} • ${_getAffiliationSecondary(u, v)}',
-              style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 13,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1272,7 +1646,15 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 Expanded(
                   child: Text(
                     '${_getAttributeLabel(u)}: ${_getAttributeValue(u, v)}',
-                    style: seqTabularFigures(AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                    style: seqTabularFigures(
+                      AppTypography.style(
+                        AppTextRole.caption,
+                        color: kSeqOutline,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1281,14 +1663,23 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 PressableScale(
                   child: TextButton(
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       minimumSize: const Size(0, 36),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () => _showUserDetails(context, u, v),
                     child: Text(
                       'Inspect Dossier',
-                      style: AppTypography.style(AppTextRole.button, color: kSeqPrimaryContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        color: kSeqPrimaryContainer,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ),
@@ -1311,7 +1702,10 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       name = u.email!.trim();
     }
     if (name.isEmpty) return u.role == 'admin' ? 'AD' : (u.role == 'provider' ? 'PR' : 'ST');
-    final parts = name.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts = name
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.length >= 2) {
       return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     } else if (parts.isNotEmpty && parts[0].length >= 2) {
@@ -1322,17 +1716,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
     return 'SC';
   }
 
-  Widget _buildUserAvatar(StudentProfile u, ProviderVerification? v, {double size = 40}) {
-    Color bg;
-    final fg = Colors.white; // Guaranteed high contrast >= 7:1 against all dark avatar backgrounds
-
-    if (u.role == 'admin') {
-      bg = const Color(0xFF263238); // Deep Slate, contrast ratio ~11.8:1
-    } else if (u.role == 'provider') {
-      bg = const Color(0xFF1E5280); // Rich Navy, contrast ratio ~7.8:1
-    } else {
-      bg = const Color(0xFF0F4D2E); // Deep Forest Green, contrast ratio ~8.9:1
-    }
+  Widget _buildUserAvatar(
+    StudentProfile u,
+    ProviderVerification? v, {
+    double size = 40,
+  }) {
+    const bg = kWorkspaceSelected;
+    const fg = Colors.white;
 
     final initials = _getInitials(u, v);
 
@@ -1353,7 +1743,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       alignment: Alignment.center,
       child: Text(
         initials,
-        style: AppTypography.style(AppTextRole.label, fontSize: size * 0.36, color: fg, letterSpacing: 0.5),
+        style: AppTypography.style(
+          AppTextRole.label,
+          fontSize: size * 0.36,
+          color: fg,
+          letterSpacing: 0.5,
+          height: 1.4,
+        ),
       ),
     );
   }
@@ -1398,8 +1794,8 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       fg = kSeqOnSurface;
       label = 'Platform Admin';
     } else if (role == 'provider') {
-      bg = kSeqSecondaryFixed;
-      fg = kSeqOnSecondaryFixedVariant;
+      bg = kWorkspaceSubtle;
+      fg = kWorkspaceInk;
       label = 'Grant Provider';
     } else {
       bg = kSeqSurfaceContainer;
@@ -1417,13 +1813,56 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         ),
         child: Text(
           label,
-          style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+          style: AppTypography.style(
+            AppTextRole.badge,
+            color: fg,
+            fontSize: 11,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildVerificationBadge(StudentProfile u, ProviderVerification? v) {
+    final isLocked = LoginLockoutService.instance.isAccountLocked(
+      u.email ?? '',
+    );
+    if (isLocked) {
+      return FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFF3E0),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: const Color(0xFFFFB74D), width: 0.8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.lock_rounded,
+                size: 11,
+                color: Color(0xFFE65100),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Locked (3+ Failed Logins)',
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: const Color(0xFFE65100),
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     // Semantic status pill palette (green=active, red=suspended, amber=pending)
     const activeBg = Color(0xFFE8F5E9);
     const activeFg = Color(0xFF1B5E20);
@@ -1452,12 +1891,21 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               Container(
                 width: 6,
                 height: 6,
-                decoration: const BoxDecoration(color: suspendedDot, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                  color: suspendedDot,
+                  shape: BoxShape.circle,
+                ),
               ),
               const SizedBox(width: 5),
               Text(
                 'Deactivated',
-                style: AppTypography.style(AppTextRole.badge, color: suspendedFg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: suspendedFg,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -1508,12 +1956,21 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               Container(
                 width: 6,
                 height: 6,
-                decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: dotColor,
+                  shape: BoxShape.circle,
+                ),
               ),
               const SizedBox(width: 5),
               Text(
                 label,
-                style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: fg,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -1549,7 +2006,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               const SizedBox(width: 5),
               Text(
                 isComplete ? 'Active Scholar' : 'Pending Setup',
-                style: AppTypography.style(AppTextRole.badge, color: fg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: fg,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -1572,12 +2035,21 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             Container(
               width: 6,
               height: 6,
-              decoration: const BoxDecoration(color: activeDot, shape: BoxShape.circle),
+              decoration: const BoxDecoration(
+                color: activeDot,
+                shape: BoxShape.circle,
+              ),
             ),
             const SizedBox(width: 5),
             Text(
               'Active Administrator',
-              style: AppTypography.style(AppTextRole.badge, color: activeFg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                color: activeFg,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -1614,6 +2086,8 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           _showEditUserModal(context, u);
         } else if (val == 'deactivate') {
           _confirmDeactivate(context, u);
+        } else if (val == 'unlock') {
+          _confirmUnlock(context, u);
         } else if (val == 'delete') {
           _confirmDelete(context, u);
         }
@@ -1621,20 +2095,66 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       itemBuilder: (ctx) => [
         PopupMenuItem(
           value: 'edit',
-          child: Text('Edit Role / Status', style: AppTypography.style(AppTextRole.button, fontSize: 12, height: 16 / 12, letterSpacing: 0, color: kSeqOnSurface)),
+          child: Text(
+            'Edit Role / Status',
+            style: AppTypography.style(
+              AppTextRole.button,
+              fontSize: 13,
+              height: 1.4,
+              color: kTextSupporting,
+              letterSpacing: 0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 'unlock',
+          child: Row(
+            children: [
+              const Icon(
+                Icons.lock_open_rounded,
+                size: 16,
+                color: Color(0xFF0F4D2E),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Unlock Account',
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  color: const Color(0xFF0F4D2E),
+                  fontSize: 13,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
+              ),
+            ],
+          ),
         ),
         PopupMenuItem(
           value: 'deactivate',
           child: Text(
-            u.status == 'deactivated' ? 'Reactivate Account' : 'Deactivate Account',
-            style: AppTypography.style(AppTextRole.button, color: kSeqError, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+            u.status == 'deactivated'
+                ? 'Reactivate Account'
+                : 'Deactivate Account',
+            style: AppTypography.style(
+              AppTextRole.button,
+              color: kSeqError,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
         PopupMenuItem(
           value: 'delete',
           child: Text(
             'Delete Account',
-            style: AppTypography.style(AppTextRole.button, color: kSeqError, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+            style: AppTypography.style(
+              AppTextRole.button,
+              color: kSeqError,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],
@@ -1660,11 +2180,10 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       category: 'REGISTRY INTEGRITY',
       headerDot: kSeqPrimaryContainer,
       title: 'Profile Setup & Academic Verification',
-      description:
-          'Live tracking of student profiles with verified academic standing, enrolled course, institutional affiliation, and completion rate across all 17 administrative regions.',
+      description: 'Live tracking of student profiles with verified academic standing, enrolled course, institutional affiliation, and completion rate across all 17 administrative regions.',
       footerLabel: 'Profile Completion Rate',
       footerValue: '$completionRate% Completed',
-      footerBadgeColor: kSeqPrimaryFixed,
+      footerBadgeColor: kWorkspaceSubtle,
       footerTextColor: kSeqOnPrimaryFixedVariant,
     );
 
@@ -1673,11 +2192,11 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       headerIcon: Icons.verified_user_rounded,
       headerIconColor: kSeqSecondary,
       title: 'Provider Vetting & Document Verification',
-      description:
-          'Accreditation pipeline enforcing statutory KYC validation, SEC/DTI documentation, and administrative review per Migration 0014 before grant disbursement.',
+      description: 'Accreditation pipeline enforcing statutory KYC validation, SEC/DTI documentation, and administrative review per Migration 0014 before grant disbursement.',
       footerLabel: 'Accreditation Status',
-      footerValue: '$approvedProvidersCount Approved • $pendingProvidersCount In Review',
-      footerBadgeColor: kSeqSecondaryFixed,
+      footerValue:
+          '$approvedProvidersCount Approved • $pendingProvidersCount In Review',
+      footerBadgeColor: kWorkspaceSubtle,
       footerTextColor: kSeqOnSecondaryFixedVariant,
     );
 
@@ -1686,11 +2205,10 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
       headerIcon: Icons.policy_rounded,
       headerIconColor: kSeqTertiary,
       title: 'Row-Level Security (RLS) Protocol',
-      description:
-          'Cryptographic JWT session claims and PostgreSQL Row-Level Security policies strictly isolating student records, provider disbursements, and administrative operations.',
+      description: 'Cryptographic JWT session claims and PostgreSQL Row-Level Security policies strictly isolating student records, provider disbursements, and administrative operations.',
       footerLabel: 'Database Security Policy',
       footerValue: 'PostgreSQL RLS Enforced',
-      footerBadgeColor: kSeqTertiaryFixed,
+      footerBadgeColor: kWorkspaceSubtle,
       footerTextColor: kSeqOnTertiaryFixedVariant,
     );
 
@@ -1742,8 +2260,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               Expanded(
                 child: Text(
                   category,
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)
-                      .copyWith(letterSpacing: 0.5),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOutline,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ).copyWith(letterSpacing: 0.5),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -1752,21 +2275,40 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 Container(
                   width: 8,
                   height: 8,
-                  decoration: BoxDecoration(color: headerDot, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: headerDot,
+                    shape: BoxShape.circle,
+                  ),
                 )
               else if (headerIcon != null)
-                Icon(headerIcon, size: 16, color: headerIconColor ?? kSeqOutline),
+                Icon(
+                  headerIcon,
+                  size: 16,
+                  color: headerIconColor ?? kSeqOutline,
+                ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             title,
-            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+            style: AppTypography.style(
+              AppTextRole.cardTitle,
+              fontSize: 17,
+              height: 1.25,
+              color: kSeqOnSurface,
+              letterSpacing: -.15,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             description,
-            style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+            style: AppTypography.style(
+              AppTextRole.body,
+              color: kSeqOnSurfaceVariant,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 16),
           Container(
@@ -1781,7 +2323,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 Expanded(
                   child: Text(
                     footerLabel,
-                    style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      color: kSeqOutline,
+                      fontSize: 11,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1789,14 +2337,23 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 const SizedBox(width: 8),
                 Flexible(
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: footerBadgeColor,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       footerValue,
-                      style: AppTypography.style(AppTextRole.badge, color: footerTextColor, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        color: footerTextColor,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1814,7 +2371,9 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
 
   Widget _buildSkeleton(BuildContext context) {
     return SingleChildScrollView(
-      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics: const AppleBouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1853,17 +2412,11 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           const SizedBox(height: 24),
 
           // Filter Section Skeleton
-          Container(
-            height: 60,
-            decoration: kAdminCardDecoration,
-          ),
+          Container(height: 60, decoration: kAdminCardDecoration),
           const SizedBox(height: 20),
 
           // Table Skeleton
-          Container(
-            height: 320,
-            decoration: kAdminCardDecoration,
-          ),
+          Container(height: 320, decoration: kAdminCardDecoration),
         ],
       ),
     );
@@ -1897,7 +2450,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             Expanded(
               child: Text(
                 displayName,
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 17,
+                  height: 1.25,
+                  color: kSeqOnSurface,
+                  letterSpacing: -.15,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1922,30 +2481,63 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 ),
                 _detailRow(context, 'Account Status', u.status),
                 if (u.role == 'student') ...[
-                  _detailRow(context, 'Profile Setup',
-                      u.setupComplete ? 'Completed' : 'Pending completion'),
-                  if (u.course.isNotEmpty) _detailRow(context, 'Course', u.course),
+                  _detailRow(
+                    context,
+                    'Profile Setup',
+                    u.setupComplete ? 'Completed' : 'Pending completion',
+                  ),
+                  if (u.course.isNotEmpty)
+                    _detailRow(context, 'Course', u.course),
                   if (u.school != null && u.school!.isNotEmpty)
                     _detailRow(context, 'School', u.school!),
                   _detailRow(context, 'Year Level', 'Year ${u.yearLevel}'),
-                  _detailRow(context, 'GWA', u.gpa > 0 ? u.gpa.toStringAsFixed(2) : 'Not declared'),
+                  _detailRow(
+                    context,
+                    'GWA',
+                    u.gpa > 0 ? u.gpa.toStringAsFixed(2) : 'Not declared',
+                  ),
                   if (u.monthlyFamilyIncome != null)
-                    _detailRow(context, 'Monthly Income',
-                        'PHP ${u.monthlyFamilyIncome!.toStringAsFixed(0)}'),
+                    _detailRow(
+                      context,
+                      'Monthly Income',
+                      'PHP ${u.monthlyFamilyIncome!.toStringAsFixed(0)}',
+                    ),
                 ] else if (u.role == 'provider') ...[
-                  _detailRow(context, 'Organization Name', v?.orgName ?? 'Independent Fiduciary'),
-                  _detailRow(context, 'Provider Type', v?.providerType ?? 'Individual'),
-                  _detailRow(context, 'Accreditation Status', v?.status ?? 'unverified'),
+                  _detailRow(
+                    context,
+                    'Organization Name',
+                    v?.orgName ?? 'Independent Fiduciary',
+                  ),
+                  _detailRow(
+                    context,
+                    'Provider Type',
+                    v?.providerType ?? 'Individual',
+                  ),
+                  _detailRow(
+                    context,
+                    'Accreditation Status',
+                    v?.status ?? 'unverified',
+                  ),
                   if (v?.submittedAt != null)
-                    _detailRow(context, 'Submitted At', v!.submittedAt!.toIso8601String()),
+                    _detailRow(
+                      context,
+                      'Submitted At',
+                      v!.submittedAt!.toIso8601String(),
+                    ),
                 ],
-                if (u.region.isNotEmpty) _detailRow(context, 'Region', u.region),
+                if (u.region.isNotEmpty)
+                  _detailRow(context, 'Region', u.region),
                 if (u.province != null && u.province!.isNotEmpty)
                   _detailRow(context, 'Province', u.province!),
-                if (u.cityMunicipality != null && u.cityMunicipality!.isNotEmpty)
+                if (u.cityMunicipality != null &&
+                    u.cityMunicipality!.isNotEmpty)
                   _detailRow(context, 'City/Municipality', u.cityMunicipality!),
                 if (u.createdAt != null)
-                  _detailRow(context, 'Registered On', u.createdAt!.toIso8601String()),
+                  _detailRow(
+                    context,
+                    'Registered On',
+                    u.createdAt!.toIso8601String(),
+                  ),
               ],
             ),
           ),
@@ -1958,14 +2550,26 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             },
             child: Text(
               'Edit Role / Status',
-              style: AppTypography.style(AppTextRole.button, color: kSeqPrimaryContainer, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: kSeqPrimaryContainer,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
               'Close',
-              style: AppTypography.style(AppTextRole.button, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -1998,7 +2602,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           ),
           title: Text(
             'Provision Platform Identity',
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 17,
+              height: 1.25,
+              color: kSeqOnSurface,
+              letterSpacing: -.15,
+            ),
           ),
           content: SizedBox(
             width: 440,
@@ -2014,8 +2624,9 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                         labelText: 'Full Name *',
                         hintText: 'e.g. Maria Santos',
                       ),
-                      validator: (val) =>
-                          (val == null || val.trim().isEmpty) ? 'Enter a name' : null,
+                      validator: (val) => (val == null || val.trim().isEmpty)
+                          ? 'Enter a name'
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -2035,10 +2646,18 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     DropdownButtonFormField<String>(
                       initialValue: role,
                       isExpanded: true,
-                      decoration: const InputDecoration(labelText: 'System Role'),
+                      decoration: const InputDecoration(
+                        labelText: 'System Role',
+                      ),
                       items: const [
-                        DropdownMenuItem(value: 'student', child: Text('Student')),
-                        DropdownMenuItem(value: 'provider', child: Text('Provider')),
+                        DropdownMenuItem(
+                          value: 'student',
+                          child: Text('Student'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'provider',
+                          child: Text('Provider'),
+                        ),
                         DropdownMenuItem(value: 'admin', child: Text('Admin')),
                       ],
                       onChanged: (val) {
@@ -2049,11 +2668,22 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     DropdownButtonFormField<String>(
                       initialValue: status,
                       isExpanded: true,
-                      decoration: const InputDecoration(labelText: 'Initial Status'),
+                      decoration: const InputDecoration(
+                        labelText: 'Initial Status',
+                      ),
                       items: const [
-                        DropdownMenuItem(value: 'active', child: Text('Active')),
-                        DropdownMenuItem(value: 'deactivated', child: Text('Deactivated')),
-                        DropdownMenuItem(value: 'suspended', child: Text('Suspended')),
+                        DropdownMenuItem(
+                          value: 'active',
+                          child: Text('Active'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'deactivated',
+                          child: Text('Deactivated'),
+                        ),
+                        DropdownMenuItem(
+                          value: 'suspended',
+                          child: Text('Suspended'),
+                        ),
                       ],
                       onChanged: (val) {
                         if (val != null) setModalState(() => status = val);
@@ -2065,7 +2695,9 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                       isExpanded: true,
                       decoration: const InputDecoration(labelText: 'Region'),
                       items: kPhilippineRegions
-                          .map((r) => DropdownMenuItem(value: r, child: Text(r)))
+                          .map(
+                            (r) => DropdownMenuItem(value: r, child: Text(r)),
+                          )
                           .toList(),
                       onChanged: (val) {
                         if (val != null) setModalState(() => region = val);
@@ -2095,13 +2727,24 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text('Cancel', style: AppTypography.style(AppTextRole.button, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12)),
+              child: Text(
+                'Cancel',
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  color: kSeqOutline,
+                  fontSize: 12,
+                  height: 16 / 12,
+                  letterSpacing: 0,
+                ),
+              ),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: kSeqPrimaryContainer,
                 foregroundColor: kSeqOnPrimary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               onPressed: () async {
                 if (formKey.currentState?.validate() ?? false) {
@@ -2109,28 +2752,36 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                     final captcha = await acquireCaptcha(dialogContext);
                     if (!dialogContext.mounted || !captcha.allowed) return;
                     Navigator.of(dialogContext).pop();
-                    await ref.read(adminUsersControllerProvider).createUser(
-                        fullName: nameCtrl.text.trim(),
-                        email: emailCtrl.text.trim().toLowerCase(),
-                        role: role,
-                        status: status,
-                        region: region,
-                        school: schoolCtrl.text.trim(),
-                        course: courseCtrl.text.trim(),
-                        captchaToken: captcha.token,
+                    await ref
+                        .read(adminUsersControllerProvider)
+                        .createUser(
+                          fullName: nameCtrl.text.trim(),
+                          email: emailCtrl.text.trim().toLowerCase(),
+                          role: role,
+                          status: status,
+                          region: region,
+                          school: schoolCtrl.text.trim(),
+                          course: courseCtrl.text.trim(),
+                          captchaToken: captcha.token,
+                        );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'User account created. The user must verify their email and reset their password before signing in.',
+                          ),
+                          backgroundColor: kSeqPrimaryContainer,
+                        ),
                       );
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('User account created. The user must verify their email and reset their password before signing in.'),
-                        backgroundColor: kSeqPrimaryContainer,
-                      ),
-                    );
-                  }
+                    }
                   } catch (_) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Account creation could not be confirmed. Please check the account before retrying.')),
+                        const SnackBar(
+                          content: Text(
+                            'Account creation could not be confirmed. Please check the account before retrying.',
+                          ),
+                        ),
                       );
                     }
                   }
@@ -2163,7 +2814,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           ),
           title: Text(
             'Edit Role & Status: ${user.fullName.isNotEmpty ? user.fullName : user.id}',
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 17,
+              height: 1.25,
+              color: kSeqOnSurface,
+              letterSpacing: -.15,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -2175,7 +2832,13 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
               children: [
                 Text(
                   'User ID: ${user.id}',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kSeqOutline),
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 11,
+                    color: kSeqOutline,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
@@ -2184,7 +2847,10 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                   decoration: const InputDecoration(labelText: 'System Role'),
                   items: const [
                     DropdownMenuItem(value: 'student', child: Text('Student')),
-                    DropdownMenuItem(value: 'provider', child: Text('Provider')),
+                    DropdownMenuItem(
+                      value: 'provider',
+                      child: Text('Provider'),
+                    ),
                     DropdownMenuItem(value: 'admin', child: Text('Admin')),
                   ],
                   onChanged: (val) {
@@ -2195,11 +2861,19 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 DropdownButtonFormField<String>(
                   initialValue: status,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: 'Account Status'),
+                  decoration: const InputDecoration(
+                    labelText: 'Account Status',
+                  ),
                   items: const [
                     DropdownMenuItem(value: 'active', child: Text('Active')),
-                    DropdownMenuItem(value: 'deactivated', child: Text('Deactivated')),
-                    DropdownMenuItem(value: 'suspended', child: Text('Suspended')),
+                    DropdownMenuItem(
+                      value: 'deactivated',
+                      child: Text('Deactivated'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'suspended',
+                      child: Text('Suspended'),
+                    ),
                   ],
                   onChanged: (val) {
                     if (val != null) setModalState(() => status = val);
@@ -2211,17 +2885,30 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text('Cancel', style: AppTypography.style(AppTextRole.button, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12)),
+              child: Text(
+                'Cancel',
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  color: kSeqOutline,
+                  fontSize: 12,
+                  height: 16 / 12,
+                  letterSpacing: 0,
+                ),
+              ),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: kSeqPrimaryContainer,
                 foregroundColor: kSeqOnPrimary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
-                await ref.read(adminUsersControllerProvider).updateRoleAndStatus(
+                await ref
+                    .read(adminUsersControllerProvider)
+                    .updateRoleAndStatus(
                       user: user,
                       newRole: role,
                       newStatus: status,
@@ -2239,6 +2926,101 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmUnlock(BuildContext context, StudentProfile user) {
+    final isDesktop = MediaQuery.sizeOf(context).width >= 768;
+    final email = (user.email != null && user.email!.isNotEmpty)
+        ? user.email!
+        : user.id;
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: kSeqSurfaceContainerLowest,
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: isDesktop ? 40 : 16,
+          vertical: 24,
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        title: Row(
+          children: [
+            const Icon(
+              Icons.lock_open_rounded,
+              color: Color(0xFF0F4D2E),
+              size: 22,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Unlock Account',
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 17,
+                height: 1.25,
+                color: kSeqOnSurface,
+                letterSpacing: -.15,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to clear failed login attempts and unlock the account for ${user.fullName.isNotEmpty ? user.fullName : email}?',
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 14,
+            height: 1.4,
+            color: kTextSupporting,
+            letterSpacing: 0,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(
+              'Cancel',
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: kSeqOutline,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
+            ),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF0F4D2E),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await LoginLockoutService.instance.unlockAccount(
+                email,
+                adminEmail:
+                    ref.read(currentUserIdProvider) ?? 'admin@scholaris.ph',
+              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Account lockout cleared for ${user.fullName.isNotEmpty ? user.fullName : email}.',
+                    ),
+                    backgroundColor: const Color(0xFF0F4D2E),
+                  ),
+                );
+              }
+              setState(() {});
+            },
+            child: const Text('Unlock Account'),
+          ),
+        ],
       ),
     );
   }
@@ -2261,29 +3043,58 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         ),
         title: Text(
           '$actionName Account',
-          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+          style: AppTypography.style(
+            AppTextRole.sectionTitle,
+            fontSize: 17,
+            height: 1.25,
+            color: kSeqOnSurface,
+            letterSpacing: -.15,
+          ),
         ),
         content: Text(
           'Are you sure you want to $actionName account for ${user.fullName.isNotEmpty ? user.fullName : user.id}?',
-          style: AppTypography.style(AppTextRole.body, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 14,
+            height: 1.4,
+            color: kTextSupporting,
+            letterSpacing: 0,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text('Cancel', style: AppTypography.style(AppTextRole.button, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12)),
+            child: Text(
+              'Cancel',
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: kSeqOutline,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
+            ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: willDeactivate ? kSeqError : kSeqPrimaryContainer,
+              backgroundColor: willDeactivate
+                  ? kSeqError
+                  : kSeqPrimaryContainer,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             onPressed: () async {
               Navigator.of(dialogContext).pop();
               if (willDeactivate) {
-                await ref.read(adminUsersControllerProvider).deactivateUser(user);
+                await ref
+                    .read(adminUsersControllerProvider)
+                    .deactivateUser(user);
               } else {
-                await ref.read(adminUsersControllerProvider).updateRoleAndStatus(
+                await ref
+                    .read(adminUsersControllerProvider)
+                    .updateRoleAndStatus(
                       user: user,
                       newRole: user.role,
                       newStatus: 'active',
@@ -2293,7 +3104,9 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('User account ${actionName.toLowerCase()}d.'),
-                    backgroundColor: willDeactivate ? kSeqError : kSeqPrimaryContainer,
+                    backgroundColor: willDeactivate
+                        ? kSeqError
+                        : kSeqPrimaryContainer,
                   ),
                 );
               }
@@ -2321,22 +3134,45 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         ),
         title: Text(
           'Delete Account: ${user.fullName.isNotEmpty ? user.fullName : user.id}',
-          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+          style: AppTypography.style(
+            AppTextRole.sectionTitle,
+            fontSize: 17,
+            height: 1.25,
+            color: kSeqOnSurface,
+            letterSpacing: -.15,
+          ),
         ),
         content: Text(
           'Are you sure you want to permanently delete account ${user.id}? This action cannot be undone and will be logged in the system audit logs.',
-          style: AppTypography.style(AppTextRole.body, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 14,
+            height: 1.4,
+            color: kTextSupporting,
+            letterSpacing: 0,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text('Cancel', style: AppTypography.style(AppTextRole.button, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12)),
+            child: Text(
+              'Cancel',
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: kSeqOutline,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
+            ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: kSeqError,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             onPressed: () async {
               Navigator.of(dialogContext).pop();
@@ -2359,15 +3195,30 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
 
   Widget _detailRow(BuildContext context, String label, String value) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
-    final isMono = label.contains('ID') ||
+    final isMono =
+        label.contains('ID') ||
         label.contains('Date') ||
         label.contains('At') ||
         label.contains('GWA') ||
         label.contains('Income') ||
         label.contains('Registered');
     final valStyle = isMono
-        ? seqTabularFigures(AppTypography.style(AppTextRole.body, fontSize: 13, color: kSeqOnSurface))
-        : AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface);
+        ? seqTabularFigures(
+            AppTypography.style(
+              AppTextRole.body,
+              fontSize: 13,
+              color: kSeqOnSurface,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
+          )
+        : AppTypography.style(
+            AppTextRole.bodyEmphasis,
+            fontSize: 14,
+            height: 1.4,
+            color: kTextSupporting,
+            letterSpacing: 0,
+          );
 
     if (!isDesktop) {
       return Padding(
@@ -2375,12 +3226,18 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
-            const SizedBox(height: 2),
-            SelectableText(
-              value,
-              style: valStyle,
+            Text(
+              label,
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
+            const SizedBox(height: 2),
+            SelectableText(value, style: valStyle),
           ],
         ),
       );
@@ -2393,14 +3250,18 @@ class _AdminUsersTabState extends ConsumerState<AdminUsersTab> {
         children: [
           SizedBox(
             width: 140,
-            child: Text(label, style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12)),
-          ),
-          Expanded(
-            child: SelectableText(
-              value,
-              style: valStyle,
+            child: Text(
+              label,
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
             ),
           ),
+          Expanded(child: SelectableText(value, style: valStyle)),
         ],
       ),
     );

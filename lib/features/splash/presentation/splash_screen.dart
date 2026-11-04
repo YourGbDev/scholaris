@@ -24,7 +24,6 @@
 // Reduced motion: the sequence jumps straight to its settled end state and
 // the hold is released immediately (minimal/no delay). The float never runs.
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -259,7 +258,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     position: _titleRise,
                     child: Text(
                       'Scholaris',
-                      style: AppTypography.style(AppTextRole.display, fontSize: titleSize, color: kPrimary, letterSpacing: opticalTracking(titleSize), height: opticalLeading(titleSize, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.display,
+                        fontSize: titleSize,
+                        color: kPrimary,
+                        height: 1.2,
+                        letterSpacing: ((titleSize) >= 24 ? -.4 : -.15),
+                      ),
                     ),
                   ),
                 ),
@@ -269,7 +274,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   opacity: _taglineFade,
                   child: Text(
                     'Your future starts somewhere.',
-                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 15, color: Colors.black54, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.subtitle,
+                      fontSize: 15,
+                      color: Colors.black54,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ],

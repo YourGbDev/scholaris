@@ -1,26 +1,5 @@
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
-// lib/features/profile/presentation/profile_tab_screen.dart
-//
-// "Profile" tab — 100% Stitch V2 design fidelity:
-// - Top bar with Scholaris logo, breadcrumb, notifications, and profile avatar indicator
-// - Section header with "My Profile", "Academic standing & grant eligibility", and settings gear
-// - Profile Hero card with Iskolar avatar, Student profile badge, full name, university,
-//   course & year, and student ID / SUC metadata chip
-// - Grant Engine Matching Power milestone card (key: ValueKey('profile-milestone-card'))
-//   with progress bar, unlocks stat, metric breakdown chips, and advice banner
-// - Verified Credentials with 3 distinct Stitch cards:
-//   1. Academic Information (GWA, Priority Field, Academic Standing, College, TCG banner)
-//   2. Location & Residency (Permanent Address, Residency Duration, LGU grant banner)
-//   3. Financial Background (RA 10173 privacy shield, Income Tier, Beneficiary status)
-// - Documents & Quick Actions:
-//   * Download Scholaris Passport (Coming soon)
-//   * University transcript sync • Coming soon
-// - Account & Settings navigation cards:
-//   * My Applications
-//   * Account Settings (Email, verification and password)
-// - Update Profile & Sign Out action buttons (ValueKey('profile-logout-button'))
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -35,6 +14,7 @@ import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholaris_logo.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
+
 import '../models/student_profile.dart';
 import '../providers/avatar_provider.dart';
 import '../providers/profile_setup_provider.dart';
@@ -44,7 +24,11 @@ import 'widgets/avatar_display.dart';
 import 'widgets/avatar_selector_sheet.dart';
 
 class ProfileTabScreen extends ConsumerWidget {
-  const ProfileTabScreen({super.key, this.guideTargets = const [], this.scrollController});
+  const ProfileTabScreen({
+    super.key,
+    this.guideTargets = const [],
+    this.scrollController,
+  });
   final List<GlobalKey> guideTargets;
   final ScrollController? scrollController;
 
@@ -53,26 +37,35 @@ class ProfileTabScreen extends ConsumerWidget {
     final profileAsync = ref.watch(currentProfileProvider);
 
     return Scaffold(
-      backgroundColor: kSurfaceWarm,
+      backgroundColor: kStudentCanvas,
       body: SafeArea(
         bottom: false,
         child: ResponsiveContainer(
           child: profileAsync.when(
-            loading: () => StudentTabReveal(order: 3, child: CrossFadeLoading(
-              isLoading: true,
-              skeleton: _buildProfileSkeleton(context),
-              child: const SizedBox.shrink(),
-            )),
-            error: (error, stackTrace) => StudentTabReveal(order: 3, child: ErrorView(
-              message: 'We could not load your profile.',
-              onRetry: () => ref.invalidate(currentProfileProvider),
-            )),
+            loading: () => StudentTabReveal(
+              order: 3,
+              child: CrossFadeLoading(
+                isLoading: true,
+                skeleton: _buildProfileSkeleton(context),
+                child: const SizedBox.shrink(),
+              ),
+            ),
+            error: (error, stackTrace) => StudentTabReveal(
+              order: 3,
+              child: ErrorView(
+                message: 'We could not load your profile.',
+                onRetry: () => ref.invalidate(currentProfileProvider),
+              ),
+            ),
             data: (profile) => profile == null
-                ? const StudentTabReveal(order: 3, child: EmptyView(
-                    icon: Icons.person_outline_rounded,
-                    title: 'No profile yet',
-                    message: 'Complete your profile to start matching.',
-                  ))
+                ? const StudentTabReveal(
+                    order: 3,
+                    child: EmptyView(
+                      icon: Icons.person_outline_rounded,
+                      title: 'No profile yet',
+                      message: 'Complete your profile to start matching.',
+                    ),
+                  )
                 : _buildProfileContent(context, ref, profile),
           ),
         ),
@@ -84,9 +77,9 @@ class ProfileTabScreen extends ConsumerWidget {
     return SingleChildScrollView(
       physics: const AppleBouncingScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
+        20,
         16,
-        12,
-        16,
+        20,
         MediaQuery.of(context).padding.bottom + 64 + 16,
       ),
       child: Column(
@@ -121,33 +114,45 @@ class ProfileTabScreen extends ConsumerWidget {
       controller: scrollController,
       physics: const AppleBouncingScrollPhysics(),
       padding: EdgeInsets.fromLTRB(
+        20,
         16,
-        12,
-        16,
+        20,
         MediaQuery.of(context).padding.bottom + 64 + 16,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Stitch Top Bar
-          StudentTabReveal(order: 0,
+          StudentTabReveal(
+            order: 0,
             immediate: true,
-            child: _buildTopBar(context)),
-          const SizedBox(height: 14),
+            child: _buildTopBar(context),
+          ),
+          const SizedBox(height: 16),
 
           // Section Title & Settings Button
-          StudentTabReveal(order: 0,
+          StudentTabReveal(
+            order: 0,
             immediate: true,
-            child: _buildHeader(context)),
-          const SizedBox(height: 14),
+            child: _buildHeader(context),
+          ),
+          const SizedBox(height: 16),
 
           // Profile Hero Card
-          StudentTabReveal(order: 1, structural: true, child: _buildHeroCard(context, ref, profile)),
-          const SizedBox(height: 14),
+          StudentTabReveal(
+            order: 1,
+            structural: true,
+            child: _buildHeroCard(context, ref, profile),
+          ),
+          const SizedBox(height: 16),
 
           // Matching Power Milestone Card
-          StudentTabReveal(order: 2, structural: true, child: _ProfileMilestoneCard(profile: profile)),
-          const SizedBox(height: 18),
+          StudentTabReveal(
+            order: 2,
+            structural: true,
+            child: _ProfileMilestoneCard(profile: profile),
+          ),
+          const SizedBox(height: 24),
 
           // Verified Credentials Section (3 Stitch Cards)
           _buildVerifiedCredentials(context, profile),
@@ -165,65 +170,38 @@ class ProfileTabScreen extends ConsumerWidget {
   }
 
   Widget _buildTopBar(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final actions = Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Flexible(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Flexible(child: StudentTabReveal(
-                  order: 0, immediate: true,
-                  child: ScholarisLogo(compact: true),
-                )),
-              const SizedBox(width: 6),
-              StudentTabReveal(
-                order: 0, immediate: true,
-                child: Text(
-                '/',
-                style: AppTypography.style(AppTextRole.body, fontSize: 14, color: kTextSecondary.withValues(alpha: 0.5), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
-              ),
-              ),
-              const SizedBox(width: 6),
-              StudentTabReveal(
-                order: 0, immediate: true,
-                child: Text(
-                'Profile',
-                style: AppTypography.style(AppTextRole.navigation, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
-                ),
-              ),
-            ],
-          ),
+        IconButton(
+          tooltip: 'Notifications',
+          icon: const Icon(Icons.notifications_none_rounded, size: 20),
+          color: kTextSecondary,
+          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+          onPressed: () => showStudentNotificationsSheet(context),
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              tooltip: 'Notifications',
-              icon: const Icon(Icons.notifications_none_rounded, size: 20),
-              color: kOnSurfaceVariant,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-              onPressed: () {
-                showStudentNotificationsSheet(context);
-              },
-            ),
-            const SizedBox(width: 4),
-            Container(
-              width: 28,
-              height: 28,
-              decoration: const BoxDecoration(
-                color: kPrimary,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.person,
-                size: 16,
-                color: Colors.white,
-              ),
-            ),
-          ],
+        const SizedBox(width: 8),
+        const CircleAvatar(
+          radius: 14,
+          backgroundColor: kPrimary,
+          child: Icon(Icons.person, size: 16, color: Colors.white),
         ),
+      ],
+    );
+    if (MediaQuery.textScalerOf(context).scale(18) > 25) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ScholarisLogo(compact: true),
+          Align(alignment: Alignment.centerRight, child: actions),
+        ],
+      );
+    }
+    return Row(
+      children: [
+        const Expanded(child: ScholarisLogo(compact: true)),
+        const SizedBox(width: 8),
+        actions,
       ],
     );
   }
@@ -237,20 +215,30 @@ class ProfileTabScreen extends ConsumerWidget {
           child: StudentTabReveal(
             order: 0,
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'My Profile',
-                style: AppTypography.style(AppTextRole.screenTitle, fontSize: 24, color: kOnSurface, letterSpacing: opticalTracking(24), height: opticalLeading(24, isBody: false)),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Academic standing & grant eligibility',
-                style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'My Profile',
+                  style: AppTypography.style(
+                    AppTextRole.screenTitle,
+                    fontSize: 20,
+                    color: kOnSurface,
+                    height: 1.25,
+                    letterSpacing: -0.3,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Your details and account',
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 12,
+                    color: kOnSurfaceVariant,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -262,7 +250,7 @@ class ProfileTabScreen extends ConsumerWidget {
             ),
           ),
           style: IconButton.styleFrom(
-            backgroundColor: kSurfaceContainerHigh,
+            backgroundColor: kStudentSurfaceSubtle,
             padding: const EdgeInsets.all(10),
             shape: const CircleBorder(),
           ),
@@ -281,123 +269,78 @@ class ProfileTabScreen extends ConsumerWidget {
     WidgetRef ref,
     StudentProfile profile,
   ) {
-    final hashNum = (profile.fullName.hashCode.abs() % 90000 + 10000);
-    final enrollYear = DateTime.now().year - profile.yearLevel + 1;
-    final studentId = '$enrollYear-$hashNum';
     final avatarState = ref.watch(avatarProvider(profile.id));
-
+    final identity = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          profile.fullName,
+          style: AppTypography.style(
+            AppTextRole.cardTitle,
+            fontSize: 17,
+            color: kOnSurface,
+            height: 1.25,
+            letterSpacing: -0.15,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          (profile.school != null && profile.school!.trim().isNotEmpty)
+              ? profile.school!
+              : 'Institution not set',
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            fontSize: 13,
+            color: kOnSurfaceVariant,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          '${profile.course} (${profile.yearLevel}${_ordinal(profile.yearLevel)} Year)',
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            fontSize: 12,
+            color: kTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
+        ),
+      ],
+    );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Avatar with Iskolar badge and tap to customize
-              AvatarDisplay(
-                key: const ValueKey('profile-hero-avatar'),
-                avatarId: avatarState.avatarId,
-                isRealPhoto: avatarState.isRealPhoto,
-                photoPath: avatarState.photoPath,
-                size: 64,
-                showEditOverlay: true,
-                onTap: () => AvatarSelectorSheet.show(context, profile.id),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: kPrimaryFixed,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.verified,
-                            size: 13,
-                            color: kOnPrimaryFixedVariant,
-                          ),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              'Student profile',
-                              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnPrimaryFixedVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      profile.fullName,
-                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kOnSurface, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      (profile.school != null && profile.school!.trim().isNotEmpty)
-                          ? profile.school!
-                          : 'Institution not set',
-                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOnSurfaceVariant, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${profile.course} (${profile.yearLevel}${_ordinal(profile.yearLevel)} Year)',
-                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.badge_outlined,
-                        size: 18,
-                        color: kSecondary,
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Student ID / SUC:',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final stackIdentity =
+                  MediaQuery.textScalerOf(context).scale(14) > 20;
+              return Wrap(
+                spacing: 14,
+                runSpacing: 12,
+                children: [
+                  AvatarDisplay(
+                    key: const ValueKey('profile-hero-avatar'),
+                    avatarId: avatarState.avatarId,
+                    isRealPhoto: avatarState.isRealPhoto,
+                    photoPath: avatarState.photoPath,
+                    size: 64,
+                    showEditOverlay: true,
+                    onTap: () => AvatarSelectorSheet.show(context, profile.id),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  studentId,
-                  style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kOnSurface, letterSpacing: 0.5, height: opticalLeading(13, isBody: false)),
-                ),
-              ],
-            ),
+                  SizedBox(
+                    width: stackIdentity
+                        ? constraints.maxWidth
+                        : constraints.maxWidth - 78,
+                    child: identity,
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -412,379 +355,152 @@ class ProfileTabScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Section Header
-        StudentTabReveal(order: 2, structural: true, child: Builder(
-          builder: (context) {
-            final syncedCount = (profile.course.trim().isNotEmpty ? 1 : 0) +
-                (profile.region.trim().isNotEmpty ? 1 : 0) +
-                (profile.monthlyFamilyIncome != null ? 1 : 0);
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Profile details',
-                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOnSurface, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      syncedCount > 0 ? '$syncedCount Categories Provided' : 'Pending Profile Setup',
-                      textAlign: TextAlign.end,
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: syncedCount > 0 ? kPrimary : kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        )),
+        StudentTabReveal(
+          order: 2,
+          structural: true,
+          child: Text(
+            'Profile details',
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 17,
+              color: kOnSurface,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
+          ),
+        ),
         const SizedBox(height: 10),
 
         // Card 1: Academic Information
         StudentTabReveal(
           order: 1,
-          child: KeyedSubtree(key: guideTargets.isNotEmpty ? guideTargets[0] : null,
-            child: _buildAcademicCard(context, profile)),
+          child: KeyedSubtree(
+            key: guideTargets.isNotEmpty ? guideTargets[0] : null,
+            child: _buildAcademicCard(context, profile),
+          ),
         ),
         const SizedBox(height: 12),
 
         // Card 2: Location & Residency
         StudentTabReveal(
           order: 2,
-          child: KeyedSubtree(key: guideTargets.length > 1 ? guideTargets[1] : null,
-            child: _buildLocationCard(context, profile)),
+          child: KeyedSubtree(
+            key: guideTargets.length > 1 ? guideTargets[1] : null,
+            child: _buildLocationCard(context, profile),
+          ),
         ),
         const SizedBox(height: 12),
 
         // Card 3: Financial Background
         StudentTabReveal(
           order: 3,
-          child: KeyedSubtree(key: guideTargets.length > 2 ? guideTargets[2] : null,
-            child: _buildFinancialCard(context, profile)),
+          child: KeyedSubtree(
+            key: guideTargets.length > 2 ? guideTargets[2] : null,
+            child: _buildFinancialCard(context, profile),
+          ),
         ),
       ],
     );
   }
 
-  bool _isStemCourse(String course) {
-    final lower = course.toLowerCase();
-    return lower.contains('science') ||
-        lower.contains('engineer') ||
-        lower.contains('tech') ||
-        lower.contains('math') ||
-        lower.contains('nurs') ||
-        lower.contains('medic') ||
-        lower.contains('comp') ||
-        lower.contains('it') ||
-        lower.contains('stem');
-  }
-
   Widget _buildAcademicCard(BuildContext context, StudentProfile profile) {
-    final gwaScale = profile.gpa <= 1.75 ? "Dean's List" : "Good Standing";
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: kSoftCardDecoration,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: kPrimaryContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.school_outlined,
-                        size: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Academic Information',
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              _buildEditBadge(
-                onTap: () => context.go('/profile-setup/academic'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // 2x2 Details Grid
-          Row(
-            children: [
-              Expanded(
-                child: _buildGridItem(
-                  label: 'Cumulative GWA',
-                  valueRole: AppTextRole.metric,
-                  value: profile.gpa.toStringAsFixed(2),
-                  subtitle: '1.0 – 5.0 ($gwaScale)',
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildGridItem(
-                  label: 'Priority Field',
-                  value: _isStemCourse(profile.course) ? 'STEM Priority' : 'General Degree',
-                  subtitle: _isStemCourse(profile.course) ? 'CHED Category A' : 'CHED Standard',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: _buildGridItem(
-                  label: 'Academic Standing',
-                  value: '${profile.yearLevel}${_ordinal(profile.yearLevel)} Year',
-                  subtitle: profile.setupComplete ? 'Enrolled • Regular' : 'Setup Incomplete',
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _buildGridItem(
-                  label: 'Enrolled College',
-                  value: (profile.school != null && profile.school!.trim().isNotEmpty)
-                      ? profile.school!
-                      : 'University not set',
-                  subtitle: profile.course.isNotEmpty ? profile.course : 'Course not specified',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // TCG Document Status Banner
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: profile.setupComplete
-                  ? kPrimaryFixed.withValues(alpha: 0.35)
-                  : kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: profile.setupComplete ? Colors.transparent : kBorderLight),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  (profile.school != null && profile.school!.trim().isNotEmpty)
-                      ? Icons.school_outlined
-                      : Icons.info_outline_rounded,
-                  size: 16,
-                  color: profile.setupComplete ? kPrimary : kOnSurfaceVariant,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    (profile.school != null && profile.school!.trim().isNotEmpty)
-                        ? 'Institution provided on your profile'
-                        : 'Institution not declared on profile',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: profile.setupComplete ? kOnPrimaryFixedVariant : kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return _buildDetailsCard(
+      title: 'Academic Information',
+      icon: Icons.school_outlined,
+      onEdit: () => context.go('/profile-setup/academic'),
+      children: [
+        _buildGridItem(
+          label: 'Reported grade',
+          value: profile.gpa > 0
+              ? profile.gpa.toStringAsFixed(2)
+              : 'Not provided',
+          subtitle: profile.gpaScale != null
+              ? gradingScaleLabel(profile.gpaScale)
+              : '',
+        ),
+        _buildGridItem(
+          label: 'Course / Degree Program',
+          value: profile.course.trim().isNotEmpty
+              ? profile.course
+              : 'Not provided',
+          subtitle: '',
+        ),
+        _buildGridItem(
+          label: 'Year level',
+          value: profile.yearLevel > 0
+              ? '${profile.yearLevel}${_ordinal(profile.yearLevel)} Year'
+              : 'Not provided',
+          subtitle: '',
+        ),
+        _buildGridItem(
+          label: 'School or University',
+          value: profile.school?.trim().isNotEmpty == true
+              ? profile.school!
+              : 'Not provided',
+          subtitle: '',
+        ),
+      ],
     );
   }
 
   Widget _buildLocationCard(BuildContext context, StudentProfile profile) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: kSoftCardDecoration,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: kSecondaryContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.location_on_outlined,
-                        size: 18,
-                        color: kOnSecondaryContainer,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Location & Residency',
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              _buildEditBadge(
-                onTap: () => context.go('/profile-setup/financial'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          // Permanent Address Row
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Permanent Address',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                      ),
-                      const SizedBox(height: 1),
-                      Text(
-                        profile.cityMunicipality ?? 'Diliman, Quezon City',
-                        style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        'Region ${profile.region}',
-                        style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: kSurfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    '${profile.region} Dist.',
-                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          // Residency Duration Row
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Declared Residency',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                      ),
-                      const SizedBox(height: 1),
-                      Text(
-                        profile.province != null && profile.province!.trim().isNotEmpty
-                            ? '${profile.cityMunicipality != null && profile.cityMunicipality!.trim().isNotEmpty ? '${profile.cityMunicipality}, ' : ''}${profile.province}'
-                            : (profile.region.isNotEmpty
-                                ? profile.region
-                                : 'Region Not Set'),
-                        style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  profile.region.isNotEmpty ? 'Region Declared' : 'Incomplete',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: profile.region.isNotEmpty ? kPrimary : kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 12),
-          // LGU Grant Banner
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: profile.region.isNotEmpty
-                  ? kPrimaryFixed.withValues(alpha: 0.35)
-                  : kSurfaceContainerHigh,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  (profile.region.isNotEmpty && profile.setupComplete)
-                      ? Icons.verified_rounded
-                      : Icons.info_outline_rounded,
-                  size: 16,
-                  color: (profile.region.isNotEmpty && profile.setupComplete)
-                      ? kPrimary
-                      : kOnSurfaceVariant,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    (profile.region.isNotEmpty && profile.setupComplete)
-                        ? 'Residency information added to your profile'
-                        : 'LGU Grant Matching: Set residency to unlock local grants',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: (profile.region.isNotEmpty && profile.setupComplete) ? kOnPrimaryFixedVariant : kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    final address = [
+      profile.cityMunicipality,
+      profile.province,
+    ].whereType<String>().where((value) => value.trim().isNotEmpty).join(', ');
+    return _buildDetailsCard(
+      title: 'Location & Residency',
+      icon: Icons.location_on_outlined,
+      onEdit: () => context.go('/profile-setup/financial'),
+      children: [
+        _buildGridItem(
+          label: 'City / Municipality & Province',
+          value: address.isNotEmpty ? address : 'Not provided',
+          subtitle: '',
+        ),
+        _buildGridItem(
+          label: 'Region',
+          value: profile.region.trim().isNotEmpty
+              ? profile.region
+              : 'Not provided',
+          subtitle: '',
+        ),
+      ],
     );
   }
 
   Widget _buildFinancialCard(BuildContext context, StudentProfile profile) {
+    final demographics = [
+      if (profile.isIndigenous) 'Indigenous Peoples (IP)',
+      if (profile.hasDisability) 'Person with Disability (PWD)',
+    ].join(', ');
+    return _buildDetailsCard(
+      title: 'Financial Background',
+      icon: Icons.account_balance_outlined,
+      onEdit: () => context.go('/profile-setup/financial'),
+      children: [
+        _buildGridItem(
+          label: 'Monthly family income',
+          value: _incomeLabel(profile),
+          subtitle: 'Scholarship requirements vary by program.',
+        ),
+        _buildGridItem(
+          label: 'Self-declared demographic details',
+          value: demographics.isNotEmpty
+              ? demographics
+              : 'No special demographic status declared',
+          subtitle: '',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailsCard({
+    required String title,
+    required IconData icon,
+    required VoidCallback onEdit,
+    required List<Widget> children,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: kSoftCardDecoration,
@@ -792,151 +508,27 @@ class ProfileTabScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Icon(icon, size: 20, color: kTextSecondary),
+              const SizedBox(width: 10),
               Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: kTertiaryFixed,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.account_balance_outlined,
-                        size: 18,
-                        color: kOnTertiaryFixed,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Financial Background',
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                child: Text(
+                  title,
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 15,
+                    color: kOnSurface,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
-              _buildEditBadge(
-                onTap: () => context.go('/profile-setup/financial'),
-              ),
+              _buildEditBadge(onTap: onEdit),
             ],
           ),
-          const SizedBox(height: 10),
-          // RA 10173 Privacy Banner
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: kSurfaceContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.lock_outline_rounded,
-                  size: 15,
-                  color: kSecondary,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    'Specific salary shielded per RA 10173 (Data Privacy)',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          // Household Income Tier
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Household Income Tier',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      profile.monthlyFamilyIncome != null
-                          ? 'Declared Income'
-                          : 'Income Undisclosed',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: profile.monthlyFamilyIncome != null ? kPrimary : kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _incomeLabel(profile),
-                  style: AppTypography.style(AppTextRole.label, fontSize: 14, color: kOnSurface, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  profile.monthlyFamilyIncome != null
-                      ? 'Qualifies for needs-based tuition and stipend subsidies'
-                      : 'Declare monthly income to unlock needs-based subsidies',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
-                ),
-              ],
-            ),
-          ),
           const SizedBox(height: 8),
-          // Special Beneficiary Status
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: kSurfaceContainerLow,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Special Beneficiary Status',
-                  style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  profile.isIndigenous
-                      ? 'Indigenous Peoples (IP) Beneficiary'
-                      : (profile.hasDisability
-                          ? 'Person with Disability (PWD) Grantee'
-                          : (profile.monthlyFamilyIncome != null && profile.monthlyFamilyIncome! < 25000
-                              ? 'Low-Income Bracket (Subsidized)'
-                              : 'Standard Grant Applicant')),
-                  style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, color: kOnSurface, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  (profile.isIndigenous || profile.hasDisability)
-                      ? 'Self-declared beneficiary status'
-                      : (profile.monthlyFamilyIncome != null
-                          ? 'Based on declared family income bracket'
-                          : 'No special demographic status declared'),
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
-                ),
-              ],
-            ),
-          ),
+          ...children,
         ],
       ),
     );
@@ -946,132 +538,75 @@ class ProfileTabScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StudentTabReveal(order: 0, child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Text(
-            'Documents & Quick Actions',
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOnSurface, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
-          ),
-        )),
-        const SizedBox(height: 10),
-
-        // Download Scholaris Passport Button
-        StudentTabReveal(order: 6, child: PressableScale(
-          child: Material(
-            color: kPrimaryDark,
-            borderRadius: BorderRadius.circular(14),
-            elevation: 2,
-            shadowColor: kCardShadow,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Scholaris Passport is not available yet.',
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-                    ),
-                    behavior: SnackBarBehavior.floating,
-                    backgroundColor: kPrimary,
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: kPrimaryContainer,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: const Icon(
-                        Icons.card_membership_rounded,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Download Scholaris Passport',
-                            style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Coming soon',
-                            style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimaryFixedDim, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Icon(
-                      Icons.download_rounded,
-                      size: 22,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
+        StudentTabReveal(
+          order: 0,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Text(
+              'Documents & Quick Actions',
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 17,
+                color: kOnSurface,
+                height: 1.25,
+                letterSpacing: -0.15,
               ),
             ),
           ),
-        )),
+        ),
         const SizedBox(height: 10),
 
-        // University transcript sync • Coming soon Button
-        StudentTabReveal(order: 6, child: PressableScale(
-          child: Material(
-            color: kSurfaceContainerHigh,
-            borderRadius: BorderRadius.circular(14),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(14),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'University transcript sync is not available yet.',
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-                    ),
-                    behavior: SnackBarBehavior.floating,
-                    backgroundColor: kPrimary,
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.sync_rounded,
-                      size: 20,
-                      color: kSecondary,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'University transcript sync • Coming soon',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
-                      ),
-                    ),
-                    const Icon(
-                      Icons.chevron_right_rounded,
-                      size: 18,
-                      color: kOnSurfaceVariant,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        )),
+        _buildComingSoonRow(
+          Icons.card_membership_outlined,
+          'Scholaris Passport',
+        ),
+        const SizedBox(height: 10),
+        _buildComingSoonRow(Icons.sync_rounded, 'University transcript sync'),
       ],
+    );
+  }
+
+  Widget _buildComingSoonRow(IconData icon, String title) {
+    return Semantics(
+      enabled: false,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: kSoftCardDecoration,
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: kTextSecondary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 13,
+                      color: kTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Coming soon',
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      fontSize: 12,
+                      color: kTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1079,89 +614,120 @@ class ProfileTabScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StudentTabReveal(order: 0, child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Text(
-            'Account & Settings',
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOnSurface, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
+        StudentTabReveal(
+          order: 0,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Text(
+              'Account & Settings',
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 17,
+                color: kOnSurface,
+                height: 1.25,
+                letterSpacing: -0.15,
+              ),
+            ),
           ),
-        )),
+        ),
         const SizedBox(height: 10),
 
         // My Applications Navigation Card
-        StudentTabReveal(order: 6, child: _buildNavCard(
-          context: context,
-          icon: Icons.send_outlined,
-          title: 'My Applications',
-          subtitle: 'Track your applications and their status',
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => const ApplicationsScreen(),
+        StudentTabReveal(
+          order: 6,
+          child: _buildNavCard(
+            context: context,
+            icon: Icons.send_outlined,
+            title: 'My Applications',
+            subtitle: 'Track your applications and their status',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const ApplicationsScreen(),
+              ),
             ),
           ),
-        )),
+        ),
         const SizedBox(height: 10),
 
         // Account Settings Navigation Card
-        StudentTabReveal(order: 6, child: _buildNavCard(
-          context: context,
-          icon: Icons.manage_accounts_outlined,
-          title: 'Account Settings',
-          subtitle: 'Email, verification and password',
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => const AccountSettingsScreen(),
+        StudentTabReveal(
+          order: 6,
+          child: _buildNavCard(
+            context: context,
+            icon: Icons.manage_accounts_outlined,
+            title: 'Account Settings',
+            subtitle: 'Email, verification and password',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const AccountSettingsScreen(),
+              ),
             ),
           ),
-        )),
+        ),
         const SizedBox(height: 16),
 
         // Action Buttons
-        StudentTabReveal(order: 6, child: PressableScale(
-          child: OutlinedButton.icon(
-            onPressed: () => context.go('/profile-setup/personal'),
-            icon: const Icon(Icons.edit_outlined, size: 18),
-            label: Text(
-              'Update profile',
-              style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-            ),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: kPrimary,
-              side: const BorderSide(color: kPrimary, width: 1.5),
-              minimumSize: const Size.fromHeight(48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+        StudentTabReveal(
+          order: 6,
+          child: PressableScale(
+            child: OutlinedButton.icon(
+              onPressed: () => context.go('/profile-setup/personal'),
+              icon: const Icon(Icons.edit_outlined, size: 18),
+              label: Text(
+                'Update profile',
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 13,
+                  height: 1.25,
+                  letterSpacing: 0,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: kPrimary,
+                side: const BorderSide(color: kPrimary, width: 1.5),
+                minimumSize: const Size.fromHeight(48),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
-        )),
+        ),
         const SizedBox(height: 10),
-        StudentTabReveal(order: 6, child: PressableScale(
-          child: OutlinedButton.icon(
-            key: const ValueKey('profile-logout-button'),
-            onPressed: () async {
-              final confirmed = await showLogoutConfirmationDialog(context);
-              if (confirmed) {
-                try {
-                  await Supabase.instance.client.auth.signOut();
-                } catch (_) {}
-              }
-            },
-            icon: const Icon(Icons.logout_rounded, size: 18),
-            label: Text(
-              'Sign out',
-              style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-            ),
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size.fromHeight(48),
-              foregroundColor: kError,
-              side: const BorderSide(color: kError, width: 1.5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+        StudentTabReveal(
+          order: 6,
+          child: PressableScale(
+            child: OutlinedButton.icon(
+              key: const ValueKey('profile-logout-button'),
+              onPressed: () async {
+                final confirmed = await showLogoutConfirmationDialog(context);
+                if (confirmed) {
+                  try {
+                    await Supabase.instance.client.auth.signOut();
+                  } catch (_) {}
+                }
+              },
+              icon: const Icon(Icons.logout_rounded, size: 18),
+              label: Text(
+                'Sign out',
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 13,
+                  height: 1.25,
+                  letterSpacing: 0,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(48),
+                foregroundColor: kError,
+                side: const BorderSide(color: kError, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
-        )),
+        ),
       ],
     );
   }
@@ -1170,12 +736,11 @@ class ProfileTabScreen extends ConsumerWidget {
     required String label,
     required String value,
     required String subtitle,
-    AppTextRole valueRole = AppTextRole.bodyEmphasis,
   }) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: kSurfaceContainerLow,
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
@@ -1183,22 +748,37 @@ class ProfileTabScreen extends ConsumerWidget {
         children: [
           Text(
             label,
-            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 12,
+              color: kTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           Text(
             value,
-            style: AppTypography.style(valueRole, fontSize: 14, color: kOnSurface, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            style: AppTypography.style(
+              AppTextRole.bodyEmphasis,
+              fontSize: 15,
+              color: kOnSurface,
+              height: 1.25,
+              letterSpacing: 0,
+            ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            subtitle,
-            style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kOnSurfaceVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+          if (subtitle.isNotEmpty) const SizedBox(height: 4),
+          if (subtitle.isNotEmpty)
+            Text(
+              subtitle,
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                fontSize: 12,
+                color: kTextSecondary,
+                height: 1.45,
+                letterSpacing: 0,
+              ),
+            ),
         ],
       ),
     );
@@ -1209,14 +789,23 @@ class ProfileTabScreen extends ConsumerWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: kSurfaceContainerLow,
+          color: kStudentSurfaceSubtle,
           borderRadius: BorderRadius.circular(14),
+          border: kCardBorderCrisp,
         ),
         child: Text(
           'Edit',
-          style: AppTypography.style(AppTextRole.button, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.button,
+            fontSize: 13,
+            color: kPrimary,
+            height: 1.25,
+            letterSpacing: 0,
+          ),
         ),
       ),
     );
@@ -1232,14 +821,12 @@ class ProfileTabScreen extends ConsumerWidget {
     return PressableScale(
       child: Material(
         color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-          side: const BorderSide(color: kBorderLight),
-        ),
+        borderRadius: BorderRadius.circular(kRadiusCard),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(14),
-          child: Padding(
+          borderRadius: BorderRadius.circular(kRadiusCard),
+          child: Container(
+            decoration: kSoftCardDecoration,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
@@ -1247,7 +834,7 @@ class ProfileTabScreen extends ConsumerWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: kPrimarySoft,
+                    color: kStudentSurfaceSubtle,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(icon, size: 18, color: kPrimary),
@@ -1259,12 +846,24 @@ class ProfileTabScreen extends ConsumerWidget {
                     children: [
                       Text(
                         title,
-                        style: AppTypography.style(AppTextRole.navigation, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.navigation,
+                          fontSize: 13,
+                          color: kTextPrimary,
+                          height: 1.25,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.subtitle,
+                          fontSize: 12,
+                          color: kTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -1297,219 +896,115 @@ class ProfileTabScreen extends ConsumerWidget {
   }
 
   String _ordinal(int n) => switch (n) {
-        1 => 'st',
-        2 => 'nd',
-        3 => 'rd',
-        _ => 'th',
-      };
+    1 => 'st',
+    2 => 'nd',
+    3 => 'rd',
+    _ => 'th',
+  };
 }
 
 class _ProfileMilestoneCard extends StatelessWidget {
   const _ProfileMilestoneCard({required this.profile});
-
   final StudentProfile profile;
 
   @override
   Widget build(BuildContext context) {
     final report = MatchingPowerService.evaluate(profile);
-    final percentage = report.percentage;
-    final isComplete = report.isFullyComplete;
-    final accentColor = isComplete ? kPrimary : kAccent;
-
     return PressableScale(
       child: Material(
         color: Colors.transparent,
+        borderRadius: BorderRadius.circular(kRadiusCard),
         child: InkWell(
           key: const ValueKey('profile-milestone-card'),
           borderRadius: BorderRadius.circular(kRadiusCard),
           onTap: () => showMatchingPowerSheet(context, profile),
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: kSoftCardDecoration.copyWith(border: Border.all(
-                color: isComplete
-                    ? kPrimary.withValues(alpha: 0.3)
-                    : kAccent.withValues(alpha: 0.35),
-              )),
+            decoration: kSoftCardDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 6,
                   children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: isComplete
-                            ? kPrimarySoft
-                            : kTertiaryFixed.withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        isComplete
-                            ? Icons.workspace_premium_rounded
-                            : Icons.trending_up_rounded,
-                        color: isComplete ? kPrimary : const Color(0xFF583F00),
-                        size: 24,
+                    Text(
+                      'Profile completeness',
+                      style: AppTypography.style(
+                        AppTextRole.sectionTitle,
+                        fontSize: 15,
+                        color: kOnSurface,
+                        height: 1.4,
+                        letterSpacing: 0,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'GRANT ENGINE',
-                                  style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: 1.0, height: opticalLeading(10, isBody: false)),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 4),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isComplete
-                                      ? kPrimaryFixed
-                                      : const Color(0xFF98D4AB).withValues(alpha: 0.25),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  isComplete ? 'Peak Fit' : 'High Fit',
-                                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  'Matching Power',
-                                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOnSurface, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              CountUpAnimation(
-                                targetValue: percentage,
-                                suffix: '%',
-                                style: AppTypography.style(AppTextRole.metric, fontSize: 16, color: isComplete ? kPrimary : kMatchGoldText, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
-                              ),
-                            ],
-                          ),
-                        ],
+                    CountUpAnimation(
+                      targetValue: report.percentage,
+                      suffix: '%',
+                      style: AppTypography.style(
+                        AppTextRole.metric,
+                        fontSize: 15,
+                        color: kPrimary,
+                        height: 1.4,
+                        letterSpacing: 0,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-
-                // Progress bar
+                const SizedBox(height: 10),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
+                  borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: report.ratio,
-                    minHeight: 8,
-                    backgroundColor: kSurfaceContainerHighest,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      accentColor,
-                    ),
+                    minHeight: 4,
+                    backgroundColor: kStudentDivider,
+                    valueColor: const AlwaysStoppedAnimation<Color>(kPrimary),
                   ),
                 ),
                 const SizedBox(height: 10),
-
-                // Unlocks copy
-                RichText(
-                  text: TextSpan(
-                    style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, color: kOnSurfaceVariant, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                    children: [
-                      const TextSpan(text: 'Your profile unlocks '),
-                      TextSpan(
-                        text: '${((percentage * 42) / 100).round()} of 42',
-                        style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
-                      ),
-                      const TextSpan(text: ' active Philippine grants.'),
-                    ],
+                Text(
+                  '${report.completedCount} of ${report.totalCount} details provided',
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 12,
+                    color: kTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
                   ),
                 ),
-                const SizedBox(height: 10),
-
-                // Metric Breakdown Chips (Distinct labels so find.text('100%') remains unique)
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildMetricChip(
-                        label: 'Academics',
-                        status: 'Full Fit',
-                        valueColor: kPrimary,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildMetricChip(
-                        label: 'Location',
-                        status: 'Eligible',
-                        valueColor: kPrimary,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildMetricChip(
-                        label: 'Financials',
-                        status: profile.monthlyFamilyIncome != null ? 'Provided' : 'General',
-                        valueColor: const Color(0xFF436084),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                // Advice Banner
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-                  decoration: BoxDecoration(
-                    color: isComplete ? kPrimarySoft : kMatchGoldSoft,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    report.advice,
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: isComplete ? kPrimary : kMatchGoldText, height: 1.35, letterSpacing: opticalTracking(12)),
+                const SizedBox(height: 6),
+                Text(
+                  report.isFullyComplete
+                      ? 'Your profile details are complete. Keep them up to date.'
+                      : 'Add your missing details to keep your profile up to date.',
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 12,
+                    color: kTextSecondary,
+                    height: 1.45,
+                    letterSpacing: 0,
                   ),
                 ),
-                const SizedBox(height: 12),
-
-                // View Matching Power Breakdown CTA button
-                Container(
-                  width: double.infinity,
-                  height: 38,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: kSurfaceContainerHigh,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                const SizedBox(height: 6),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 44),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Flexible(
                         child: Text(
-                          'View Matching Power Breakdown',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                          report.isFullyComplete
+                              ? 'View details'
+                              : 'Add missing details',
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 13,
+                            color: kPrimary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 6),
                       const Icon(
                         Icons.arrow_forward_rounded,
                         size: 16,
@@ -1522,33 +1017,6 @@ class _ProfileMilestoneCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMetricChip({
-    required String label,
-    required String status,
-    required Color valueColor,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
-      decoration: BoxDecoration(
-        color: kSurfaceContainer,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOnSurfaceVariant, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            status,
-            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: valueColor, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-          ),
-        ],
       ),
     );
   }

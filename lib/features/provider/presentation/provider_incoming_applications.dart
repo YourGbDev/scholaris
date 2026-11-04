@@ -3,7 +3,6 @@
 // Incoming Applications Console for /provider-home.
 // Built to match Stitch design reference: scholaris_incoming_applications_console.
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,12 +45,24 @@ class ProviderIncomingApplications extends ConsumerWidget {
               children: [
                 Text(
                   'Incoming Applications',
-                  style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: kPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.screenTitle,
+                    fontSize: 20,
+                    color: kPrimary,
+                    height: 1.2,
+                    letterSpacing: -0.15,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Review and evaluate student applications.',
-                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.subtitle,
+                    fontSize: 12,
+                    color: Colors.black54,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -85,16 +96,18 @@ class ProviderIncomingApplications extends ConsumerWidget {
                     s: applications.where((a) => a.status == s).length,
                 };
 
-                final pendingCount = (counts[ApplicationStatus.submitted] ?? 0) +
+                final pendingCount =
+                    (counts[ApplicationStatus.submitted] ?? 0) +
                     (counts[ApplicationStatus.underReview] ?? 0);
-                final decidedCount = (counts[ApplicationStatus.approved] ?? 0) +
+                final decidedCount =
+                    (counts[ApplicationStatus.approved] ?? 0) +
                     (counts[ApplicationStatus.rejected] ?? 0);
 
                 final filteredApplications = selectedStatus == null
                     ? applications
                     : applications
-                        .where((a) => a.status == selectedStatus)
-                        .toList();
+                          .where((a) => a.status == selectedStatus)
+                          .toList();
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,9 +129,11 @@ class ProviderIncomingApplications extends ConsumerWidget {
                         counts: counts,
                         totalCount: applications.length,
                         selected: selectedStatus,
-                        onSelect: (status) => ref
-                            .read(providerStatusFilterProvider.notifier)
-                            .state = status,
+                        onSelect: (status) =>
+                            ref
+                                    .read(providerStatusFilterProvider.notifier)
+                                    .state =
+                                status,
                       ),
                     ),
 
@@ -128,8 +143,7 @@ class ProviderIncomingApplications extends ConsumerWidget {
                               icon: Icons.filter_list_off_rounded,
                               title:
                                   'No ${ApplicationStatusUi.of(selectedStatus!).label.toLowerCase()} applications',
-                              message:
-                                  'No incoming applications match this status filter.',
+                              message: 'No incoming applications match this status filter.',
                             )
                           : scholarshipsAsync.when(
                               loading: () => const LoadingView(),
@@ -161,10 +175,7 @@ class ProviderIncomingApplications extends ConsumerWidget {
 }
 
 class _ApplicantNameBuilder extends ConsumerWidget {
-  const _ApplicantNameBuilder({
-    required this.applications,
-    required this.byId,
-  });
+  const _ApplicantNameBuilder({required this.applications, required this.byId});
 
   final List<Application> applications;
   final Map<String, Scholarship> byId;
@@ -210,7 +221,7 @@ class _ApplicantNameBuilder extends ConsumerWidget {
               scholarship: byId[applications[i].scholarshipId],
               applicantName:
                   profileByUserId[applications[i].userId]?.fullName ??
-                      'Applicant',
+                  'Applicant',
               applicantProfile: profileByUserId[applications[i].userId],
             ),
           ),
@@ -240,7 +251,8 @@ class _IncomingApplicationRow extends ConsumerWidget {
         ? 'Not submitted yet'
         : 'Applied ${_formatDate(application.appliedAt!)}';
 
-    final isTerminal = application.status == ApplicationStatus.approved ||
+    final isTerminal =
+        application.status == ApplicationStatus.approved ||
         application.status == ApplicationStatus.rejected ||
         application.status == ApplicationStatus.withdrawn ||
         application.status == ApplicationStatus.awarded;
@@ -275,23 +287,33 @@ class _IncomingApplicationRow extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.04),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       refCode,
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kNavyTrust, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 10,
+                        color: kNavyTrust,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 6),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
-                      color: kPrimarySoft,
+                      color: kStudentSurfaceSubtle,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -308,7 +330,13 @@ class _IncomingApplicationRow extends ConsumerWidget {
                         const SizedBox(width: 4),
                         Text(
                           '98% Match',
-                          style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.badge,
+                            fontSize: 10,
+                            color: kPrimary,
+                            height: 1.2,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                       ],
                     ),
@@ -335,7 +363,13 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       applicantName.isNotEmpty
                           ? applicantName.substring(0, 1).toUpperCase()
                           : 'A',
-                      style: AppTypography.style(AppTextRole.label, fontSize: 16, color: kNavyTrust, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        fontSize: 16,
+                        color: kNavyTrust,
+                        height: 1.2,
+                        letterSpacing: -0.15,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -347,14 +381,26 @@ class _IncomingApplicationRow extends ConsumerWidget {
                           title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: Colors.black87, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.cardTitle,
+                            fontSize: 15,
+                            color: Colors.black87,
+                            height: 1.2,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           applicantName,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.bodyEmphasis,
+                            fontSize: 13,
+                            color: Colors.black87,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -366,23 +412,36 @@ class _IncomingApplicationRow extends ConsumerWidget {
               // Academic Status Pill (if available)
               if (applicantProfile != null) ...[
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.02),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.school_rounded,
-                          size: 13, color: kPrimary),
+                      const Icon(
+                        Icons.school_rounded,
+                        size: 13,
+                        color: kPrimary,
+                      ),
                       const SizedBox(width: 5),
                       Text(
                         'Applicant GWA: ${applicantProfile!.gpa.toStringAsFixed(2)}',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11,
+                          color: kPrimary,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                       ),
-                       Text(' • Priority STEM Candidate',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54)),
+                      const Text(
+                        ' • Priority STEM Candidate',
+                        style: TextStyle(fontSize: 11, color: Colors.black54),
+                      ),
                     ],
                   ),
                 ),
@@ -392,10 +451,7 @@ class _IncomingApplicationRow extends ConsumerWidget {
               // Submission Date & Review CTA
               Row(
                 children: [
-                  _MetaChip(
-                    icon: Icons.event_rounded,
-                    label: appliedLabel,
-                  ),
+                  _MetaChip(icon: Icons.event_rounded, label: appliedLabel),
                   const Spacer(),
                   if (!isTerminal)
                     Row(
@@ -403,7 +459,13 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       children: [
                         Text(
                           'Review',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 12,
+                            color: kPrimary,
+                            height: 1.2,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                         const SizedBox(width: 2),
                         const Icon(
@@ -426,11 +488,19 @@ class _IncomingApplicationRow extends ConsumerWidget {
     final identity = ref.read(providerSubRoleProvider);
     final validNextStatuses = <ApplicationStatus>[];
     if (identity.isOrgAdmin &&
-        application.status == ApplicationStatus.underReview && application.endorsedBy != null) {
-      validNextStatuses.addAll([ApplicationStatus.approved, ApplicationStatus.rejected]);
+        application.status == ApplicationStatus.underReview &&
+        application.endorsedBy != null) {
+      validNextStatuses.addAll([
+        ApplicationStatus.approved,
+        ApplicationStatus.rejected,
+      ]);
     } else if (identity.isIndividualBenefactor &&
-        (application.status == ApplicationStatus.submitted || application.status == ApplicationStatus.underReview)) {
-      validNextStatuses.addAll([ApplicationStatus.approved, ApplicationStatus.rejected]);
+        (application.status == ApplicationStatus.submitted ||
+            application.status == ApplicationStatus.underReview)) {
+      validNextStatuses.addAll([
+        ApplicationStatus.approved,
+        ApplicationStatus.rejected,
+      ]);
     }
 
     showModalBottomSheet<void>(
@@ -444,11 +514,18 @@ class _IncomingApplicationRow extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
+                  ),
                   child: Text(
                     'Update Application Status',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 18,
+                      height: 1.2,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                 ),
                 if (applicantProfile != null)
@@ -457,8 +534,10 @@ class _IncomingApplicationRow extends ConsumerWidget {
                     notes: application.notes,
                   ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 2.0,
+                  ),
                   child: SizedBox(
                     width: double.infinity,
                     child: OutlinedButton.icon(
@@ -471,8 +550,12 @@ class _IncomingApplicationRow extends ConsumerWidget {
                       ),
                       onPressed: () {
                         Navigator.of(bottomSheetContext).pop();
-                        ApplicantReviewDrawer.show(context, application: application,
-                          scholarship: scholarship, applicantProfile: applicantProfile);
+                        ApplicantReviewDrawer.show(
+                          context,
+                          application: application,
+                          scholarship: scholarship,
+                          applicantProfile: applicantProfile,
+                        );
                       },
                       icon: const Icon(Icons.open_in_new_rounded, size: 14),
                       label: const Text('View Full Dossier & Audit Log'),
@@ -492,19 +575,26 @@ class _IncomingApplicationRow extends ConsumerWidget {
 
                       final isTerminalTransition =
                           status == ApplicationStatus.approved ||
-                              status == ApplicationStatus.rejected;
+                          status == ApplicationStatus.rejected;
 
                       if (isTerminalTransition) {
-                        final confirmed =
-                            await _confirmTerminalStatus(context, status);
+                        final confirmed = await _confirmTerminalStatus(
+                          context,
+                          status,
+                        );
                         if (!confirmed) return;
                       }
 
                       try {
                         await ref
                             .read(applicationRepositoryProvider)
-                            .reviewApplication(applicationId: application.id, expectedStatus: application.status,
-                              action: status == ApplicationStatus.approved ? 'approve' : 'reject');
+                            .reviewApplication(
+                              applicationId: application.id,
+                              expectedStatus: application.status,
+                              action: status == ApplicationStatus.approved
+                                  ? 'approve'
+                                  : 'reject',
+                            );
                         ref
                             .read(incomingApplicationsProvider.notifier)
                             .refresh();
@@ -530,18 +620,29 @@ class _IncomingApplicationRow extends ConsumerWidget {
     BuildContext context,
     ApplicationStatus status,
   ) async {
-    final actionLabel =
-        status == ApplicationStatus.approved ? 'Approve' : 'Reject';
+    final actionLabel = status == ApplicationStatus.approved
+        ? 'Approve'
+        : 'Reject';
     final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(
           '$actionLabel Application',
-          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.cardTitle,
+            fontSize: 18,
+            height: 1.2,
+            letterSpacing: -0.15,
+          ),
         ),
         content: Text(
           'Are you sure you want to ${actionLabel.toLowerCase()} the application for $applicantName? This decision is final.',
-          style: AppTypography.style(AppTextRole.body, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 14,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         actions: [
           TextButton(
@@ -550,8 +651,9 @@ class _IncomingApplicationRow extends ConsumerWidget {
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor:
-                  status == ApplicationStatus.approved ? kPrimary : kError,
+              backgroundColor: status == ApplicationStatus.approved
+                  ? kPrimary
+                  : kError,
             ),
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(actionLabel),
@@ -564,18 +666,25 @@ class _IncomingApplicationRow extends ConsumerWidget {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 }
 
 class _ApplicantCredentialsCard extends StatelessWidget {
-  const _ApplicantCredentialsCard({
-    required this.profile,
-    this.notes,
-  });
+  const _ApplicantCredentialsCard({required this.profile, this.notes});
 
   final ApplicantProfile profile;
   final String? notes;
@@ -586,7 +695,7 @@ class _ApplicantCredentialsCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -594,7 +703,12 @@ class _ApplicantCredentialsCard extends StatelessWidget {
         children: [
           Text(
             profile.fullName,
-            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.cardTitle,
+              fontSize: 15,
+              height: 1.2,
+              letterSpacing: -0.15,
+            ),
           ),
           const SizedBox(height: 8),
           _credentialRow(Icons.school_outlined, profile.course),
@@ -619,12 +733,24 @@ class _ApplicantCredentialsCard extends StatelessWidget {
                 children: [
                   Text(
                     'Applicant Note',
-                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      fontSize: 11,
+                      color: kPrimary,
+                      height: 1.2,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                   const SizedBox(height: 3),
                   Text(
                     notes!,
-                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 13,
+                      color: Colors.black87,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -645,7 +771,13 @@ class _ApplicantCredentialsCard extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.black87, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.body,
+                fontSize: 13,
+                color: Colors.black87,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -719,8 +851,10 @@ class _ProviderStatusFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = selected ? Colors.white : kPrimary;
-    final background = selected ? kPrimary : kPrimarySoft;
+    final foreground = selected ? Colors.white : kOnSurface;
+    final background = selected
+        ? const Color(0xFF25282A)
+        : kStudentSurfaceSubtle;
 
     return Semantics(
       button: true,
@@ -736,7 +870,13 @@ class _ProviderStatusFilterChip extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             child: Text(
               '$label ($count)',
-              style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: foreground, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                fontSize: 12,
+                color: foreground,
+                height: 1.2,
+                letterSpacing: -0.15,
+              ),
             ),
           ),
         ),
@@ -756,7 +896,7 @@ class _MetaChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -766,7 +906,13 @@ class _MetaChip extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             label,
-            style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.badge,
+              fontSize: 12,
+              color: kPrimary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ],
       ),
@@ -826,7 +972,7 @@ class _ProviderSummaryPill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
       decoration: BoxDecoration(
-        color: kPrimarySoft,
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -836,7 +982,13 @@ class _ProviderSummaryPill extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             label,
-            style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.badge,
+              fontSize: 12,
+              color: kPrimary,
+              height: 1.2,
+              letterSpacing: -0.15,
+            ),
           ),
         ],
       ),

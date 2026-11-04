@@ -10,15 +10,19 @@ import 'package:scholaris/shared/theme/app_typography.dart';
 // Displays honest low-data and empty states when cohorts are small, with zero fabricated names or percentages.
 
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/profile/providers/profile_setup_provider.dart';
+
 import '../../../applications/models/application.dart';
 import '../../../applications/providers/applications_provider.dart';
 import '../../../profile/models/applicant_profile.dart';
 import '../../providers/provider_scholarships_provider.dart';
+
 import 'package:scholaris/shared/theme/app_motion.dart';
+
 import 'org_provider_theme.dart';
 import '../widgets/org_metric_count.dart';
 
@@ -65,10 +69,14 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFB3F1C6),
+                    color: kWorkspaceSubtle,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.task_alt_rounded, size: 18, color: kOrgPrimary),
+                  child: const Icon(
+                    Icons.task_alt_rounded,
+                    size: 18,
+                    color: kOrgPrimary,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Column(
@@ -77,11 +85,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   children: [
                     Text(
                       'Export unavailable',
-                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.cardTitle,
+                        fontSize: 13,
+                        color: kOrgTextPrimary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                     Text(
                       'This report cannot be exported yet.',
-                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.body,
+                        fontSize: 11,
+                        color: kOrgTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -93,13 +113,19 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
     );
   }
 
-  void _showScholarDossierDialog(BuildContext context, ApplicantProfile profile, Application app) {
+  void _showScholarDossierDialog(
+    BuildContext context,
+    ApplicantProfile profile,
+    Application app,
+  ) {
     showDialog(
       context: context,
       builder: (ctx) {
         return Dialog(
           backgroundColor: kOrgSurfaceWhite,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 520),
             child: Padding(
@@ -114,13 +140,21 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0F4D2E).withValues(alpha: 0.1),
+                          color: kWorkspaceSubtle,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Text(
-                            profile.fullName.isNotEmpty ? profile.fullName[0].toUpperCase() : 'S',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 18, color: kOrgPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: (18) <= 16)),
+                            profile.fullName.isNotEmpty
+                                ? profile.fullName[0].toUpperCase()
+                                : 'S',
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 18,
+                              color: kOrgPrimary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ),
@@ -130,18 +164,35 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              profile.fullName.isNotEmpty ? profile.fullName : 'Scholar Applicant',
-                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kOrgTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: (18) <= 16)),
+                              profile.fullName.isNotEmpty
+                                  ? profile.fullName
+                                  : 'Scholar Applicant',
+                              style: AppTypography.style(
+                                AppTextRole.cardTitle,
+                                fontSize: 18,
+                                color: kOrgTextPrimary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                             Text(
                               '${profile.course} • Year ${profile.yearLevel}',
-                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                              style: AppTypography.style(
+                                AppTextRole.subtitle,
+                                fontSize: 13,
+                                color: kOrgTextSecondary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close_rounded, color: kOrgTextSecondary),
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: kOrgTextSecondary,
+                        ),
                         onPressed: () => Navigator.of(ctx).pop(),
                       ),
                     ],
@@ -149,11 +200,28 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   const SizedBox(height: 20),
                   const Divider(height: 1, color: kOrgBorder),
                   const SizedBox(height: 16),
-                  _buildDossierRow('Institution', profile.school ?? 'Unspecified University'),
-                  _buildDossierRow('Cumulative GWA', '${profile.gpa.toStringAsFixed(2)} (Summa Tier)'),
-                  _buildDossierRow('Geographic Region', profile.region.isNotEmpty ? profile.region : 'NCR'),
-                  _buildDossierRow('Family Income', profile.monthlyFamilyIncome != null ? '₱${profile.monthlyFamilyIncome!.toStringAsFixed(0)}/mo (4Ps Tier 1)' : 'Not Disclosed'),
-                  _buildDossierRow('Intake Application Status', app.status.name.toUpperCase()),
+                  _buildDossierRow(
+                    'Institution',
+                    profile.school ?? 'Unspecified University',
+                  ),
+                  _buildDossierRow(
+                    'Cumulative GWA',
+                    '${profile.gpa.toStringAsFixed(2)} (Summa Tier)',
+                  ),
+                  _buildDossierRow(
+                    'Geographic Region',
+                    profile.region.isNotEmpty ? profile.region : 'NCR',
+                  ),
+                  _buildDossierRow(
+                    'Family Income',
+                    profile.monthlyFamilyIncome != null
+                        ? '₱${profile.monthlyFamilyIncome!.toStringAsFixed(0)}/mo (4Ps Tier 1)'
+                        : 'Not Disclosed',
+                  ),
+                  _buildDossierRow(
+                    'Intake Application Status',
+                    app.status.name.toUpperCase(),
+                  ),
                   const SizedBox(height: 20),
                   Align(
                     alignment: Alignment.centerRight,
@@ -161,7 +229,9 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kOrgPrimary,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       onPressed: () => Navigator.of(ctx).pop(),
                       child: const Text('Close Dossier'),
@@ -182,12 +252,27 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: AppTypography.style(AppTextRole.label, fontSize: 12.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: (12.5) <= 16))),
+          Text(
+            label,
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 12.5,
+              color: kOrgTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
+          ),
           Flexible(
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: (12.5) <= 16)),
+              style: AppTypography.style(
+                AppTextRole.bodyEmphasis,
+                fontSize: 12.5,
+                color: kOrgTextPrimary,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -212,269 +297,287 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
         skeleton: _buildAnalyticsSkeleton(),
         child: incomingAppsAsync.when(
           loading: () => _buildAnalyticsSkeleton(),
-        error: (err, _) => Center(
-          child: Text('Error loading analytics: $err', style: AppTypography.style(AppTextRole.body, color: kOrgError, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true)))),
-        ),
-        data: (apps) {
-          final profiles = ref.watch(providerApplicantProfilesProvider).valueOrNull ??
-              <String, ApplicantProfile>{};
+          error: (err, _) => Center(
+            child: Text(
+              'Error loading analytics: $err',
+              style: AppTypography.style(
+                AppTextRole.body,
+                color: kOrgError,
+                fontSize: 13.5,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+            ),
+          ),
+          data: (apps) {
+            final profiles =
+                ref.watch(providerApplicantProfilesProvider).valueOrNull ??
+                <String, ApplicantProfile>{};
 
-          // 1. Live Cohort Filtering
-          // We consider approved or awarded applicants as active cohort scholars;
-          // if none are approved yet, we base the baseline metrics on all incoming applicants.
-          final approvedApps = apps
-              .where((a) =>
-                  a.status == ApplicationStatus.approved ||
-                  a.status == ApplicationStatus.awarded)
-              .toList();
-          final cohortApps = approvedApps.isNotEmpty ? approvedApps : apps;
-          final totalScholars = cohortApps.length;
+            // 1. Live Cohort Filtering
+            // We consider approved or awarded applicants as active cohort scholars;
+            // if none are approved yet, we base the baseline metrics on all incoming applicants.
+            final approvedApps = apps
+                .where(
+                  (a) =>
+                      a.status == ApplicationStatus.approved ||
+                      a.status == ApplicationStatus.awarded,
+                )
+                .toList();
+            final cohortApps = approvedApps.isNotEmpty ? approvedApps : apps;
+            final totalScholars = cohortApps.length;
 
-          ApplicantProfile resolveProfile(Application app) {
-            final existing = profiles[app.userId];
-            if (existing != null) return existing;
-            return ApplicantProfile(
-              id: app.userId,
-              fullName: 'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}',
-              school: 'School Pending',
-              course: 'Course Pending',
-              gpa: 0.0,
-              yearLevel: 1,
-              region: 'NCR',
-              monthlyFamilyIncome: 0, setupComplete: false,
-            );
-          }
+            ApplicantProfile resolveProfile(Application app) {
+              final existing = profiles[app.userId];
+              if (existing != null) return existing;
+              return ApplicantProfile(
+                id: app.userId,
+                fullName:
+                    'Applicant #${app.userId.length >= 8 ? app.userId.substring(0, 8) : app.userId}',
+                school: 'School Pending',
+                course: 'Course Pending',
+                gpa: 0.0,
+                yearLevel: 1,
+                region: 'NCR',
+                monthlyFamilyIncome: 0,
+                setupComplete: false,
+              );
+            }
 
-          // 2. GWA Metric Calculations
-          double totalGwa = 0;
-          int gwaCount = 0;
-          int summaCount = 0;
-          int magnaCount = 0;
-          int cumLaudeCount = 0;
+            // 2. GWA Metric Calculations
+            double totalGwa = 0;
+            int gwaCount = 0;
+            int summaCount = 0;
+            int magnaCount = 0;
+            int cumLaudeCount = 0;
 
-          for (final a in cohortApps) {
-            final p = resolveProfile(a);
-            if (p.gpa > 0) {
-              totalGwa += p.gpa;
-              gwaCount++;
-              if (p.gpa <= 1.25) {
-                summaCount++;
-              } else if (p.gpa <= 1.50) {
-                magnaCount++;
-              } else if (p.gpa <= 1.75) {
-                cumLaudeCount++;
+            for (final a in cohortApps) {
+              final p = resolveProfile(a);
+              if (p.gpa > 0) {
+                totalGwa += p.gpa;
+                gwaCount++;
+                if (p.gpa <= 1.25) {
+                  summaCount++;
+                } else if (p.gpa <= 1.50) {
+                  magnaCount++;
+                } else if (p.gpa <= 1.75) {
+                  cumLaudeCount++;
+                }
               }
             }
-          }
-          final avgGwa = gwaCount > 0 ? (totalGwa / gwaCount) : 0.0;
+            final avgGwa = gwaCount > 0 ? (totalGwa / gwaCount) : 0.0;
 
-          // 3. University Partner Footprint Calculations
-          final Map<String, int> heiCounts = {};
-          int stemCount = 0;
-          for (final a in cohortApps) {
-            final p = resolveProfile(a);
-            final school = (p.school != null && p.school!.trim().isNotEmpty)
-                ? p.school!.trim()
-                : 'University of the Philippines Diliman';
-            heiCounts[school] = (heiCounts[school] ?? 0) + 1;
+            // 3. University Partner Footprint Calculations
+            final Map<String, int> heiCounts = {};
+            int stemCount = 0;
+            for (final a in cohortApps) {
+              final p = resolveProfile(a);
+              final school = (p.school != null && p.school!.trim().isNotEmpty)
+                  ? p.school!.trim()
+                  : 'University of the Philippines Diliman';
+              heiCounts[school] = (heiCounts[school] ?? 0) + 1;
 
-            final course = p.course.toLowerCase();
-            if (course.contains('computer') ||
-                course.contains('engineering') ||
-                course.contains('science') ||
-                course.contains('tech') ||
-                course.contains('math') ||
-                course.contains('agri')) {
-              stemCount++;
+              final course = p.course.toLowerCase();
+              if (course.contains('computer') ||
+                  course.contains('engineering') ||
+                  course.contains('science') ||
+                  course.contains('tech') ||
+                  course.contains('math') ||
+                  course.contains('agri')) {
+                stemCount++;
+              }
             }
-          }
-          final stemPct = totalScholars > 0 ? ((stemCount / totalScholars) * 100).round() : 0;
+            final stemPct = totalScholars > 0
+                ? ((stemCount / totalScholars) * 100).round()
+                : 0;
 
-          // 4. Geographic Island Group Calculations
-          int luzonCount = 0;
-          int visayasCount = 0;
-          int mindanaoCount = 0;
-          for (final a in cohortApps) {
-            final p = resolveProfile(a);
-            final region = p.region.toUpperCase();
-            if (region.contains('VI') ||
-                region.contains('VII') ||
-                region.contains('VIII') ||
-                region.contains('VISAYAS')) {
-              visayasCount++;
-            } else if (region.contains('IX') ||
-                region.contains('X') ||
-                region.contains('XI') ||
-                region.contains('XII') ||
-                region.contains('XIII') ||
-                region.contains('CARAGA') ||
-                region.contains('BARMM') ||
-                region.contains('MINDANAO')) {
-              mindanaoCount++;
-            } else {
-              // NCR, Region I-V, CAR default to Luzon
-              luzonCount++;
+            // 4. Geographic Island Group Calculations
+            int luzonCount = 0;
+            int visayasCount = 0;
+            int mindanaoCount = 0;
+            for (final a in cohortApps) {
+              final p = resolveProfile(a);
+              final region = p.region.toUpperCase();
+              if (region.contains('VI') ||
+                  region.contains('VII') ||
+                  region.contains('VIII') ||
+                  region.contains('VISAYAS')) {
+                visayasCount++;
+              } else if (region.contains('IX') ||
+                  region.contains('X') ||
+                  region.contains('XI') ||
+                  region.contains('XII') ||
+                  region.contains('XIII') ||
+                  region.contains('CARAGA') ||
+                  region.contains('BARMM') ||
+                  region.contains('MINDANAO')) {
+                mindanaoCount++;
+              } else {
+                // NCR, Region I-V, CAR default to Luzon
+                luzonCount++;
+              }
             }
-          }
 
-          // 5. Family Income Distribution Calculations
-          int lowIncomeCount = 0;
-          int midIncomeCount = 0;
-          for (final a in cohortApps) {
-            final p = resolveProfile(a);
-            final inc = p.monthlyFamilyIncome;
-            if (inc != null) {
-              if (inc < 25000) {
+            // 5. Family Income Distribution Calculations
+            int lowIncomeCount = 0;
+            int midIncomeCount = 0;
+            for (final a in cohortApps) {
+              final p = resolveProfile(a);
+              final inc = p.monthlyFamilyIncome;
+              if (inc != null) {
+                if (inc < 25000) {
+                  lowIncomeCount++;
+                } else if (inc <= 70000) {
+                  midIncomeCount++;
+                }
+              } else {
                 lowIncomeCount++;
-              } else if (inc <= 70000) {
-                midIncomeCount++;
               }
-            } else {
-              lowIncomeCount++;
             }
-          }
 
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              final isDesktop = constraints.maxWidth >= 768;
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                final isDesktop = constraints.maxWidth >= 768;
 
-              return SizedBox(
-                width: constraints.maxWidth,
-                child: RefreshIndicator(
-                  color: kOrgPrimary,
-                  onRefresh: () async {
-                    ref.invalidate(incomingApplicationsProvider);
-                  },
-                  child: SingleChildScrollView(
-                    physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isDesktop ? 32 : 16,
-                      vertical: isDesktop ? 28 : 20,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 1. Breadcrumb & Action Toolbar
-                        _buildHeaderBar(orgName, isDesktop),
-                        const SizedBox(height: 24),
+                return SizedBox(
+                  width: constraints.maxWidth,
+                  child: RefreshIndicator(
+                    color: kOrgPrimary,
+                    onRefresh: () async {
+                      ref.invalidate(incomingApplicationsProvider);
+                    },
+                    child: SingleChildScrollView(
+                      physics: const AppleBouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 32 : 16,
+                        vertical: isDesktop ? 28 : 20,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 1. Breadcrumb & Action Toolbar
+                          _buildHeaderBar(orgName, isDesktop),
+                          const SizedBox(height: 24),
 
-                        // 2. 4 High-Level Impact Metrics (Squircle Cards)
-                        _buildKpiMetricsGrid(
-                          totalScholars: totalScholars,
-                          avgGwa: avgGwa,
-                          gwaCount: gwaCount,
-                          isDesktop: isDesktop,
-                        ),
-                        const SizedBox(height: 24),
-
-                        // 3. Visualizations 2-Column Responsive Layout
-                        if (isDesktop)
-                          SizedBox(
-                            width: double.infinity,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 7,
-                                  child: _buildGwaDistributionCard(
-                                    avgGwa: avgGwa,
-                                    gwaCount: gwaCount,
-                                    summaCount: summaCount,
-                                    magnaCount: magnaCount,
-                                    cumLaudeCount: cumLaudeCount,
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                Expanded(
-                                  flex: 5,
-                                  child: _buildUniversityBreakdownCard(
-                                    heiCounts: heiCounts,
-                                    totalScholars: totalScholars,
-                                    stemPct: stemPct,
-                                    stemCount: stemCount,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                        else ...[
-                          _buildGwaDistributionCard(
+                          // 2. 4 High-Level Impact Metrics (Squircle Cards)
+                          _buildKpiMetricsGrid(
+                            totalScholars: totalScholars,
                             avgGwa: avgGwa,
                             gwaCount: gwaCount,
-                            summaCount: summaCount,
-                            magnaCount: magnaCount,
-                            cumLaudeCount: cumLaudeCount,
+                            isDesktop: isDesktop,
                           ),
-                          const SizedBox(height: 20),
-                          _buildUniversityBreakdownCard(
-                            heiCounts: heiCounts,
-                            totalScholars: totalScholars,
-                            stemPct: stemPct,
-                            stemCount: stemCount,
-                          ),
-                        ],
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 24),
 
-                        // 4. Geographic & Socioeconomic Representation
-                        if (isDesktop)
-                          SizedBox(
-                            width: double.infinity,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 6,
-                                  child: _buildGeographicGroupsCard(
-                                    luzonCount: luzonCount,
-                                    visayasCount: visayasCount,
-                                    mindanaoCount: mindanaoCount,
-                                    totalScholars: totalScholars,
+                          // 3. Visualizations 2-Column Responsive Layout
+                          if (isDesktop)
+                            SizedBox(
+                              width: double.infinity,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 7,
+                                    child: _buildGwaDistributionCard(
+                                      avgGwa: avgGwa,
+                                      gwaCount: gwaCount,
+                                      summaCount: summaCount,
+                                      magnaCount: magnaCount,
+                                      cumLaudeCount: cumLaudeCount,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 20),
-                                Expanded(
-                                  flex: 6,
-                                  child: _buildFamilyIncomeCard(
-                                    lowIncomeCount: lowIncomeCount,
-                                    midIncomeCount: midIncomeCount,
-                                    totalScholars: totalScholars,
+                                  const SizedBox(width: 20),
+                                  Expanded(
+                                    flex: 5,
+                                    child: _buildUniversityBreakdownCard(
+                                      heiCounts: heiCounts,
+                                      totalScholars: totalScholars,
+                                      stemPct: stemPct,
+                                      stemCount: stemCount,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                            )
+                          else ...[
+                            _buildGwaDistributionCard(
+                              avgGwa: avgGwa,
+                              gwaCount: gwaCount,
+                              summaCount: summaCount,
+                              magnaCount: magnaCount,
+                              cumLaudeCount: cumLaudeCount,
                             ),
-                          )
-                        else ...[
-                          _buildGeographicGroupsCard(
-                            luzonCount: luzonCount,
-                            visayasCount: visayasCount,
-                            mindanaoCount: mindanaoCount,
-                            totalScholars: totalScholars,
-                          ),
-                          const SizedBox(height: 20),
-                          _buildFamilyIncomeCard(
-                            lowIncomeCount: lowIncomeCount,
-                            midIncomeCount: midIncomeCount,
-                            totalScholars: totalScholars,
-                          ),
-                        ],
-                        const SizedBox(height: 24),
+                            const SizedBox(height: 20),
+                            _buildUniversityBreakdownCard(
+                              heiCounts: heiCounts,
+                              totalScholars: totalScholars,
+                              stemPct: stemPct,
+                              stemCount: stemCount,
+                            ),
+                          ],
+                          const SizedBox(height: 24),
 
-                        // 5. High Impact Scholars Spotlight Table
-                        _buildScholarsSpotlightSection(
-                          cohortApps: cohortApps,
-                          profiles: profiles,
-                          totalScholars: totalScholars,
-                          isDesktop: isDesktop,
-                        ),
-                        const SizedBox(height: 48),
-                      ],
+                          // 4. Geographic & Socioeconomic Representation
+                          if (isDesktop)
+                            SizedBox(
+                              width: double.infinity,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 6,
+                                    child: _buildGeographicGroupsCard(
+                                      luzonCount: luzonCount,
+                                      visayasCount: visayasCount,
+                                      mindanaoCount: mindanaoCount,
+                                      totalScholars: totalScholars,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 20),
+                                  Expanded(
+                                    flex: 6,
+                                    child: _buildFamilyIncomeCard(
+                                      lowIncomeCount: lowIncomeCount,
+                                      midIncomeCount: midIncomeCount,
+                                      totalScholars: totalScholars,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          else ...[
+                            _buildGeographicGroupsCard(
+                              luzonCount: luzonCount,
+                              visayasCount: visayasCount,
+                              mindanaoCount: mindanaoCount,
+                              totalScholars: totalScholars,
+                            ),
+                            const SizedBox(height: 20),
+                            _buildFamilyIncomeCard(
+                              lowIncomeCount: lowIncomeCount,
+                              midIncomeCount: midIncomeCount,
+                              totalScholars: totalScholars,
+                            ),
+                          ],
+                          const SizedBox(height: 24),
+
+                          // 5. High Impact Scholars Spotlight Table
+                          _buildScholarsSpotlightSection(
+                            cohortApps: cohortApps,
+                            profiles: profiles,
+                            totalScholars: totalScholars,
+                            isDesktop: isDesktop,
+                          ),
+                          const SizedBox(height: 48),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
         ),
       ),
     );
@@ -507,9 +610,15 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
         const SizedBox(height: 24),
         Row(
           children: const [
-            Expanded(flex: 7, child: SkeletonBand(height: 260, borderRadius: 16)),
+            Expanded(
+              flex: 7,
+              child: SkeletonBand(height: 260, borderRadius: 16),
+            ),
             SizedBox(width: 20),
-            Expanded(flex: 5, child: SkeletonBand(height: 260, borderRadius: 16)),
+            Expanded(
+              flex: 5,
+              child: SkeletonBand(height: 260, borderRadius: 16),
+            ),
           ],
         ),
       ],
@@ -538,28 +647,61 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             const SizedBox(width: 8),
             Text(
               orgName,
-              style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgTextSecondary, letterSpacing: 0.5, height: opticalLeading(11, isBody: (11) <= 16)),
+              style: AppTypography.style(
+                AppTextRole.navigation,
+                fontSize: 11,
+                color: kOrgTextSecondary,
+                letterSpacing: 0.5,
+                height: 1.4,
+              ),
             ),
             const SizedBox(width: 6),
-            Text('/', style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgBorderDark, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
+            Text(
+              '/',
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 11,
+                color: kOrgBorderDark,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+            ),
             const SizedBox(width: 6),
             Text(
               'Impact & Analytics',
-              style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgTextPrimary, letterSpacing: 0.5, height: opticalLeading(11, isBody: (11) <= 16)),
+              style: AppTypography.style(
+                AppTextRole.navigation,
+                fontSize: 11,
+                color: kOrgTextPrimary,
+                letterSpacing: 0.5,
+                height: 1.4,
+              ),
             ),
           ],
         ),
         const SizedBox(height: 8),
         Text(
           'Scholarship Analytics & Impact',
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: isDesktop ? 26 : 21, color: kOrgTextPrimary, letterSpacing: opticalTracking(isDesktop ? 26 : 21), height: opticalLeading(isDesktop ? 26 : 21, isBody: (isDesktop ? 26 : 21) <= 16)),
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: isDesktop ? 24 : 20,
+            color: kOrgTextPrimary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 4),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 540),
           child: Text(
             'Track cohort demographic spread, GWA distribution, partner university representation, and social mobility impact.',
-            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(13)),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              fontSize: 13,
+              color: kOrgTextSecondary,
+              height: 1.35,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],
@@ -614,14 +756,28 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.date_range_rounded, size: 16, color: kOrgPrimary),
+              const Icon(
+                Icons.date_range_rounded,
+                size: 16,
+                color: kOrgPrimary,
+              ),
               const SizedBox(width: 6),
               Text(
                 'All available records',
-                style: AppTypography.style(AppTextRole.label, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.label,
+                  fontSize: 11.5,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
               const SizedBox(width: 6),
-              const Icon(Icons.expand_more_rounded, size: 16, color: kOrgTextMuted),
+              const Icon(
+                Icons.expand_more_rounded,
+                size: 16,
+                color: kOrgTextMuted,
+              ),
             ],
           ),
         ),
@@ -631,39 +787,61 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
         PressableScale(
           scale: 0.97,
           child: Material(
-          color: kOrgPrimary,
-          borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+            color: kOrgPrimary,
             borderRadius: BorderRadius.circular(12),
-            onTap: () => _showExportToast(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.download_rounded, size: 16, color: Colors.white),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Export Impact Report',
-                    style: AppTypography.style(AppTextRole.button, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(6),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => _showExportToast(context),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 9,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.download_rounded,
+                      size: 16,
+                      color: Colors.white,
                     ),
-                    child: Text(
-                      'PDF / XLSX',
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 9, color: Colors.white, letterSpacing: 0.5, height: opticalLeading(9, isBody: (9) <= 16)),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Export Impact Report',
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 12,
+                        color: Colors.white,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'PDF / XLSX',
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 9,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
         ),
       ],
     );
@@ -681,23 +859,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
     final gwaLabel = gwaCount == 0
         ? 'No Data'
         : (avgGwa <= 1.25
-            ? 'Summa Tier'
-            : (avgGwa <= 1.50
-                ? 'Magna Tier'
-                : 'Cum Laude Tier'));
+              ? 'Summa Tier'
+              : (avgGwa <= 1.50 ? 'Magna Tier' : 'Cum Laude Tier'));
 
     final card1 = StaggeredListItem(
       index: 0,
       child: _buildKpiCard(
         title: 'ACTIVE BENEFICIARIES',
         icon: Icons.school_outlined,
-        iconBg: const Color(0xFFB3F1C6),
-        iconColor: const Color(0xFF00351C),
+        iconBg: kWorkspaceSubtle,
+        iconColor: kOrgTextSecondary,
         value: totalScholars.toString(),
         numericValue: totalScholars,
         unit: totalScholars == 1 ? 'Scholar' : 'Scholars',
         badgeText: totalScholars > 0 ? '100% Active' : null,
-        badgeIcon: totalScholars > 0 ? Icons.check_circle_outline_rounded : null,
+        badgeIcon: totalScholars > 0
+            ? Icons.check_circle_outline_rounded
+            : null,
         subtext: totalScholars > 0
             ? 'Recorded intake'
             : 'No active beneficiaries enrolled yet',
@@ -709,16 +887,16 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: _buildKpiCard(
         title: 'AVERAGE COHORT GWA',
         icon: Icons.verified_outlined,
-        iconBg: const Color(0xFFD8E2FF),
-        iconColor: const Color(0xFF0058BC),
+        iconBg: kWorkspaceSubtle,
+        iconColor: kOrgTextSecondary,
         value: gwaCount > 0 ? avgGwa.toStringAsFixed(2) : '--',
         unit: gwaLabel,
-        unitColor: const Color(0xFF0058BC),
+        unitColor: kOrgTextSecondary,
         subtext: gwaCount == 0
             ? 'Awaiting applicant grade submissions'
             : (gwaCount == 1
-                ? 'Based on 1 active scholar record'
-                : 'High distinction across $gwaCount scholars'),
+                  ? 'Based on 1 active scholar record'
+                  : 'High distinction across $gwaCount scholars'),
       ),
     );
 
@@ -727,8 +905,8 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: _buildKpiCard(
         title: 'FIRST-GEN STUDENTS',
         icon: Icons.family_restroom_outlined,
-        iconBg: const Color(0xFFFFDDBB),
-        iconColor: const Color(0xFF623A00),
+        iconBg: kWorkspaceSubtle,
+        iconColor: kOrgTextSecondary,
         value: '--',
         unit: 'Not Tracked',
         subtext: 'Attribute not collected on intake profile',
@@ -740,7 +918,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
       child: _buildKpiCard(
         title: 'RETENTION RATE',
         icon: Icons.all_inclusive_rounded,
-        iconBg: const Color(0xFFE3E2E7),
+        iconBg: kWorkspaceSubtle,
         iconColor: kOrgTextPrimary,
         value: totalScholars > 0 ? '100%' : '--',
         unit: totalScholars > 0 ? 'Zero Attrition' : 'No Cohort Data',
@@ -819,7 +997,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: 0.5, height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 10.5,
+                    color: kOrgTextMuted,
+                    letterSpacing: 0.5,
+                    height: 1.4,
+                  ),
                 ),
               ),
               Container(
@@ -839,13 +1023,26 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               numericValue != null
-                  ? OrgMetricCount(motionId: 'legacy-analytics.$title',
+                  ? OrgMetricCount(
+                      motionId: 'legacy-analytics.$title',
                       targetValue: numericValue,
-                      style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kOrgTextPrimary, letterSpacing: -0.5, height: opticalLeading(26, isBody: (26) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.metric,
+                        fontSize: 26,
+                        color: kOrgTextPrimary,
+                        letterSpacing: -0.5,
+                        height: 1.4,
+                      ),
                     )
                   : Text(
                       value,
-                      style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kOrgTextPrimary, letterSpacing: -0.5, height: opticalLeading(26, isBody: (26) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.metric,
+                        fontSize: 26,
+                        color: kOrgTextPrimary,
+                        letterSpacing: -0.5,
+                        height: 1.4,
+                      ),
                     ),
               const SizedBox(width: 8),
               Flexible(
@@ -853,7 +1050,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   unit,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.style(AppTextRole.label, fontSize: 12.5, color: unitColor ?? kOrgTextSecondary, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: (12.5) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 12.5,
+                    color: unitColor ?? kOrgTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -863,7 +1066,10 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFB3F1C6).withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(12),
@@ -872,12 +1078,22 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (badgeIcon != null) ...[
-                        Icon(badgeIcon, size: 12, color: const Color(0xFF00351C)),
+                        Icon(
+                          badgeIcon,
+                          size: 12,
+                          color: const Color(0xFF00351C),
+                        ),
                         const SizedBox(width: 3),
                       ],
                       Text(
                         badgeText,
-                        style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: const Color(0xFF00351C), letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.badge,
+                          fontSize: 10.5,
+                          color: const Color(0xFF00351C),
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -888,7 +1104,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     subtext,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.caption,
+                      fontSize: 11,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ],
@@ -898,7 +1120,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               subtext,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 11,
+                color: kOrgTextSecondary,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
         ],
       ),
@@ -944,19 +1172,31 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 children: [
                   Text(
                     'ACADEMIC MERIT ANALYSIS',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextMuted, letterSpacing: 0.5, height: opticalLeading(10, isBody: (10) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 10,
+                      color: kOrgTextMuted,
+                      letterSpacing: 0.5,
+                      height: 1.4,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'GWA Distribution Curve',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: (17) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 17,
+                      color: kOrgTextPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
@@ -966,9 +1206,14 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                       onTap: () => setState(() => _isPercentileView = false),
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: !_isPercentileView ? kOrgSurfaceWhite : Colors.transparent,
+                          color: !_isPercentileView
+                              ? kOrgSurfaceWhite
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: !_isPercentileView
                               ? [
@@ -982,7 +1227,15 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         ),
                         child: Text(
                           'Cohort Distribution',
-                          style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: !_isPercentileView ? kOrgTextPrimary : kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.navigation,
+                            fontSize: 11,
+                            color: !_isPercentileView
+                                ? kOrgTextPrimary
+                                : kOrgTextSecondary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ),
@@ -990,9 +1243,14 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                       onTap: () => setState(() => _isPercentileView = true),
                       borderRadius: BorderRadius.circular(8),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
-                          color: _isPercentileView ? kOrgSurfaceWhite : Colors.transparent,
+                          color: _isPercentileView
+                              ? kOrgSurfaceWhite
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: _isPercentileView
                               ? [
@@ -1006,7 +1264,15 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         ),
                         child: Text(
                           'Percentile',
-                          style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: _isPercentileView ? kOrgTextPrimary : kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.navigation,
+                            fontSize: 11,
+                            color: _isPercentileView
+                                ? kOrgTextPrimary
+                                : kOrgTextSecondary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ),
@@ -1022,7 +1288,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             height: 180,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: const Color(0xFFF9F8FD),
+              color: const Color(0xFFF8F8F8),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Stack(
@@ -1030,9 +1296,16 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 // Custom Bell Curve Canvas
                 Positioned.fill(
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 20, bottom: 38, left: 16, right: 16),
+                    padding: const EdgeInsets.only(
+                      top: 20,
+                      bottom: 38,
+                      left: 16,
+                      right: 16,
+                    ),
                     child: CustomPaint(
-                      painter: _GwaBellCurvePainter(medianGwa: avgGwa > 0 ? avgGwa : 1.25),
+                      painter: _GwaBellCurvePainter(
+                        medianGwa: avgGwa > 0 ? avgGwa : 1.25,
+                      ),
                     ),
                   ),
                 ),
@@ -1041,7 +1314,10 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   alignment: Alignment.topCenter,
                   child: Container(
                     margin: const EdgeInsets.only(top: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: kOrgPrimary,
                       borderRadius: BorderRadius.circular(14),
@@ -1067,7 +1343,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         const SizedBox(width: 6),
                         Text(
                           'Median GWA: $medianLabel',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: Colors.white, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 10.5,
+                            color: Colors.white,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -1086,11 +1368,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         children: [
                           Text(
                             '1.00 – 1.25',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 11,
+                              color: kOrgTextPrimary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           Text(
                             'Summa ($summaCount ${summaCount == 1 ? 'scholar' : 'scholars'})',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 10,
+                              color: kOrgPrimary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -1099,11 +1393,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         children: [
                           Text(
                             '1.26 – 1.50',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 11,
+                              color: kOrgTextPrimary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           Text(
                             'Magna ($magnaCount ${magnaCount == 1 ? 'scholar' : 'scholars'})',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 10,
+                              color: kOrgPrimary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -1112,11 +1418,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         children: [
                           Text(
                             '1.51 – 1.75',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 11,
+                              color: kOrgTextPrimary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           Text(
                             'Cum Laude ($cumLaudeCount ${cumLaudeCount == 1 ? 'scholar' : 'scholars'})',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextSecondary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 10,
+                              color: kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -1135,11 +1453,25 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               RichText(
                 text: TextSpan(
                   text: 'Standard Deviation: ',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 11.5,
+                    color: kOrgTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   children: [
                     TextSpan(
-                      text: gwaCount <= 1 ? 'N/A (Single applicant baseline)' : '±0.00 GWA',
-                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                      text: gwaCount <= 1
+                          ? 'N/A (Single applicant baseline)'
+                          : '±0.00 GWA',
+                      style: AppTypography.style(
+                        AppTextRole.bodyEmphasis,
+                        fontSize: 11.5,
+                        color: kOrgTextPrimary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -1147,13 +1479,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.military_tech_outlined, size: 16, color: kOrgPrimary),
+                  const Icon(
+                    Icons.military_tech_outlined,
+                    size: 16,
+                    color: kOrgPrimary,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     gwaCount > 0
                         ? '${((summaCount + magnaCount) / gwaCount * 100).round()}% in Upper Honor Bands ($summaCount/$gwaCount)'
                         : '-- in Upper Honor Bands',
-                    style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11.5, color: kOrgPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.bodyEmphasis,
+                      fontSize: 11.5,
+                      color: kOrgPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1201,24 +1543,42 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 children: [
                   Text(
                     'INSTITUTIONAL FOOTPRINT',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextMuted, letterSpacing: 0.5, height: opticalLeading(10, isBody: (10) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 10,
+                      color: kOrgTextMuted,
+                      letterSpacing: 0.5,
+                      height: 1.4,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'University Breakdown',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: (17) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 17,
+                      color: kOrgTextPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${heiCountList.length} ${heiCountList.length == 1 ? 'HEI Partner' : 'HEI Partners'}',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 10.5,
+                    color: kOrgTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -1232,7 +1592,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               child: Center(
                 child: Text(
                   'No partner university data available yet',
-                  style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 12,
+                    color: kOrgTextMuted,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             )
@@ -1240,7 +1606,9 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             Column(
               children: heiCountList.map((entry) {
                 final count = entry.value;
-                final pct = totalScholars > 0 ? ((count / totalScholars) * 100).round() : 0;
+                final pct = totalScholars > 0
+                    ? ((count / totalScholars) * 100).round()
+                    : 0;
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
@@ -1255,18 +1623,37 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                               entry.key,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 12,
+                                color: kOrgTextPrimary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 8),
                           RichText(
                             text: TextSpan(
                               text: '$pct% ',
-                              style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                              style: AppTypography.style(
+                                AppTextRole.metric,
+                                fontSize: 12,
+                                color: kOrgPrimary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                               children: [
                                 TextSpan(
-                                  text: '($count ${count == 1 ? 'scholar' : 'scholars'})',
-                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextMuted, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                                  text:
+                                      '($count ${count == 1 ? 'scholar' : 'scholars'})',
+                                  style: AppTypography.style(
+                                    AppTextRole.caption,
+                                    fontSize: 11,
+                                    color: kOrgTextMuted,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ],
                             ),
@@ -1279,14 +1666,12 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                         child: Container(
                           height: 7,
                           width: double.infinity,
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8E8E8),
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: FractionallySizedBox(
                               widthFactor: (pct / 100).clamp(0.0, 1.0),
-                              child: Container(
-                                color: kOrgPrimary,
-                              ),
+                              child: Container(color: kOrgPrimary),
                             ),
                           ),
                         ),
@@ -1300,19 +1685,32 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             if (heiCountList.length < 2)
               Container(
                 margin: const EdgeInsets.only(top: 4, bottom: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline_rounded, size: 14, color: kOrgTextSecondary),
+                    const Icon(
+                      Icons.info_outline_rounded,
+                      size: 14,
+                      color: kOrgTextSecondary,
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
                         'Single Partner HEI Active • Additional institution footprints appear as new scholars are admitted.',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 10.5,
+                          color: kOrgTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ],
@@ -1321,7 +1719,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
           ],
 
           // Footnote
-          const Divider(height: 12, color: Color(0xFFF1F0F5)),
+          const Divider(height: 12, color: Color(0xFFE8E8E8)),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1329,15 +1727,33 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
               RichText(
                 text: TextSpan(
                   text: 'STEM / Engineering Focus: ',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 11.5,
+                    color: kOrgTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   children: [
                     TextSpan(
                       text: '$stemPct% ',
-                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.bodyEmphasis,
+                        fontSize: 11.5,
+                        color: kOrgTextPrimary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                     TextSpan(
                       text: '($stemCount/$totalScholars active)',
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 10.5,
+                        color: kOrgTextMuted,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -1350,10 +1766,20 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   children: [
                     Text(
                       'View MoA Matrix',
-                      style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 11.5,
+                        color: kOrgPrimary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                     const SizedBox(width: 4),
-                    const Icon(Icons.arrow_forward_rounded, size: 14, color: kOrgPrimary),
+                    const Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 14,
+                      color: kOrgPrimary,
+                    ),
                   ],
                 ),
               ),
@@ -1373,25 +1799,46 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
     required int mindanaoCount,
     required int totalScholars,
   }) {
-    final luzonPct = totalScholars > 0 ? ((luzonCount / totalScholars) * 100).round() : 0;
-    final visayasPct = totalScholars > 0 ? ((visayasCount / totalScholars) * 100).round() : 0;
-    final mindanaoPct = totalScholars > 0 ? ((mindanaoCount / totalScholars) * 100).round() : 0;
+    final luzonPct = totalScholars > 0
+        ? ((luzonCount / totalScholars) * 100).round()
+        : 0;
+    final visayasPct = totalScholars > 0
+        ? ((visayasCount / totalScholars) * 100).round()
+        : 0;
+    final mindanaoPct = totalScholars > 0
+        ? ((mindanaoCount / totalScholars) * 100).round()
+        : 0;
 
     // Build non-zero segments for composite bar safely
     final segments = <Widget>[];
     if (luzonCount > 0) {
-      segments.add(Expanded(flex: luzonCount, child: Container(color: kOrgPrimary)));
+      segments.add(
+        Expanded(
+          flex: luzonCount,
+          child: Container(color: kOrgPrimary),
+        ),
+      );
     }
     if (visayasCount > 0) {
       if (segments.isNotEmpty) segments.add(Container(width: 2, color: Colors.white));
-      segments.add(Expanded(flex: visayasCount, child: Container(color: kOrgPrimary.withValues(alpha: 0.7))));
+      segments.add(
+        Expanded(
+          flex: visayasCount,
+          child: Container(color: kOrgPrimary.withValues(alpha: 0.7)),
+        ),
+      );
     }
     if (mindanaoCount > 0) {
       if (segments.isNotEmpty) segments.add(Container(width: 2, color: Colors.white));
-      segments.add(Expanded(flex: mindanaoCount, child: Container(color: const Color(0xFF98D4AB))));
+      segments.add(
+        Expanded(
+          flex: mindanaoCount,
+          child: Container(color: const Color(0xFF98D4AB)),
+        ),
+      );
     }
     if (segments.isEmpty) {
-      segments.add(Expanded(child: Container(color: const Color(0xFFEEEDF3))));
+      segments.add(Expanded(child: Container(color: const Color(0xFFE8E8E8))));
     }
 
     return Container(
@@ -1419,29 +1866,51 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 children: [
                   Text(
                     'ARCHIPELAGIC EQUITY',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextMuted, letterSpacing: 0.5, height: opticalLeading(10, isBody: (10) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 10,
+                      color: kOrgTextMuted,
+                      letterSpacing: 0.5,
+                      height: 1.4,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'Geographic Island Groups',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: (17) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 17,
+                      color: kOrgTextPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F3F8),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.map_outlined, size: 14, color: kOrgTextSecondary),
+                    const Icon(
+                      Icons.map_outlined,
+                      size: 14,
+                      color: kOrgTextSecondary,
+                    ),
                     const SizedBox(width: 5),
                     Text(
                       'Nationwide Reach',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        fontSize: 10.5,
+                        color: kOrgTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -1492,10 +1961,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
           // Multi-segmented composite bar
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: SizedBox(
-              height: 14,
-              child: Row(children: segments),
-            ),
+            child: SizedBox(height: 14, child: Row(children: segments)),
           ),
           const SizedBox(height: 10),
 
@@ -1517,7 +1983,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   const SizedBox(width: 5),
                   Text(
                     'Luzon ($luzonPct%)',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 10.5,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1535,7 +2007,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   const SizedBox(width: 5),
                   Text(
                     'Visayas ($visayasPct%)',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 10.5,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1553,7 +2031,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                   const SizedBox(width: 5),
                   Text(
                     'Mindanao ($mindanaoPct%)',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 10.5,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1564,7 +2048,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             const SizedBox(height: 10),
             Text(
               'Single-scholar intake baseline: geographic distribution updates as regional cohorts enroll.',
-              style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 10.5,
+                color: kOrgTextMuted,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ],
@@ -1581,7 +2071,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9F8FD),
+        color: const Color(0xFFF8F8F8),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -1598,16 +2088,34 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
           const SizedBox(height: 10),
           Text(
             percentage,
-            style: AppTypography.style(AppTextRole.metric, fontSize: 20, color: kOrgPrimary, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: (20) <= 16)),
+            style: AppTypography.style(
+              AppTextRole.metric,
+              fontSize: 20,
+              color: kOrgPrimary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           Text(
             name,
-            style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 12,
+              color: kOrgTextPrimary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             detail,
-            style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgTextMuted, height: 1.25, letterSpacing: opticalTracking(10)),
+            style: AppTypography.style(
+              AppTextRole.caption,
+              fontSize: 10,
+              color: kOrgTextMuted,
+              height: 1.25,
+              letterSpacing: 0,
+            ),
           ),
         ],
       ),
@@ -1622,8 +2130,12 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
     required int midIncomeCount,
     required int totalScholars,
   }) {
-    final lowPct = totalScholars > 0 ? ((lowIncomeCount / totalScholars) * 100).round() : 0;
-    final midPct = totalScholars > 0 ? ((midIncomeCount / totalScholars) * 100).round() : 0;
+    final lowPct = totalScholars > 0
+        ? ((lowIncomeCount / totalScholars) * 100).round()
+        : 0;
+    final midPct = totalScholars > 0
+        ? ((midIncomeCount / totalScholars) * 100).round()
+        : 0;
 
     return Container(
       padding: const EdgeInsets.all(22),
@@ -1650,12 +2162,24 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 children: [
                   Text(
                     'IMPACT COEFFICIENT',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextMuted, letterSpacing: 0.5, height: opticalLeading(10, isBody: (10) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 10,
+                      color: kOrgTextMuted,
+                      letterSpacing: 0.5,
+                      height: 1.4,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'Family Income Quintiles',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: (17) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 17,
+                      color: kOrgTextPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1668,11 +2192,21 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.volunteer_activism_outlined, size: 14, color: Color(0xFF00351C)),
+                    const Icon(
+                      Icons.volunteer_activism_outlined,
+                      size: 14,
+                      color: Color(0xFF00351C),
+                    ),
                     const SizedBox(width: 5),
                     Text(
                       'Targeted Equity',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: const Color(0xFF00351C), letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        fontSize: 10.5,
+                        color: const Color(0xFF00351C),
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -1694,8 +2228,12 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     CustomPaint(
                       size: const Size(110, 110),
                       painter: _IncomeDonutPainter(
-                        lowRatio: totalScholars > 0 ? (lowIncomeCount / totalScholars) : 0.0,
-                        midRatio: totalScholars > 0 ? (midIncomeCount / totalScholars) : 0.0,
+                        lowRatio: totalScholars > 0
+                            ? (lowIncomeCount / totalScholars)
+                            : 0.0,
+                        midRatio: totalScholars > 0
+                            ? (midIncomeCount / totalScholars)
+                            : 0.0,
                       ),
                     ),
                     Column(
@@ -1703,11 +2241,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                       children: [
                         Text(
                           '$lowPct%',
-                          style: AppTypography.style(AppTextRole.metric, fontSize: 18, color: kOrgPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: (18) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.metric,
+                            fontSize: 18,
+                            color: kOrgPrimary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         Text(
                           '4Ps / LOW-INC',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 8.5, color: kOrgTextMuted, letterSpacing: opticalTracking(8.5), height: opticalLeading(8.5, isBody: (8.5) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 8.5,
+                            color: kOrgTextMuted,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -1723,7 +2273,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9F8FD),
+                        color: const Color(0xFFF8F8F8),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -1745,20 +2295,38 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                                   const SizedBox(width: 6),
                                   Text(
                                     'Low-Income / 4Ps Beneficiaries',
-                                    style: AppTypography.style(AppTextRole.label, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                                    style: AppTypography.style(
+                                      AppTextRole.label,
+                                      fontSize: 11.5,
+                                      color: kOrgTextPrimary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
                               Text(
                                 '$lowPct%',
-                                style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                                style: AppTypography.style(
+                                  AppTextRole.metric,
+                                  fontSize: 12,
+                                  color: kOrgPrimary,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Annual household income below PHP 300,000 ($lowIncomeCount ${lowIncomeCount == 1 ? 'scholar' : 'scholars'})',
-                            style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgTextMuted, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              fontSize: 10,
+                              color: kOrgTextMuted,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -1767,7 +2335,7 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9F8FD),
+                        color: const Color(0xFFF8F8F8),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -1789,20 +2357,38 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                                   const SizedBox(width: 6),
                                   Text(
                                     'Lower-Middle Income',
-                                    style: AppTypography.style(AppTextRole.label, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                                    style: AppTypography.style(
+                                      AppTextRole.label,
+                                      fontSize: 11.5,
+                                      color: kOrgTextPrimary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
                               Text(
                                 '$midPct%',
-                                style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                                style: AppTypography.style(
+                                  AppTextRole.metric,
+                                  fontSize: 12,
+                                  color: kOrgTextPrimary,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Annual household income PHP 300,000 – 840,000 ($midIncomeCount ${midIncomeCount == 1 ? 'scholar' : 'scholars'})',
-                            style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgTextMuted, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              fontSize: 10,
+                              color: kOrgTextMuted,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -1815,18 +2401,30 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
           const SizedBox(height: 16),
 
           // Footnote
-          const Divider(height: 12, color: Color(0xFFF1F0F5)),
+          const Divider(height: 12, color: Color(0xFFE8E8E8)),
           const SizedBox(height: 4),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'Stipend Reliability: ${totalScholars > 0 ? "100%" : "--"}',
-                style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  fontSize: 11.5,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
               Text(
                 'Social ROI: In Assessment',
-                style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: kOrgPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  fontSize: 11.5,
+                  color: kOrgPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -1875,7 +2473,11 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                       color: const Color(0xFFB3F1C6),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.stars_rounded, size: 18, color: kOrgPrimary),
+                    child: const Icon(
+                      Icons.stars_rounded,
+                      size: 18,
+                      color: kOrgPrimary,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Column(
@@ -1883,11 +2485,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     children: [
                       Text(
                         'High Impact Scholars Spotlight',
-                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: (17) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          fontSize: 17,
+                          color: kOrgTextPrimary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       Text(
                         'Exemplary scholars leading breakthrough research, social innovations, and university leadership.',
-                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.subtitle,
+                          fontSize: 11.5,
+                          color: kOrgTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -1897,19 +2511,32 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF4F3F8),
+                      color: const Color(0xFFF6F6F6),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.filter_list_rounded, size: 14, color: kOrgTextSecondary),
+                        const Icon(
+                          Icons.filter_list_rounded,
+                          size: 14,
+                          color: kOrgTextSecondary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Filter: $_selectedGwaFilter',
-                          style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.navigation,
+                            fontSize: 11,
+                            color: kOrgTextSecondary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -1920,12 +2547,22 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: kOrgTextPrimary,
                       side: const BorderSide(color: kOrgBorder),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                     child: Text(
                       'View All Scholars',
-                      style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ],
@@ -1940,19 +2577,29 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             child: ConstrainedBox(
               constraints: BoxConstraints(minWidth: isDesktop ? 960 : 800),
               child: DataTable(
-                headingRowColor: WidgetStateProperty.all(const Color(0xFFF9F8FD)),
+                headingRowColor: WidgetStateProperty.all(
+                  const Color(0xFFF8F8F8),
+                ),
                 dataRowMinHeight: 56,
                 dataRowMaxHeight: 64,
                 horizontalMargin: 12,
                 columnSpacing: 18,
-                headingTextStyle: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: 0.5, height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                headingTextStyle: AppTypography.style(
+                  AppTextRole.label,
+                  fontSize: 10.5,
+                  color: kOrgTextMuted,
+                  letterSpacing: 0.5,
+                  height: 1.4,
+                ),
                 columns: const [
                   DataColumn(label: Text('SCHOLAR & PROGRAM')),
                   DataColumn(label: Text('PARTNER HEI')),
                   DataColumn(label: Text('CUMULATIVE GWA')),
                   DataColumn(label: Text('CAPSTONES & COMMUNITY IMPACT')),
 
-                  DataColumn(label: Text('DOSSIER', textAlign: TextAlign.right)),
+                  DataColumn(
+                    label: Text('DOSSIER', textAlign: TextAlign.right),
+                  ),
                 ],
                 rows: cohortApps.isEmpty
                     ? [
@@ -1961,7 +2608,13 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                             DataCell(
                               Text(
                                 'No active scholars to spotlight yet. Approved scholars will appear here once applications are decided.',
-                                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                                style: AppTypography.style(
+                                  AppTextRole.body,
+                                  fontSize: 12,
+                                  color: kOrgTextMuted,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ),
                             const DataCell(SizedBox()),
@@ -1982,26 +2635,43 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                             : 'Course Pending';
                         final yearStr = (p != null && p.yearLevel > 0)
                             ? (p.yearLevel == 1
-                                ? 'Freshman'
-                                : (p.yearLevel == 2
-                                    ? 'Sophomore'
-                                    : (p.yearLevel == 3 ? 'Junior' : 'Senior')))
+                                  ? 'Freshman'
+                                  : (p.yearLevel == 2
+                                        ? 'Sophomore'
+                                        : (p.yearLevel == 3
+                                              ? 'Junior'
+                                              : 'Senior')))
                             : 'Undergraduate';
-                        final hei = (p?.school != null && p!.school!.trim().isNotEmpty)
+                        final hei =
+                            (p?.school != null && p!.school!.trim().isNotEmpty)
                             ? p.school!.trim()
                             : 'School Pending';
                         final gwa = (p != null && p.gpa > 0) ? p.gpa : 0.0;
-                        final gwaTier = gwa > 0 ? (gwa <= 1.25 ? 'Summa Cum Laude' : (gwa <= 1.50 ? 'Magna Cum Laude' : 'Cum Laude')) : 'Pending Review';
-                        final Color gwaBadgeColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFFB3F1C6) : const Color(0xFFD8E2FF)) : const Color(0xFFF4F3F8);
-                        final Color gwaTextColor = gwa > 0 ? (gwa <= 1.25 ? const Color(0xFF00351C) : const Color(0xFF004493)) : kOrgTextSecondary;
+                        final gwaTier = gwa > 0
+                            ? (gwa <= 1.25
+                                  ? 'Summa Cum Laude'
+                                  : (gwa <= 1.50
+                                        ? 'Magna Cum Laude'
+                                        : 'Cum Laude'))
+                            : 'Pending Review';
+                        final Color gwaBadgeColor = gwa > 0
+                            ? (gwa <= 1.25
+                                  ? const Color(0xFFB3F1C6)
+                                  : const Color(0xFFD8E2FF))
+                            : const Color(0xFFF6F6F6);
+                        final Color gwaTextColor = gwa > 0
+                            ? (gwa <= 1.25
+                                  ? const Color(0xFF00351C)
+                                  : const Color(0xFF004493))
+                            : kOrgTextSecondary;
                         // gwaBadgeColor and gwaTextColor set above
 
                         final parts = fullName.split(' ');
                         final initials = parts.length >= 2
                             ? '${parts.first[0]}${parts.last[0]}'.toUpperCase()
                             : (parts.isNotEmpty && parts[0].isNotEmpty
-                                ? parts[0][0].toUpperCase()
-                                : 'AP');
+                                  ? parts[0][0].toUpperCase()
+                                  : 'AP');
 
                         // Removed demographic calculation.
 
@@ -2016,28 +2686,48 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                                     width: 36,
                                     height: 36,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF0F4D2E).withValues(alpha: 0.1),
+                                      color: const Color(0xFF0F4D2E)
+                                          .withValues(alpha: 0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     child: Center(
                                       child: Text(
                                         initials,
-                                        style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                                        style: AppTypography.style(
+                                          AppTextRole.label,
+                                          fontSize: 12,
+                                          color: kOrgPrimary,
+                                          height: 1.4,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         fullName,
-                                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: (12.5) <= 16)),
+                                        style: AppTypography.style(
+                                          AppTextRole.bodyEmphasis,
+                                          fontSize: 12.5,
+                                          color: kOrgTextPrimary,
+                                          height: 1.4,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                       Text(
                                         '$course • $yearStr',
-                                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                                        style: AppTypography.style(
+                                          AppTextRole.caption,
+                                          fontSize: 11,
+                                          color: kOrgTextSecondary,
+                                          height: 1.4,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2049,11 +2739,21 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.account_balance_outlined, size: 14, color: kOrgPrimary),
+                                  const Icon(
+                                    Icons.account_balance_outlined,
+                                    size: 14,
+                                    color: kOrgPrimary,
+                                  ),
                                   const SizedBox(width: 6),
                                   Text(
                                     hei,
-                                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                                    style: AppTypography.style(
+                                      AppTextRole.caption,
+                                      fontSize: 12,
+                                      color: kOrgTextPrimary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -2061,14 +2761,27 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                             // Cumulative GWA
                             DataCell(
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
                                 decoration: BoxDecoration(
                                   color: gwaBadgeColor,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Text(
-                                  gwa > 0 ? '${gwa.toStringAsFixed(2)} • $gwaTier' : gwaTier,
-                                  style: orgTabularFigures(AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: gwaTextColor, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16))),
+                                  gwa > 0
+                                      ? '${gwa.toStringAsFixed(2)} • $gwaTier'
+                                      : gwaTier,
+                                  style: orgTabularFigures(
+                                    AppTypography.style(
+                                      AppTextRole.badge,
+                                      fontSize: 10.5,
+                                      color: gwaTextColor,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -2080,11 +2793,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                                 children: [
                                   Text(
                                     'Academic Distinction Honoree',
-                                    style: AppTypography.style(AppTextRole.badge, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                                    style: AppTypography.style(
+                                      AppTextRole.badge,
+                                      fontSize: 11.5,
+                                      color: kOrgTextPrimary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                   Text(
                                     'Intake cohort • Capstone pending faculty assignment',
-                                    style: AppTypography.style(AppTextRole.caption, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                                    style: AppTypography.style(
+                                      AppTextRole.caption,
+                                      fontSize: 10.5,
+                                      color: kOrgTextSecondary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -2093,7 +2818,11 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                             // Dossier action
                             DataCell(
                               IconButton(
-                                icon: const Icon(Icons.open_in_new_rounded, size: 16, color: kOrgTextSecondary),
+                                icon: const Icon(
+                                  Icons.open_in_new_rounded,
+                                  size: 16,
+                                  color: kOrgTextSecondary,
+                                ),
                                 onPressed: () {
                                   if (p != null) {
                                     _showScholarDossierDialog(context, p, a);
@@ -2116,12 +2845,26 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
             children: [
               RichText(
                 text: TextSpan(
-                  text: 'Showing ${cohortApps.length} spotlight ${cohortApps.length == 1 ? 'honoree' : 'honorees'} out of ',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                  text:
+                      'Showing ${cohortApps.length} spotlight ${cohortApps.length == 1 ? 'honoree' : 'honorees'} out of ',
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 11.5,
+                    color: kOrgTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   children: [
                     TextSpan(
-                      text: '$totalScholars active ${totalScholars == 1 ? 'scholar' : 'scholars'}',
-                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                      text:
+                          '$totalScholars active ${totalScholars == 1 ? 'scholar' : 'scholars'}',
+                      style: AppTypography.style(
+                        AppTextRole.bodyEmphasis,
+                        fontSize: 11.5,
+                        color: kOrgTextPrimary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -2130,19 +2873,38 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   OutlinedButton.icon(
-                    onPressed: _currentPage > 1 ? () => setState(() => _currentPage--) : null,
+                    onPressed: _currentPage > 1
+                        ? () => setState(() => _currentPage--)
+                        : null,
                     icon: const Icon(Icons.chevron_left_rounded, size: 14),
-                    label: Text('Previous', style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
+                    label: Text(
+                      'Previous',
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 11,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: kOrgTextPrimary,
                       side: const BorderSide(color: kOrgBorder),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Page $_currentPage of 1',
-                    style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.navigation,
+                      fontSize: 11,
+                      color: kOrgTextPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   OutlinedButton(
@@ -2150,12 +2912,23 @@ class _OrgAnalyticsTabState extends ConsumerState<OrgAnalyticsTab> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: kOrgTextPrimary,
                       side: const BorderSide(color: kOrgBorder),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Next', style: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
+                        Text(
+                          'Next',
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
+                        ),
                         const SizedBox(width: 4),
                         const Icon(Icons.chevron_right_rounded, size: 14),
                       ],
@@ -2187,7 +2960,7 @@ class _GwaBellCurvePainter extends CustomPainter {
 
     // 1. Background grid lines
     final gridPaint = Paint()
-      ..color = const Color(0xFFE3E2E7).withValues(alpha: 0.5)
+      ..color = const Color(0xFFE2E4E3).withValues(alpha: 0.5)
       ..strokeWidth = 1.0;
     for (int i = 1; i <= 3; i++) {
       final y = h * (i / 4.0);
@@ -2204,15 +2977,24 @@ class _GwaBellCurvePainter extends CustomPainter {
     final zone3W = w * 0.32;
 
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(0, 0, zone1W, h), const Radius.circular(6)),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, 0, zone1W, h),
+        const Radius.circular(6),
+      ),
       rectPaint1,
     );
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(zone1W + 4, 0, zone2W - 8, h), const Radius.circular(6)),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(zone1W + 4, 0, zone2W - 8, h),
+        const Radius.circular(6),
+      ),
       rectPaint2,
     );
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(zone1W + zone2W, 0, zone3W, h), const Radius.circular(6)),
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(zone1W + zone2W, 0, zone3W, h),
+        const Radius.circular(6),
+      ),
       rectPaint3,
     );
 
@@ -2244,11 +3026,7 @@ class _GwaBellCurvePainter extends CustomPainter {
     // Stroke on curve
     final strokePaint = Paint()
       ..shader = const LinearGradient(
-        colors: [
-          Color(0xFF306948),
-          Color(0xFF0F4D2E),
-          Color(0xFF82BD95),
-        ],
+        colors: [Color(0xFF306948), Color(0xFF0F4D2E), Color(0xFF82BD95)],
       ).createShader(Rect.fromLTWH(0, 0, w, h))
       ..strokeWidth = 3.0
       ..style = PaintingStyle.stroke
@@ -2264,7 +3042,11 @@ class _GwaBellCurvePainter extends CustomPainter {
       ..strokeWidth = 1.5;
     double curY = peakY;
     while (curY < h) {
-      canvas.drawLine(Offset(peakX, curY), Offset(peakX, math.min(curY + 4, h)), dashPaint);
+      canvas.drawLine(
+        Offset(peakX, curY),
+        Offset(peakX, math.min(curY + 4, h)),
+        dashPaint,
+      );
       curY += 7;
     }
 
@@ -2295,7 +3077,7 @@ class _IncomeDonutPainter extends CustomPainter {
 
     // 1. Background ring
     final bgPaint = Paint()
-      ..color = const Color(0xFFEEEDF3)
+      ..color = const Color(0xFFE8E8E8)
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
     canvas.drawCircle(center, radius, bgPaint);

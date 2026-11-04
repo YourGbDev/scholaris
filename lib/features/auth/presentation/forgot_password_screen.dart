@@ -87,14 +87,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(
-          message,
-          style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-        ),
-        backgroundColor: const Color(0xFF161C27),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      );
+    content: Text(
+      message,
+      style: AppTypography.style(
+        AppTextRole.body,
+        color: Colors.white,
+        fontSize: 13,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
+    ),
+    backgroundColor: const Color(0xFF161C27),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +115,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: kTextPrimary,
+                    ),
                     onPressed: () {
                       if (Navigator.of(context).canPop()) {
                         Navigator.of(context).pop();
@@ -123,7 +132,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const ScholarisLogo(compact: true),
                   const Spacer(),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: kSurfaceCard,
                       borderRadius: BorderRadius.circular(16),
@@ -132,11 +144,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
+                        const Icon(
+                          Icons.help_outline_rounded,
+                          size: 16,
+                          color: kTextSecondary,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Help',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 12,
+                            color: kTextSecondary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -189,7 +211,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.08),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.08,
+                                        ),
                                         blurRadius: 10,
                                         offset: const Offset(0, 3),
                                       ),
@@ -209,9 +233,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           // Account Recovery Pill
                           Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE8EEFF),
+                                color: kSurfaceContainer,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Row(
@@ -228,7 +255,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   const SizedBox(width: 6),
                                   Text(
                                     'ACCOUNT RECOVERY',
-                                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
+                                    style: AppTypography.style(
+                                      AppTextRole.badge,
+                                      fontSize: 11,
+                                      color: kPrimary,
+                                      letterSpacing: 0.8,
+                                      height: 1.2,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -240,13 +273,25 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           Text(
                             'Forgot Password?',
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 26, color: kPrimary, height: 1.2, letterSpacing: opticalTracking(26)),
+                            style: AppTypography.style(
+                              AppTextRole.screenTitle,
+                              fontSize: 20,
+                              color: kPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Enter the email associated with your Scholaris account. We\'ll send you a one-time code to recover your access.',
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(13)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 13,
+                              color: kTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 24),
 
@@ -269,15 +314,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'Email',
-                                      style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.label,
+                                        fontSize: 13,
+                                        color: kTextPrimary,
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                     Text(
                                       'School or personal',
-                                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                      style: AppTypography.style(
+                                        AppTextRole.caption,
+                                        fontSize: 11,
+                                        color: kTextSecondary,
+                                        height: 1.4,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -287,11 +345,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   keyboardType: TextInputType.emailAddress,
                                   textInputAction: TextInputAction.done,
                                   onFieldSubmitted: (_) => _onSubmit(),
-                                  style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+                                  style: AppTypography.style(
+                                    AppTextRole.input,
+                                    fontSize: 13,
+                                    color: kTextPrimary,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                   validator: _validateEmail,
                                   decoration: InputDecoration(
                                     hintText: 'e.g. maya.santos@up.edu.ph',
-                                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: Colors.black38, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                                    hintStyle: AppTypography.style(
+                                      AppTextRole.placeholder,
+                                      fontSize: 13,
+                                      color: Colors.black38,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                     prefixIcon: const Icon(
                                       Icons.alternate_email_rounded,
                                       size: 20,
@@ -305,23 +375,35 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(color: kBorderLight),
+                                      borderSide: BorderSide(
+                                        color: kBorderLight,
+                                      ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide(color: kBorderLight),
+                                      borderSide: BorderSide(
+                                        color: kBorderLight,
+                                      ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: kPrimary, width: 1.5),
+                                      borderSide: const BorderSide(
+                                        color: kPrimary,
+                                        width: 1.5,
+                                      ),
                                     ),
                                     errorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Colors.redAccent),
+                                      borderSide: const BorderSide(
+                                        color: Colors.redAccent,
+                                      ),
                                     ),
                                     focusedErrorBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12),
-                                      borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
+                                      borderSide: const BorderSide(
+                                        color: Colors.redAccent,
+                                        width: 1.5,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -334,9 +416,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF1F3FF),
+                              color: kSurfaceContainerLow,
                               borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: const Color(0xFFDDE2F3)),
+                              border: Border.all(
+                                color: kSurfaceContainerHighest,
+                              ),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,16 +441,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Need recovery via mobile?',
-                                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 12, color: kTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.bodyEmphasis,
+                                          fontSize: 12,
+                                          color: kTextPrimary,
+                                          height: 1.2,
+                                          letterSpacing: -0.15,
+                                        ),
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
                                         'You can also receive an SMS OTP if two-factor SMS authentication was configured on your account.',
-                                        style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
+                                        style: AppTypography.style(
+                                          AppTextRole.body,
+                                          fontSize: 11,
+                                          color: kTextSecondary,
+                                          height: 1.35,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -402,10 +499,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                     children: [
                                       Text(
                                         'Send reset code',
-                                        style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.button,
+                                          fontSize: 15,
+                                          color: Colors.white,
+                                          height: 1.2,
+                                          letterSpacing: -0.15,
+                                        ),
                                       ),
                                       const SizedBox(width: 6),
-                                      const Icon(Icons.arrow_forward_rounded, size: 18),
+                                      const Icon(
+                                        Icons.arrow_forward_rounded,
+                                        size: 18,
+                                      ),
                                     ],
                                   ),
                           ),
@@ -417,16 +523,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               decoration: BoxDecoration(
                                 color: kPrimaryLight.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: kPrimary.withValues(alpha: 0.2)),
+                                border: Border.all(
+                                  color: kPrimary.withValues(alpha: 0.2),
+                                ),
                               ),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.mark_email_read_rounded, color: kPrimary, size: 20),
+                                  const Icon(
+                                    Icons.mark_email_read_rounded,
+                                    color: kPrimary,
+                                    size: 20,
+                                  ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
                                       'Recovery code requested. Please check your inbox and spam folder.',
-                                      style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                                      style: AppTypography.style(
+                                        AppTextRole.caption,
+                                        fontSize: 12,
+                                        color: kPrimary,
+                                        height: 1.4,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -442,18 +560,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             children: [
                               Text(
                                 'Remember your password? ',
-                                style: AppTypography.style(AppTextRole.body, fontSize: 13, color: kTextSecondary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                                style: AppTypography.style(
+                                  AppTextRole.body,
+                                  fontSize: 13,
+                                  color: kTextSecondary,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                               TextButton(
                                 onPressed: () => context.go('/login'),
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
                                   minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 child: Text(
                                   'Log in',
-                                  style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimary, decoration: TextDecoration.underline, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.button,
+                                    fontSize: 13,
+                                    color: kPrimary,
+                                    decoration: TextDecoration.underline,
+                                    height: 1.2,
+                                    letterSpacing: -0.15,
+                                  ),
                                 ),
                               ),
                             ],
@@ -463,21 +595,34 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           // Trust Badge
                           Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE8EEFF),
+                                color: kSurfaceContainer,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.shield_outlined, size: 14, color: kNavyTrust),
+                                  const Icon(
+                                    Icons.shield_outlined,
+                                    size: 14,
+                                    color: kNavyTrust,
+                                  ),
                                   const SizedBox(width: 6),
                                   Flexible(
                                     child: Text(
                                       '256-bit encrypted • RA 10173 Compliant',
                                       overflow: TextOverflow.ellipsis,
-                                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kNavyTrust, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                      style: AppTypography.style(
+                                        AppTextRole.caption,
+                                        fontSize: 11,
+                                        color: kNavyTrust,
+                                        height: 1.4,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                 ],

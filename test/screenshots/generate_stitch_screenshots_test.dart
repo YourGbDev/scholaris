@@ -22,7 +22,6 @@ import 'package:scholaris/features/scholarships/providers/scholarships_provider.
 import 'package:scholaris/features/scholarships/repositories/scholarship_repository.dart';
 import 'package:scholaris/features/scholarships/screens/discover_screen.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
-import 'package:scholaris/shared/theme/app_typography.dart';
 
 import '../helpers/fake_application_data_source.dart';
 import '../helpers/fake_bookmark_data_source.dart';
@@ -30,13 +29,45 @@ import '../helpers/fake_profile_data_source.dart';
 import '../helpers/fake_scholarship_data_source.dart';
 
 Future<void> _loadFonts() async {
-  await (FontLoader('MaterialIcons')
-    ..addFont(rootBundle.load('fonts/MaterialIcons-Regular.otf'))).load();
-  final fonts = FontLoader('Inter');
-  for (final weight in ['Regular', 'Medium', 'SemiBold', 'Bold']) {
-    fonts.addFont(rootBundle.load('assets/fonts/inter/Inter-$weight.ttf'));
+  final iconFile = File(r'C:\flutter\flutter\bin\cache\artifacts\material_fonts\materialicons-regular.otf');
+  if (iconFile.existsSync()) {
+    final loader = FontLoader('MaterialIcons');
+    loader.addFont(Future.value(ByteData.view(iconFile.readAsBytesSync().buffer)));
+    await loader.load();
   }
-  await fonts.load();
+
+  final robotoFile = File(r'C:\flutter\flutter\bin\cache\artifacts\material_fonts\roboto-regular.ttf');
+  final robotoBoldFile = File(r'C:\flutter\flutter\bin\cache\artifacts\material_fonts\roboto-bold.ttf');
+  if (robotoFile.existsSync()) {
+    final regBytes = robotoFile.readAsBytesSync();
+    final boldBytes = robotoBoldFile.existsSync() ? robotoBoldFile.readAsBytesSync() : regBytes;
+
+    final families = <String>[
+      'Outfit',
+      'Outfit_regular',
+      'Outfit_400',
+      'Outfit_500',
+      'Outfit_600',
+      'Outfit_700',
+      'Outfit_bold',
+      'OpenSans',
+      'OpenSans_regular',
+      'OpenSans_400',
+      'OpenSans_500',
+      'OpenSans_600',
+      'OpenSans_700',
+      'OpenSans_bold',
+      'Open Sans',
+      'Roboto',
+    ];
+
+    for (final family in families) {
+      final loader = FontLoader(family);
+      loader.addFont(Future.value(ByteData.view(regBytes.buffer)));
+      loader.addFont(Future.value(ByteData.view(boldBytes.buffer)));
+      await loader.load();
+    }
+  }
 }
 
 List<Map<String, dynamic>> _stitchRows() {
@@ -161,11 +192,10 @@ Widget _wrapScreen({required Widget screen, required int selectedTab}) {
     ],
     child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: applyScholarisTypography(ThemeData(
+      theme: ThemeData(
         scaffoldBackgroundColor: kBackground,
-        fontFamily: AppTypography.familyFor(14),
-        fontFamilyFallback: AppTypography.fallback,
-      )),
+        fontFamily: 'Roboto',
+      ),
       home: Scaffold(
         backgroundColor: kBackground,
         body: screen,

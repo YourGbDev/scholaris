@@ -9,15 +9,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:scholaris/features/scholarships/models/scholarship.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
+
 import '../../../models/organization_team_member.dart';
 import '../../../providers/organization_team_provider.dart';
 import '../org_provider_theme.dart';
 
 class AssignReviewerDialog extends ConsumerStatefulWidget {
-  const AssignReviewerDialog({
-    super.key,
-    required this.scholarship,
-  });
+  const AssignReviewerDialog({super.key, required this.scholarship});
 
   final Scholarship scholarship;
 
@@ -57,21 +55,31 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
         await repo.assignReviewer(widget.scholarship.id, member.userId);
       }
 
-      ref.invalidate(scholarshipReviewerAssignmentsProvider(widget.scholarship.id));
+      ref.invalidate(
+        scholarshipReviewerAssignmentsProvider(widget.scholarship.id),
+      );
       ref.invalidate(organizationRosterProvider);
 
       if (!mounted) return;
       messenger.showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           backgroundColor: kOrgPrimary,
           duration: const Duration(seconds: 2),
           content: Text(
             isCurrentlyAssigned
                 ? 'Unassigned ${member.fullName} from "${widget.scholarship.title}".'
                 : 'Assigned ${member.fullName} to "${widget.scholarship.title}".',
-            style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+            style: AppTypography.style(
+              AppTextRole.body,
+              color: Colors.white,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       );
@@ -80,11 +88,19 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
       messenger.showSnackBar(
         SnackBar(
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           backgroundColor: kOrgError,
           content: Text(
             'Failed to update assignment: $e',
-            style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+            style: AppTypography.style(
+              AppTextRole.body,
+              color: Colors.white,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       );
@@ -100,8 +116,9 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
   @override
   Widget build(BuildContext context) {
     final rosterAsync = ref.watch(organizationRosterProvider);
-    final assignmentsAsync =
-        ref.watch(scholarshipReviewerAssignmentsProvider(widget.scholarship.id));
+    final assignmentsAsync = ref.watch(
+      scholarshipReviewerAssignmentsProvider(widget.scholarship.id),
+    );
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -136,7 +153,7 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: kOrgPrimary.withValues(alpha: 0.1),
+                        color: kWorkspaceSubtle,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Center(
@@ -154,12 +171,24 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                         children: [
                           Text(
                             'Assign Reviewers',
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 16.5,
+                              color: kOrgTextPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             widget.scholarship.title,
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 12,
+                              color: kOrgTextSecondary,
+                              height: 1.3,
+                              letterSpacing: 0,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -167,8 +196,11 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded,
-                          size: 20, color: kOrgTextSecondary),
+                      icon: const Icon(
+                        Icons.close_rounded,
+                        size: 20,
+                        color: kOrgTextSecondary,
+                      ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -178,17 +210,29 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
 
               // Sub-header guidance
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                color: const Color(0xFFF9F9FB),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                color: const Color(0xFFF8F8F8),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline_rounded,
-                        size: 15, color: kOrgTextSecondary),
+                    const Icon(
+                      Icons.info_outline_rounded,
+                      size: 15,
+                      color: kOrgTextSecondary,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Assigned evaluators can filter incoming dossiers using "Assigned to Me" and record rubric scores.',
-                        style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
+                        style: AppTypography.style(
+                          AppTextRole.body,
+                          fontSize: 11.5,
+                          color: kOrgTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ],
@@ -208,7 +252,13 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                     child: Center(
                       child: Text(
                         'Could not load organization roster: $err',
-                        style: AppTypography.style(AppTextRole.body, color: kOrgError, fontSize: 13, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+                        style: AppTypography.style(
+                          AppTextRole.body,
+                          color: kOrgError,
+                          fontSize: 13,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -225,17 +275,32 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.group_off_rounded,
-                                  size: 36, color: kOrgTextSecondary),
+                              const Icon(
+                                Icons.group_off_rounded,
+                                size: 36,
+                                color: kOrgTextSecondary,
+                              ),
                               const SizedBox(height: 10),
                               Text(
                                 'No Active Reviewers Found',
-                                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.cardTitle,
+                                  fontSize: 14,
+                                  height: 1.2,
+                                  color: kOrgTextPrimary,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 'Add reviewers to your organization in the Team & Reviewers tab.',
-                                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                                style: AppTypography.style(
+                                  AppTextRole.body,
+                                  fontSize: 12,
+                                  color: kOrgTextSecondary,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                                 textAlign: TextAlign.center,
                               ),
                             ],
@@ -244,7 +309,8 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                       );
                     }
 
-                    final assignedReviewerIds = assignmentsAsync.valueOrNull
+                    final assignedReviewerIds =
+                        assignmentsAsync.valueOrNull
                             ?.map((a) => a.reviewerId)
                             .toSet() ??
                         <String>{};
@@ -253,43 +319,72 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       physics: const AppleBouncingScrollPhysics(),
                       itemCount: reviewers.length,
-                      separatorBuilder: (_, _) =>
-                          const Divider(height: 1, indent: 64, color: kOrgHairline),
+                      separatorBuilder: (_, _) => const Divider(
+                        height: 1,
+                        indent: 64,
+                        color: kOrgHairline,
+                      ),
                       itemBuilder: (ctx, index) {
                         final member = reviewers[index];
-                        final isAssigned =
-                            assignedReviewerIds.contains(member.userId);
-                        final isPending =
-                            _pendingToggles.contains(member.userId);
+                        final isAssigned = assignedReviewerIds.contains(
+                          member.userId,
+                        );
+                        final isPending = _pendingToggles.contains(
+                          member.userId,
+                        );
 
                         return ListTile(
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 2,
+                          ),
                           leading: CircleAvatar(
                             radius: 18,
                             backgroundColor: isAssigned
                                 ? kOrgPrimary
-                                : const Color(0xFFE3E2E7),
+                                : const Color(0xFFE2E4E3),
                             child: Text(
                               member.fullName.isNotEmpty
                                   ? member.fullName[0].toUpperCase()
                                   : 'R',
-                              style: AppTypography.style(AppTextRole.label, fontSize: 13, color: isAssigned ? Colors.white : kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.label,
+                                fontSize: 13,
+                                color: isAssigned
+                                    ? Colors.white
+                                    : kOrgTextPrimary,
+                                height: 1.3,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ),
                           title: Text(
                             member.fullName,
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 13.5,
+                              color: kOrgTextPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           subtitle: Text(
                             'Academic Evaluator • ${member.assignedScholarshipCount} current assignments',
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 11.5,
+                              color: kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           trailing: isPending
                               ? const SizedBox(
                                   width: 20,
                                   height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
                                 )
                               : Switch.adaptive(
                                   value: isAssigned,
@@ -312,7 +407,10 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
 
               // Bottom Actions
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -325,11 +423,19 @@ class _AssignReviewerDialogState extends ConsumerState<AssignReviewerDialog> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
                       ),
                       child: Text(
                         'Done',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 13,
+                          color: Colors.white,
+                          height: 1.3,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ],

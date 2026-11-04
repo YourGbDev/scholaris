@@ -48,18 +48,21 @@ void main() {
       Text label(String value) => tester.widget<Text>(find.text(value));
       expect(label(scholarship.title).style!.fontWeight, FontWeight.w600);
       expect(label(scholarship.provider!).style!.fontWeight, FontWeight.w500);
-      expect(label(scholarship.provider!).style!.fontSize, 14);
-      expect(label(scholarship.provider!).style!.height, 1.4);
+      expect(label(scholarship.provider!).style!.fontSize, 13);
+      expect(label(scholarship.provider!).style!.height, 1.45);
       expect(label(scholarship.provider!).style!.letterSpacing, 0);
-      expect(
-        label(scholarship.provider!).style!.color,
-        const Color(0xFF4E5C53),
+      expect(label(scholarship.provider!).style!.color, kTextSecondary);
+      final amount = tester.widget<Text>(
+        find.byWidgetPredicate(
+          (w) =>
+              w is Text &&
+              w.textSpan?.toPlainText().startsWith('₱50,000') == true,
+        ),
       );
-      expect(label('₱50,000').style!.fontWeight, FontWeight.w700);
-      expect(
-        label(scholarship.formattedFrequency).style!.fontWeight,
-        FontWeight.w400,
-      );
+      expect(amount.style!.fontWeight, FontWeight.w700);
+      final frequency =
+          (amount.textSpan as TextSpan).children!.last as TextSpan;
+      expect(frequency.style!.fontWeight, FontWeight.w400);
       expect(label('View Details').style!.fontWeight, FontWeight.w600);
       expect(tester.takeException(), isNull);
     },

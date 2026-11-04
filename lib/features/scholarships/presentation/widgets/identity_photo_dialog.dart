@@ -52,127 +52,170 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-            // Icon emblem
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8EEFF),
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFC3D2FF), width: 2),
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.add_a_photo_rounded,
-                  size: 30,
-                  color: kNavyTrust,
+              // Icon emblem
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: kSurfaceContainer,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFC3D2FF), width: 2),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.add_a_photo_rounded,
+                    size: 30,
+                    color: kNavyTrust,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
-            // Title
-            Text(
-              'Identity Photo Required',
-              textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27)),
-            ),
-            const SizedBox(height: 6),
-
-            // Subtitle
-            Text(
-              'Official Student Verification',
-              style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kPrimary, letterSpacing: 0.5),
-            ),
-            const SizedBox(height: 14),
-
-            // Explanation box
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8F9FA),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE2E8E5)),
+              // Title
+              Text(
+                'Identity Photo Required',
+                textAlign: TextAlign.center,
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 17,
+                  color: const Color(0xFF161C27),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.verified_user_rounded,
-                        size: 16,
-                        color: Color(0xFF145131),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Scholarship providers require an authentic, real photograph of you for identity verification before evaluating your application.',
-                          style: AppTypography.style(AppTextRole.body, fontSize: 12, height: 1.45, color: const Color(0xFF404942)),
+              const SizedBox(height: 6),
+
+              // Subtitle
+              Text(
+                'Official Student Verification',
+                style: AppTypography.style(
+                  AppTextRole.subtitle,
+                  fontSize: 12,
+                  color: kPrimary,
+                  letterSpacing: 0.5,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Explanation box
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE2E8E5)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.verified_user_rounded,
+                          size: 16,
+                          color: Color(0xFF145131),
                         ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Scholarship providers require an authentic, real photograph of you for identity verification before evaluating your application.',
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              fontSize: 12,
+                              height: 1.45,
+                              color: const Color(0xFF404942),
+                              letterSpacing: 0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Applications submitted with cartoon or placeholder avatars cannot be deliberated by scholarship committees.',
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 11,
+                        color: const Color(0xFFBA1A1A),
+                        height: 1.4,
+                        letterSpacing: 0,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Applications submitted with cartoon or placeholder avatars cannot be deliberated by scholarship committees.',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFBA1A1A)),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 18),
+              const SizedBox(height: 18),
 
-            // Action Buttons
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                key: const ValueKey('photo-upload-camera'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: kPrimary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              // Action Buttons
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  key: const ValueKey('photo-upload-camera'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kPrimary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
+                  icon: const Icon(Icons.camera_alt_rounded, size: 18),
+                  label: Text(
+                    'Take Photo with Camera',
+                    style: AppTypography.style(
+                      AppTextRole.button,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                  onPressed: () {
+                    notifier.uploadRealPhoto(
+                      path: 'camera_verified_$userId.jpg',
+                    );
+                    Navigator.of(context).pop(true);
+                  },
                 ),
-                icon: const Icon(Icons.camera_alt_rounded, size: 18),
-                label: Text(
-                  'Take Photo with Camera',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 13),
-                ),
-                onPressed: () {
-                  notifier.uploadRealPhoto(path: 'camera_verified_$userId.jpg');
-                  Navigator.of(context).pop(true);
-                },
               ),
-            ),
-            const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                key: const ValueKey('photo-upload-gallery'),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  side: const BorderSide(color: kPrimary),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  key: const ValueKey('photo-upload-gallery'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    side: const BorderSide(color: kPrimary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
+                  icon: const Icon(
+                    Icons.photo_library_rounded,
+                    size: 18,
+                    color: kPrimary,
+                  ),
+                  label: Text(
+                    'Upload from Gallery',
+                    style: AppTypography.style(
+                      AppTextRole.button,
+                      fontSize: 13,
+                      color: kPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                  onPressed: () {
+                    notifier.uploadRealPhoto(
+                      path: 'gallery_verified_$userId.jpg',
+                    );
+                    Navigator.of(context).pop(true);
+                  },
                 ),
-                icon: const Icon(Icons.photo_library_rounded, size: 18, color: kPrimary),
-                label: Text(
-                  'Upload from Gallery',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimary),
-                ),
-                onPressed: () {
-                  notifier.uploadRealPhoto(path: 'gallery_verified_$userId.jpg');
-                  Navigator.of(context).pop(true);
-                },
               ),
-            ),
-          ],
+            ],
           ),
         ),
       ),
@@ -185,7 +228,13 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
               onPressed: () => Navigator.of(context).pop(false),
               child: Text(
                 'Cancel',
-                style: AppTypography.style(AppTextRole.button, fontSize: 13, color: const Color(0xFF707971)),
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 13,
+                  color: const Color(0xFF707971),
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
             TextButton(
@@ -193,7 +242,13 @@ class IdentityPhotoRequiredDialog extends ConsumerWidget {
               onPressed: () => Navigator.of(context).pop(true),
               child: Text(
                 'Proceed with Warning',
-                style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary),
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 12,
+                  color: kPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],

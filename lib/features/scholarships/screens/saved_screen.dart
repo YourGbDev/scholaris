@@ -40,7 +40,11 @@ import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
 import 'package:scholaris/shared/widgets/state_views.dart';
 
-void _returnToStudentHome(BuildContext context, WidgetRef ref, {bool discover = false}) {
+void _returnToStudentHome(
+  BuildContext context,
+  WidgetRef ref, {
+  bool discover = false,
+}) {
   if (discover) ref.read(homeTabIndexProvider.notifier).selectTab(1);
   final navigator = Navigator.of(context);
   if (navigator.canPop()) {
@@ -89,125 +93,153 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
     final savedCount = bookmarksAsync.valueOrNull?.length ?? 0;
 
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: kStudentCanvas,
       body: SafeArea(
         child: ResponsiveContainer(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top Header matching Stitch
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-              child: Row(
-                children: [
-                  IconButton(
-                    tooltip: 'Back',
-                    onPressed: () => _returnToStudentHome(context, ref),
-                    icon: const Icon(Icons.arrow_back_rounded),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 2,
-                      children: [
-                        Text(
-                          'Saved Scholarships',
-                          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: const Color(0xFF161C27), letterSpacing: -0.3),
-                        ),
-                        CountUpAnimation(
-                          targetValue: savedCount,
-                          prefix: '(',
-                          suffix: ' saved)',
-                          style: AppTypography.style(AppTextRole.badge, fontSize: 13, color: const Color(0xFF404942)),
-                        ),
-                      ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Top Header matching Stitch
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Row(
+                  children: [
+                    IconButton(
+                      tooltip: 'Back',
+                      onPressed: () => _returnToStudentHome(context, ref),
+                      icon: const Icon(Icons.arrow_back_rounded),
                     ),
-                  ),
-                  PressableScale(
-                    child: Material(
-                      color: _searchOpen
-                          ? const Color(0xFFE8EEFF)
-                          : Colors.transparent,
-                      shape: const CircleBorder(),
-                      child: IconButton(
-                        tooltip: 'Search saved scholarships',
-                        icon: Icon(
-                          _searchOpen ? Icons.close_rounded : Icons.search_rounded,
-                          size: 22,
-                          color: const Color(0xFF404942),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _searchOpen = !_searchOpen;
-                            if (!_searchOpen) {
-                              _searchController.clear();
-                            }
-                          });
-                        },
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 2,
+                        children: [
+                          Text(
+                            'Saved Scholarships',
+                            style: AppTypography.style(
+                              AppTextRole.screenTitle,
+                              fontSize: 20,
+                              color: const Color(0xFF161C27),
+                              letterSpacing: -0.3,
+                              height: 1.4,
+                            ),
+                          ),
+                          CountUpAnimation(
+                            targetValue: savedCount,
+                            prefix: '(',
+                            suffix: ' saved)',
+                            style: AppTypography.style(
+                              AppTextRole.badge,
+                              fontSize: 13,
+                              color: const Color(0xFF404942),
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Expandable Search Bar
-            if (_searchOpen)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-                child: TextField(
-                  controller: _searchController,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    hintText: 'Search saved scholarships...',
-                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13.5, color: const Color(0xFF707971)),
-                    prefixIcon: const Icon(
-                      Icons.search_rounded,
-                      size: 20,
-                      color: Color(0xFF436084),
+                    PressableScale(
+                      child: Material(
+                        color: _searchOpen
+                            ? kStudentSurfaceSubtle
+                            : Colors.transparent,
+                        shape: const CircleBorder(),
+                        child: IconButton(
+                          tooltip: 'Search saved scholarships',
+                          icon: Icon(
+                            _searchOpen
+                                ? Icons.close_rounded
+                                : Icons.search_rounded,
+                            size: 22,
+                            color: const Color(0xFF404942),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _searchOpen = !_searchOpen;
+                              if (!_searchOpen) {
+                                _searchController.clear();
+                              }
+                            });
+                          },
+                        ),
+                      ),
                     ),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear_rounded, size: 18),
-                            onPressed: () => _searchController.clear(),
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 10,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: kPrimary, width: 1.5),
-                    ),
-                  ),
-                  style: AppTypography.style(AppTextRole.input, fontSize: 14),
+                  ],
                 ),
               ),
 
-            Expanded(
-              child: _buildBody(
-                ref,
-                bookmarksAsync,
-                allAsync,
-                appliedIds,
-                _searchQuery,
+              // Expandable Search Bar
+              if (_searchOpen)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  child: TextField(
+                    controller: _searchController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: 'Search saved scholarships...',
+                      hintStyle: AppTypography.style(
+                        AppTextRole.placeholder,
+                        fontSize: 13.5,
+                        color: const Color(0xFF707971),
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                      prefixIcon: const Icon(
+                        Icons.search_rounded,
+                        size: 20,
+                        color: Color(0xFF436084),
+                      ),
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear_rounded, size: 18),
+                              onPressed: () => _searchController.clear(),
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFE2E8E5)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(
+                          color: kPrimary,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                    style: AppTypography.style(
+                      AppTextRole.input,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
+                ),
+
+              Expanded(
+                child: _buildBody(
+                  ref,
+                  bookmarksAsync,
+                  allAsync,
+                  appliedIds,
+                  _searchQuery,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         ),
       ),
     );
@@ -219,10 +251,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
       itemCount: 4,
       separatorBuilder: (_, _) => const SizedBox(height: 14),
-      itemBuilder: (_, _) => const SkeletonBand(
-        height: 140,
-        borderRadius: 16,
-      ),
+      itemBuilder: (_, _) => const SkeletonBand(height: 140, borderRadius: 16),
     );
   }
 
@@ -292,12 +321,24 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'No matching saved scholarships',
-                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: const Color(0xFF161C27)),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      fontSize: 15,
+                      color: const Color(0xFF161C27),
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Try searching with a different keyword.',
-                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942)),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 13,
+                      color: const Color(0xFF404942),
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   PressableScale(
@@ -305,7 +346,13 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                       onPressed: () => _searchController.clear(),
                       child: Text(
                         'Clear search',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimary),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 13,
+                          color: kPrimary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ),
@@ -321,7 +368,9 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
             ref.invalidate(scholarshipsProvider);
           },
           child: ListView.separated(
-            physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+            physics: const AppleBouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
             padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
             itemCount: filtered.length,
             separatorBuilder: (_, _) => const SizedBox(height: 14),
@@ -332,7 +381,10 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                 studentProfile: ref.watch(currentProfileProvider).valueOrNull,
                 reasons: ref.watch(currentProfileProvider).valueOrNull == null
                     ? const []
-                    : matchReasonsFor(ref.watch(currentProfileProvider).valueOrNull!, filtered[i]),
+                    : matchReasonsFor(
+                        ref.watch(currentProfileProvider).valueOrNull!,
+                        filtered[i],
+                      ),
                 isBookmarked: true,
                 isApplied: appliedIds.contains(filtered[i].id),
                 onToggleBookmark: () => _toggleBookmark(ref, filtered[i].id),
@@ -360,7 +412,9 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
               content: Row(
                 children: [
                   Icon(
-                    added ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                    added
+                        ? Icons.check_circle_rounded
+                        : Icons.info_outline_rounded,
                     color: const Color(0xFFB3F1C6),
                     size: 18,
                   ),
@@ -369,7 +423,13 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
                     added
                         ? 'Scholarship saved to your list!'
                         : 'Scholarship removed from bookmarks',
-                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 13,
+                      color: Colors.white,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -378,7 +438,7 @@ class _SavedScreenState extends ConsumerState<SavedScreen> {
         } catch (_) {}
       }
     } on Exception {
-      // Silent on card failure
+      rethrow;
     }
   }
 }
@@ -390,7 +450,9 @@ class _SavedEmptyState extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
-      physics: const AppleBouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics: const AppleBouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -398,37 +460,35 @@ class _SavedEmptyState extends ConsumerWidget {
           // Hero Card with Dual Concentric Halo
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8E5), width: 1.0),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x081B3A5C),
-                  blurRadius: 16,
-                  offset: Offset(0, 4),
-                ),
-              ],
-            ),
+            decoration: kSoftCardDecoration,
             child: Column(
               children: [
                 // Consoling Mascot Hero
-                const MascotPoseView(
-                  pose: MascotPose.consoling,
-                  height: 76,
-                ),
+                const MascotPoseView(pose: MascotPose.consoling, height: 76),
                 const SizedBox(height: 10),
                 // Soft nudge copy with Stitch headline
                 Text(
                   "Save scholarships you're interested in",
                   textAlign: TextAlign.center,
-                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: const Color(0xFF161C27), letterSpacing: -0.2),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    fontSize: 17,
+                    color: const Color(0xFF161C27),
+                    letterSpacing: -0.2,
+                    height: 1.4,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   "Save scholarships you're interested in so you don't lose them.",
                   textAlign: TextAlign.center,
-                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF0F4D2E)),
+                  style: AppTypography.style(
+                    AppTextRole.subtitle,
+                    fontSize: 12,
+                    color: const Color(0xFF0F4D2E),
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
@@ -436,7 +496,13 @@ class _SavedEmptyState extends ConsumerWidget {
                   'application requirements without losing your spot. Tap the bookmark '
                   'icon on any scholarship card to save it here.',
                   textAlign: TextAlign.center,
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), height: 1.4),
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 12,
+                    color: const Color(0xFF404942),
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
@@ -444,9 +510,12 @@ class _SavedEmptyState extends ConsumerWidget {
                   height: 46,
                   child: PressableScale(
                     child: FilledButton.icon(
-                      onPressed: () => _returnToStudentHome(context, ref, discover: true),
+                      onPressed: () =>
+                          _returnToStudentHome(context, ref, discover: true),
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF0F4D2E), // Stitch primary-container
+                        backgroundColor: const Color(
+                          0xFF0F4D2E,
+                        ), // Stitch primary-container
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -456,7 +525,12 @@ class _SavedEmptyState extends ConsumerWidget {
                       icon: const Icon(Icons.arrow_forward_rounded, size: 16),
                       label: Text(
                         'Discover Scholarships',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 14),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 13,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ),
@@ -484,7 +558,13 @@ class _SavedEmptyState extends ConsumerWidget {
                       child: Text(
                         'Trending Grants Near You',
                         overflow: TextOverflow.ellipsis,
-                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14.5, color: const Color(0xFF161C27)),
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          fontSize: 14.5,
+                          color: const Color(0xFF161C27),
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ],
@@ -492,14 +572,23 @@ class _SavedEmptyState extends ConsumerWidget {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 2.5,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFD2E4FF),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   'SUGGESTED',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF001C38), letterSpacing: 0.5),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 10,
+                    color: const Color(0xFF001C38),
+                    letterSpacing: 0.5,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ],
@@ -578,12 +667,13 @@ class _SuggestedGrantCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bookmarksAsync = ref.watch(bookmarksProvider);
-    final isSaved = bookmarksAsync.valueOrNull?.contains(scholarshipId) ?? false;
+    final isSaved =
+        bookmarksAsync.valueOrNull?.contains(scholarshipId) ?? false;
     final allScholarships = ref.watch(scholarshipsProvider).valueOrNull;
     final realScholarship = allScholarships?.cast<Scholarship?>().firstWhere(
-          (s) => s?.id == scholarshipId,
-          orElse: () => null,
-        );
+      (s) => s?.id == scholarshipId,
+      orElse: () => null,
+    );
 
     return Material(
       color: Colors.white,
@@ -594,7 +684,8 @@ class _SuggestedGrantCard extends ConsumerWidget {
           if (realScholarship != null) {
             Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => ScholarshipDetailScreen(scholarshipId: realScholarship.id),
+                builder: (_) =>
+                    ScholarshipDetailScreen(scholarshipId: realScholarship.id),
               ),
             );
           } else {
@@ -626,14 +717,23 @@ class _SuggestedGrantCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF1F3FF),
+                            color: kStudentSurfaceSubtle,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             category,
-                            style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: const Color(0xFF404942)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 10.5,
+                              color: const Color(0xFF404942),
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -641,14 +741,26 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           title,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14.5, color: const Color(0xFF161C27)),
+                          style: AppTypography.style(
+                            AppTextRole.cardTitle,
+                            fontSize: 14.5,
+                            color: const Color(0xFF161C27),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           provider,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF404942)),
+                          style: AppTypography.style(
+                            AppTextRole.subtitle,
+                            fontSize: 12,
+                            color: const Color(0xFF404942),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -658,15 +770,18 @@ class _SuggestedGrantCard extends ConsumerWidget {
                     child: Material(
                       color: isSaved
                           ? const Color(0xFF0F4D2E)
-                          : const Color(0xFFF1F3FF),
+                          : kStudentSurfaceSubtle,
                       shape: const CircleBorder(),
                       child: InkWell(
                         customBorder: const CircleBorder(),
                         onTap: () async {
                           try {
-                            final added = await ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
+                            final added = await ref
+                                .read(bookmarksProvider.notifier)
+                                .toggle(scholarshipId);
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   behavior: SnackBarBehavior.floating,
@@ -677,7 +792,9 @@ class _SuggestedGrantCard extends ConsumerWidget {
                                   content: Row(
                                     children: [
                                       Icon(
-                                        added ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                                        added
+                                            ? Icons.check_circle_rounded
+                                            : Icons.info_outline_rounded,
                                         color: const Color(0xFFB3F1C6),
                                         size: 18,
                                       ),
@@ -686,7 +803,13 @@ class _SuggestedGrantCard extends ConsumerWidget {
                                         added
                                             ? 'Scholarship saved to your list!'
                                             : 'Scholarship removed from bookmarks',
-                                        style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white),
+                                        style: AppTypography.style(
+                                          AppTextRole.body,
+                                          fontSize: 13,
+                                          color: Colors.white,
+                                          height: 1.4,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -698,9 +821,13 @@ class _SuggestedGrantCard extends ConsumerWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(8),
                           child: Icon(
-                            isSaved ? Icons.bookmark_rounded : Icons.bookmark_outline_rounded,
+                            isSaved
+                                ? Icons.bookmark_rounded
+                                : Icons.bookmark_outline_rounded,
                             size: 18,
-                            color: isSaved ? Colors.white : const Color(0xFF436084),
+                            color: isSaved
+                                ? Colors.white
+                                : const Color(0xFF436084),
                           ),
                         ),
                       ),
@@ -710,9 +837,12 @@ class _SuggestedGrantCard extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F3FF).withValues(alpha: 0.6),
+                  color: kStudentSurfaceSubtle.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Wrap(
@@ -728,16 +858,31 @@ class _SuggestedGrantCard extends ConsumerWidget {
                       children: [
                         Text(
                           amount,
-                          style: AppTypography.style(AppTextRole.metric, fontSize: 15, color: const Color(0xFF0F4D2E)),
+                          style: AppTypography.style(
+                            AppTextRole.metric,
+                            fontSize: 15,
+                            color: const Color(0xFF0F4D2E),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         Text(
                           frequency,
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF404942)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 11,
+                            color: const Color(0xFF404942),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: badgeColor,
                         borderRadius: BorderRadius.circular(10),
@@ -749,7 +894,13 @@ class _SuggestedGrantCard extends ConsumerWidget {
                           const SizedBox(width: 3),
                           Text(
                             badgeText,
-                            style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: badgeTextColor),
+                            style: AppTypography.style(
+                              AppTextRole.badge,
+                              fontSize: 10.5,
+                              color: badgeTextColor,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),

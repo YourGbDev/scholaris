@@ -5,7 +5,6 @@
 // matches list). Extracted from the Discover screen so every section header
 // shares the same typography, spacing and accent.
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
@@ -37,7 +36,12 @@ class SectionHeader extends StatelessWidget {
         Flexible(
           child: Text(
             title,
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 17,
+              height: 1.25,
+              letterSpacing: -0.15,
+            ),
           ),
         ),
         if (count != null) ...[
@@ -50,14 +54,17 @@ class SectionHeader extends StatelessWidget {
             ),
             child: Text(
               '$count',
-              style: AppTypography.style(AppTextRole.badge, fontSize: 13, color: kMatchGoldText, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                fontSize: 13,
+                color: kMatchGoldText,
+                height: 1.25,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
-        if (trailing != null) ...[
-          const Spacer(),
-          trailing!,
-        ],
+        if (trailing != null) ...[const Spacer(), trailing!],
       ],
     );
   }

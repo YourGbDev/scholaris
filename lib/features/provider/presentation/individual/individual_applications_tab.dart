@@ -19,12 +19,16 @@ import '../../repositories/support_repository.dart';
 import 'package:scholaris/shared/theme/app_motion.dart';
 
 import '../org/org_provider_theme.dart';
+import '../../../../shared/theme/app_theme.dart' show kSoftCardDecoration;
 import '../widgets/org_summary_disclosure.dart';
 import '../widgets/org_metric_count.dart';
 import '../widgets/applicant_review_drawer.dart';
 
 class IndividualApplicationsTab extends ConsumerStatefulWidget {
-  const IndividualApplicationsTab({super.key, this.initialAwaitingReview = false});
+  const IndividualApplicationsTab({
+    super.key,
+    this.initialAwaitingReview = false,
+  });
   final bool initialAwaitingReview;
 
   @override
@@ -81,12 +85,24 @@ class _IndividualApplicationsTabState
                   const SizedBox(height: 12),
                   Text(
                     'Error loading applicants',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 16,
+                      height: 1.2,
+                      color: kOrgTextPrimary,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Check your connection and try again.',
-                    style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 12,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
@@ -95,9 +111,9 @@ class _IndividualApplicationsTabState
                     ),
                     onPressed: () =>
                         ref.refresh(incomingApplicationsProvider.future),
-                    child:  Text(
+                    child: const Text(
                       'Retry',
-                      style: AppTypography.style(AppTextRole.button, color: Colors.white),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
@@ -135,7 +151,13 @@ class _IndividualApplicationsTabState
                 .length;
 
             final filteredApps = _awaitingReview
-                ? apps.where((a) => a.status == ApplicationStatus.submitted || a.status == ApplicationStatus.underReview).toList()
+                ? apps
+                      .where(
+                        (a) =>
+                            a.status == ApplicationStatus.submitted ||
+                            a.status == ApplicationStatus.underReview,
+                      )
+                      .toList()
                 : _selectedStatus == null
                 ? apps
                 : _selectedStatus == ApplicationStatus.approved
@@ -162,11 +184,34 @@ class _IndividualApplicationsTabState
                 ),
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
                 children: [
-                  Text('Applications', style: AppTypography.style(AppTextRole.screenTitle, fontSize: 28, color: kOrgTextPrimary, letterSpacing: opticalTracking(28), height: opticalLeading(28, isBody: false))),
+                  Text(
+                    'Applications',
+                    style: AppTypography.style(
+                      AppTextRole.screenTitle,
+                      fontSize: MediaQuery.sizeOf(context).width >= 900
+                          ? 24
+                          : 20,
+                      height: 1.2,
+                      color: kOrgTextPrimary,
+                      letterSpacing:
+                          ((MediaQuery.sizeOf(context).width >= 900
+                                  ? 24
+                                  : 20) >=
+                              20
+                          ? -.3
+                          : -.15),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Get to know your applicants and review their requirements.',
-                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+                    style: AppTypography.style(
+                      AppTextRole.subtitle,
+                      fontSize: 14,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   // Compact "My Impact" Summary Card (collapsed from full Analytics)
@@ -175,21 +220,7 @@ class _IndividualApplicationsTabState
                     summary: '${approvedApps.length} approved applications',
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [kOrgSidebarDark, kOrgPrimary],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: kOrgPrimary.withValues(alpha: 0.15),
-                            offset: const Offset(0, 3),
-                            blurRadius: 8,
-                          ),
-                        ],
-                      ),
+                      decoration: kSoftCardDecoration,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -203,7 +234,7 @@ class _IndividualApplicationsTabState
                                   vertical: 3,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.15),
+                                  color: kWorkspaceSubtle,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Row(
@@ -211,19 +242,31 @@ class _IndividualApplicationsTabState
                                     const Icon(
                                       Icons.favorite_rounded,
                                       size: 13,
-                                      color: kOrgAccentGold,
+                                      color: kOrgTextPrimary,
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Your support',
-                                      style: AppTypography.style(AppTextRole.badge, color: Colors.white, fontSize: 10, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.badge,
+                                        color: kOrgTextPrimary,
+                                        fontSize: 10,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                               Text(
                                 'Recorded activity',
-                                style: AppTypography.style(AppTextRole.badge, color: const Color(0xFFB3F1C6), fontSize: 10, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.badge,
+                                  color: kOrgTextSecondary,
+                                  fontSize: 10,
+                                  height: 1.3,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
@@ -236,22 +279,38 @@ class _IndividualApplicationsTabState
                                   children: [
                                     Text(
                                       'Recorded commitments',
-                                      style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 10, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.label,
+                                        color: kOrgTextSecondary,
+                                        fontSize: 10,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                     const SizedBox(height: 2),
                                     supportAsync.when(
                                       skipLoadingOnRefresh: false,
-                                      loading: () =>  Text(
+                                      loading: () => const Text(
                                         'Checking support totals…',
-                                        style: AppTypography.style(AppTextRole.caption, color: Colors.white),
+                                        style: TextStyle(
+                                          color: kOrgTextPrimary,
+                                        ),
                                       ),
-                                      error: (_, _) =>  Text(
+                                      error: (_, _) => const Text(
                                         'Support totals unavailable',
-                                        style: AppTypography.style(AppTextRole.caption, color: Colors.white),
+                                        style: TextStyle(
+                                          color: kOrgTextPrimary,
+                                        ),
                                       ),
                                       data: (_) => Text(
                                         supportMoney(committedCents),
-                                        style: AppTypography.style(AppTextRole.metric, fontSize: 18, color: Colors.white, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.metric,
+                                          fontSize: 18,
+                                          color: kOrgTextPrimary,
+                                          height: 1.2,
+                                          letterSpacing: -0.15,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -260,7 +319,7 @@ class _IndividualApplicationsTabState
                               Container(
                                 width: 1,
                                 height: 32,
-                                color: Colors.white24,
+                                color: kOrgBorder,
                               ),
                               const SizedBox(width: 16),
                               Expanded(
@@ -269,7 +328,13 @@ class _IndividualApplicationsTabState
                                   children: [
                                     Text(
                                       'Approved applications',
-                                      style: AppTypography.style(AppTextRole.label, color: Colors.white70, fontSize: 10, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.label,
+                                        color: kOrgTextSecondary,
+                                        fontSize: 10,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                     const SizedBox(height: 2),
                                     Wrap(
@@ -279,11 +344,23 @@ class _IndividualApplicationsTabState
                                         OrgMetricCount(
                                           motionId: 'individual-applications.approved',
                                           targetValue: approvedApps.length,
-                                          style: AppTypography.style(AppTextRole.metric, fontSize: 18, color: kOrgAccentGold, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                                          style: AppTypography.style(
+                                            AppTextRole.metric,
+                                            fontSize: 18,
+                                            color: kOrgTextPrimary,
+                                            height: 1.2,
+                                            letterSpacing: -0.15,
+                                          ),
                                         ),
                                         Text(
                                           ' Student${approvedApps.length == 1 ? '' : 's'}',
-                                          style: AppTypography.style(AppTextRole.caption, fontSize: 18, color: kOrgAccentGold, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                                          style: AppTypography.style(
+                                            AppTextRole.caption,
+                                            fontSize: 18,
+                                            color: kOrgTextPrimary,
+                                            height: 1.2,
+                                            letterSpacing: -0.15,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -297,7 +374,7 @@ class _IndividualApplicationsTabState
                               onPressed: () =>
                                   ref.invalidate(supportLedgerProvider),
                               style: TextButton.styleFrom(
-                                foregroundColor: Colors.white,
+                                foregroundColor: kOrgPrimary,
                               ),
                               child: const Text('Retry support totals'),
                             ),
@@ -309,7 +386,13 @@ class _IndividualApplicationsTabState
                               missing > 0
                                   ? '$missing approved ${missing == 1 ? 'application has' : 'applications have'} no recorded commitment. Totals are incomplete; record agreed amounts in Budget & support.'
                                   : 'Agreed amounts are fixed records. Approval does not send money.',
-                              style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                              style: AppTypography.style(
+                                AppTextRole.body,
+                                fontSize: 12,
+                                color: kOrgTextPrimary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ],
@@ -325,10 +408,25 @@ class _IndividualApplicationsTabState
                     spacing: 16,
                     runSpacing: 8,
                     children: [
-                      Text('Applicant Feed', style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false))),
+                      Text(
+                        'Applicant Feed',
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          fontSize: 16,
+                          height: 1.2,
+                          color: kOrgTextPrimary,
+                          letterSpacing: -0.15,
+                        ),
+                      ),
                       Text(
                         '${apps.length} Total Candidates',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextMuted, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          fontSize: 11,
+                          color: kOrgTextMuted,
+                          height: 1.3,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -343,10 +441,27 @@ class _IndividualApplicationsTabState
                           'All',
                           apps.length,
                           !_awaitingReview && _selectedStatus == null,
-                          () => setState(() { _awaitingReview = false; _selectedStatus = null; }),
+                          () => setState(() {
+                            _awaitingReview = false;
+                            _selectedStatus = null;
+                          }),
                         ),
                         const SizedBox(width: 6),
-                        _buildChip('Awaiting review', apps.where((a) => a.status == ApplicationStatus.submitted || a.status == ApplicationStatus.underReview).length, _awaitingReview, () => setState(() { _awaitingReview = true; _selectedStatus = null; })),
+                        _buildChip(
+                          'Awaiting review',
+                          apps
+                              .where(
+                                (a) =>
+                                    a.status == ApplicationStatus.submitted ||
+                                    a.status == ApplicationStatus.underReview,
+                              )
+                              .length,
+                          _awaitingReview,
+                          () => setState(() {
+                            _awaitingReview = true;
+                            _selectedStatus = null;
+                          }),
+                        ),
                         const SizedBox(width: 6),
                         _buildChip(
                           'Submitted',
@@ -355,10 +470,12 @@ class _IndividualApplicationsTabState
                                 (a) => a.status == ApplicationStatus.submitted,
                               )
                               .length,
-                          !_awaitingReview && _selectedStatus == ApplicationStatus.submitted,
-                          () => setState(
-                            () { _awaitingReview = false; _selectedStatus = ApplicationStatus.submitted; },
-                          ),
+                          !_awaitingReview &&
+                              _selectedStatus == ApplicationStatus.submitted,
+                          () => setState(() {
+                            _awaitingReview = false;
+                            _selectedStatus = ApplicationStatus.submitted;
+                          }),
                         ),
                         const SizedBox(width: 6),
                         _buildChip(
@@ -369,19 +486,23 @@ class _IndividualApplicationsTabState
                                     a.status == ApplicationStatus.underReview,
                               )
                               .length,
-                          !_awaitingReview && _selectedStatus == ApplicationStatus.underReview,
-                          () => setState(
-                            () { _awaitingReview = false; _selectedStatus = ApplicationStatus.underReview; },
-                          ),
+                          !_awaitingReview &&
+                              _selectedStatus == ApplicationStatus.underReview,
+                          () => setState(() {
+                            _awaitingReview = false;
+                            _selectedStatus = ApplicationStatus.underReview;
+                          }),
                         ),
                         const SizedBox(width: 6),
                         _buildChip(
                           'Approved',
                           approvedApps.length,
-                          !_awaitingReview && _selectedStatus == ApplicationStatus.approved,
-                          () => setState(
-                            () { _awaitingReview = false; _selectedStatus = ApplicationStatus.approved; },
-                          ),
+                          !_awaitingReview &&
+                              _selectedStatus == ApplicationStatus.approved,
+                          () => setState(() {
+                            _awaitingReview = false;
+                            _selectedStatus = ApplicationStatus.approved;
+                          }),
                         ),
                       ],
                     ),
@@ -408,12 +529,24 @@ class _IndividualApplicationsTabState
                           const SizedBox(height: 8),
                           Text(
                             'No candidates in this queue',
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 14,
+                              height: 1.2,
+                              color: kOrgTextPrimary,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'New student applications to your grants will appear here.',
-                            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              fontSize: 12,
+                              color: kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -464,12 +597,18 @@ class _IndividualApplicationsTabState
                                 children: [
                                   CircleAvatar(
                                     radius: 18,
-                                    backgroundColor: kOrgPrimary,
+                                    backgroundColor: kWorkspaceSelected,
                                     child: Text(
                                       studentName.isNotEmpty
                                           ? studentName[0].toUpperCase()
                                           : 'S',
-                                      style: AppTypography.style(AppTextRole.label, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.label,
+                                        fontSize: 13,
+                                        color: Colors.white,
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 10),
@@ -480,12 +619,24 @@ class _IndividualApplicationsTabState
                                       children: [
                                         Text(
                                           studentName,
-                                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                          style: AppTypography.style(
+                                            AppTextRole.cardTitle,
+                                            fontSize: 14,
+                                            height: 1.2,
+                                            color: kOrgTextPrimary,
+                                            letterSpacing: -0.15,
+                                          ),
                                         ),
                                         Text(
                                           '$studentCourse • $studentSchool',
                                           overflow: TextOverflow.ellipsis,
-                                          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
+                                          style: AppTypography.style(
+                                            AppTextRole.caption,
+                                            fontSize: 11,
+                                            color: kOrgTextSecondary,
+                                            height: 1.4,
+                                            letterSpacing: 0,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -503,7 +654,15 @@ class _IndividualApplicationsTabState
                                     ),
                                     child: Text(
                                       _statusLabel(app.status),
-                                      style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: isApproved ? kOrgBadgeApprovedText : kOrgBadgePendingText, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.badge,
+                                        fontSize: 10,
+                                        color: isApproved
+                                            ? kOrgBadgeApprovedText
+                                            : kOrgBadgePendingText,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -518,13 +677,21 @@ class _IndividualApplicationsTabState
                                     ),
                                     decoration: BoxDecoration(
                                       color: hasGwa
-                                          ? kOrgBadgeApprovedBg
+                                          ? kWorkspaceSubtle
                                           : kOrgBadgePendingBg,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
                                       hasGwa ? 'GWA $gwa' : 'GWA Pending',
-                                      style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: hasGwa ? kOrgBadgeApprovedText : kOrgBadgePendingText, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.badge,
+                                        fontSize: 10,
+                                        color: hasGwa
+                                            ? kOrgTextSecondary
+                                            : kOrgBadgePendingText,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 6),
@@ -541,7 +708,13 @@ class _IndividualApplicationsTabState
                                       ),
                                       child: Text(
                                         '${profile!.incomeBracket!.toUpperCase()} Tier',
-                                        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOrgTextMuted, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.badge,
+                                          fontSize: 10,
+                                          color: kOrgTextMuted,
+                                          height: 1.3,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                     ),
                                   const Spacer(),
@@ -551,7 +724,13 @@ class _IndividualApplicationsTabState
                                             _getAwardAmount(scholarship),
                                           )
                                         : 'Grant pending',
-                                    style: AppTypography.style(AppTextRole.metric, fontSize: 13, color: kOrgPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                    style: AppTypography.style(
+                                      AppTextRole.metric,
+                                      fontSize: 13,
+                                      color: kOrgPrimary,
+                                      height: 1.2,
+                                      letterSpacing: -0.15,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -570,7 +749,13 @@ class _IndividualApplicationsTabState
                                     '"${app.notes!.trim()}"',
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
-                                    style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kOrgTextSecondary, height: 1.4, letterSpacing: opticalTracking(11)),
+                                    style: AppTypography.style(
+                                      AppTextRole.body,
+                                      fontSize: 11,
+                                      color: kOrgTextSecondary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                               SizedBox(
@@ -664,15 +849,31 @@ class _IndividualApplicationsTabState
       child: ChoiceChip(
         selected: isSelected,
         onSelected: (_) => onTap(),
-        selectedColor: const Color(0xFFE5EDDD),
+        selectedColor: kWorkspaceSelected,
+        backgroundColor: Colors.white,
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(label, style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kOrgPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false))),
+            Text(
+              label,
+              style: AppTypography.style(
+                AppTextRole.badge,
+                fontSize: 12,
+                color: isSelected ? Colors.white : kWorkspaceInk,
+                height: 1.3,
+                letterSpacing: 0,
+              ),
+            ),
             const SizedBox(width: 6),
             Text(
               '($count)',
-              style: AppTypography.style(AppTextRole.badge, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                fontSize: 12,
+                color: isSelected ? Colors.white : kWorkspaceMuted,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),

@@ -1,4 +1,3 @@
-import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -32,7 +31,7 @@ class _StudentSupportConcernsState
           children: [
             Text(
               'Need help with this scholarship?',
-              style: AppTypography.style(AppTextRole.cardTitle, base: Theme.of(context).textTheme.titleMedium),
+              style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             const Text(
@@ -172,7 +171,9 @@ class _ReportConcernDialogState extends ConsumerState<_ReportConcernDialog> {
                 if (_error != null)
                   Text(
                     _error!,
-                    style: AppTypography.style(AppTextRole.caption, color: Theme.of(context).colorScheme.error),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
               ],
             ),

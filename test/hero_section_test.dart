@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:scholaris/shared/widgets/greeting_mascot.dart';
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
+
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'helpers/load_app_fonts.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
@@ -29,6 +35,8 @@ Widget _buildTestApp({
   List<Scholarship>? matches,
   bool matchesError = false,
   Future<List<Scholarship>>? pendingMatches,
+  FakeApplicationDataSource? applications,
+  Future<StudentProfile?>? profileFuture,
 }) {
   final profileData = FakeProfileDataSource();
   if (profile != null) {
@@ -48,9 +56,14 @@ Widget _buildTestApp({
 
   return ProviderScope(
     overrides: [
-      if (pendingMatches != null) matchesProvider.overrideWith((ref) => pendingMatches)
-      else if (matchesError) matchesProvider.overrideWith((ref) async => throw StateError('offline'))
-      else if (matches != null) matchesProvider.overrideWith((ref) async => matches),
+      if (profileFuture != null)
+        currentProfileProvider.overrideWith((ref) => profileFuture),
+      if (pendingMatches != null)
+        matchesProvider.overrideWith((ref) => pendingMatches)
+      else if (matchesError)
+        matchesProvider.overrideWith((ref) async => throw StateError('offline'))
+      else if (matches != null)
+        matchesProvider.overrideWith((ref) async => matches),
       currentUserIdProvider.overrideWith((ref) => 'test-user'),
       profileRepositoryProvider.overrideWith(
         (ref) => ProfileRepository(
@@ -59,9 +72,8 @@ Widget _buildTestApp({
         ),
       ),
       scholarshipRepositoryProvider.overrideWith(
-        (ref) => ScholarshipRepository(
-          dataSource: FakeScholarshipDataSource([]),
-        ),
+        (ref) =>
+            ScholarshipRepository(dataSource: FakeScholarshipDataSource([])),
       ),
       bookmarkRepositoryProvider.overrideWith(
         (ref) => BookmarkRepository(
@@ -71,50 +83,84 @@ Widget _buildTestApp({
       ),
       applicationRepositoryProvider.overrideWith(
         (ref) => ApplicationRepository(
-          dataSource: FakeApplicationDataSource(),
+          dataSource: applications ?? FakeApplicationDataSource(),
           currentUserId: () => 'test-user',
         ),
       ),
     ],
-    child: MaterialApp(
-      home: child ?? const StudentDashboardScreen(),
-    ),
+    child: MaterialApp(home: child ?? const StudentDashboardScreen()),
   );
 }
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
     GoogleFonts.config.allowRuntimeFetching = false;
+    await loadAppFonts();
   });
 
-  group('Student Dashboard Hero Section', () {
-    testWidgets('personal greeting and opportunity hero use display emphasis', (tester) async {
-      await tester.pumpWidget(_buildTestApp());
-      await tester.pumpAndSettle();
-      final greeting = tester.widget<Text>(find.byWidgetPredicate((widget) =>
-        widget is Text && (widget.data?.contains('Gilbert!') ?? false)));
-      expect(greeting.style!.fontWeight, FontWeight.w700);
-      expect(tester.widget<Text>(find.text('Find your next opportunity.')).style!.fontWeight, FontWeight.w700);
-    });
+  group('Student Dashboard next action', () {
+    testWidgets(
+      'failed profile does not leave a perpetual overview loading message',
+      (tester) async {
+        final profile = Completer<StudentProfile?>();
+        await tester.pumpWidget(
+          _buildTestApp(profileFuture: profile.future, matchesError: true),
+        );
+        profile.completeError(StateError('offline'));
+        await tester.pumpAndSettle();
+        expect(find.text('Matches unavailable'), findsOneWidget);
+        expect(find.text('Getting your overview…'), findsNothing);
+      },
+    );
+    testWidgets(
+      'returning student keeps progress below the compact friendly welcome card',
+      (tester) async {
+        final applications = FakeApplicationDataSource();
+        await applications.insertApplication('test-user', {
+          'user_id': 'test-user',
+          'scholarship_id': 'sch-dost',
+          'status': 'submitted',
+        });
+        await tester.pumpWidget(_buildTestApp(applications: applications));
+        await tester.pumpAndSettle();
+        expect(find.text('Application Submitted'), findsOneWidget);
+        expect(find.text('Explore matches'), findsOneWidget);
+        expect(
+          find.widgetWithText(TextButton, 'Explore matches'),
+          findsOneWidget,
+        );
+        expect(find.text('Find your next opportunity.'), findsNothing);
+        expect(find.byType(GreetingMascotPortrait), findsOneWidget);
+        expect(
+          tester
+              .getSize(find.byKey(const ValueKey('student-home-companion')))
+              .width,
+          136.5,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
     testWidgets('hero shows loading until matches arrive', (tester) async {
       final pending = Completer<List<Scholarship>>();
       await tester.pumpWidget(_buildTestApp(pendingMatches: pending.future));
       await tester.pump();
       expect(find.text('Finding matches…'), findsOneWidget);
-      expect(tester.widget<Text>(find.text('Finding matches…')).style!.fontWeight, FontWeight.w400);
       pending.complete(const []);
       await tester.pumpAndSettle();
       expect(find.text('0 scholarships match your profile.'), findsOneWidget);
     });
-    testWidgets('hero does not show a fake zero when matches fail', (tester) async {
+    testWidgets('hero does not show a fake zero when matches fail', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestApp(matchesError: true));
       await tester.pumpAndSettle();
       expect(find.text('Matches unavailable'), findsOneWidget);
-      expect(tester.widget<Text>(find.text('Matches unavailable')).style!.fontWeight, FontWeight.w400);
       expect(find.text('0 scholarships match your profile.'), findsNothing);
     });
     for (final size in [const Size(360, 800), const Size(440, 956)]) {
-      testWidgets('live hero remains readable with large text at $size', (tester) async {
+      testWidgets('live hero remains readable with large text at $size', (
+        tester,
+      ) async {
         tester.view.physicalSize = size;
         tester.view.devicePixelRatio = 1;
         tester.platformDispatcher.textScaleFactorTestValue = 2;
@@ -127,73 +173,80 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
-    testWidgets('hero displays the actual match count, including zero', (tester) async {
+    testWidgets('hero displays the actual match count, including zero', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestApp(matches: const []));
       await tester.pumpAndSettle();
       expect(find.text('0 scholarships match your profile.'), findsOneWidget);
-      final summary = tester.widget<Text>(find.text('0 scholarships match your profile.'));
-      expect(summary.style!.fontWeight, FontWeight.w400);
-      expect(summary.style!.fontSize, 13);
-      expect(summary.style!.height, 1.4);
-      final spans = (summary.textSpan! as TextSpan).children!.cast<TextSpan>();
-      expect(spans.first.text, '0');
-      expect(spans.first.style!.fontWeight, FontWeight.w700);
-      expect(spans.skip(1).map((span) => span.toPlainText()).join(), ' scholarships match your profile.');
-      final oneMatch = Scholarship(id: 'live-match', title: 'Sample', minGpa: 2, deadline: DateTime(2099));
+      final oneMatch = Scholarship(
+        id: 'live-match',
+        title: 'Sample',
+        minGpa: 2,
+        deadline: DateTime(2099),
+      );
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpWidget(_buildTestApp(matches: [oneMatch]));
       await tester.pumpAndSettle();
       expect(find.text('1 scholarship matches your profile.'), findsOneWidget);
     });
-    testWidgets('displays male mascot by default or when gender is male',
-        (tester) async {
-      await tester.pumpWidget(_buildTestApp(
-        profile: const StudentProfile(
-          id: 'test-user',
-          fullName: 'Gilbert Santos',
-          gender: 'male',
-          setupComplete: true,
-        ),
-      ));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'male student receives a personal greeting with a compact Ariel companion',
+      (tester) async {
+        await tester.pumpWidget(
+          _buildTestApp(
+            profile: const StudentProfile(
+              id: 'test-user',
+              fullName: 'Gilbert Santos',
+              gender: 'male',
+              setupComplete: true,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      final imageFinder = find.byType(Image);
-      expect(imageFinder, findsWidgets);
+        final mascot = tester.widget<GreetingMascotPortrait>(
+          find.byType(GreetingMascotPortrait),
+        );
+        expect(
+          getMascotGreetingAssetPath(gender: mascot.gender),
+          'assets/mascots/greetings/ariel.png',
+        );
 
-      final imageWidget = tester.widget<Image>(imageFinder.first);
-      expect((imageWidget.image as AssetImage).assetName,
-          'assets/images/student_hero_graduate_campus.png');
+        // Verify Gilbert greeting is displayed
+        expect(find.textContaining('Gilbert!'), findsOneWidget);
+      },
+    );
 
-      // Verify Gilbert greeting is displayed
-      expect(find.textContaining('Gilbert!'), findsOneWidget);
+    testWidgets(
+      'female student receives a personal greeting with a compact Ari companion',
+      (tester) async {
+        await tester.pumpWidget(
+          _buildTestApp(
+            profile: const StudentProfile(
+              id: 'test-user',
+              fullName: 'Maria Santos',
+              gender: 'female',
+              setupComplete: true,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-    });
+        final mascot = tester.widget<GreetingMascotPortrait>(
+          find.byType(GreetingMascotPortrait),
+        );
+        expect(
+          getMascotGreetingAssetPath(gender: mascot.gender),
+          'assets/mascots/greetings/ari.png',
+        );
 
-    testWidgets('displays female mascot when gender is female', (tester) async {
-      await tester.pumpWidget(_buildTestApp(
-        profile: const StudentProfile(
-          id: 'test-user',
-          fullName: 'Maria Santos',
-          gender: 'female',
-          setupComplete: true,
-        ),
-      ));
-      await tester.pumpAndSettle();
-
-      final imageFinder = find.byType(Image);
-      expect(imageFinder, findsWidgets);
-
-      final imageWidget = tester.widget<Image>(imageFinder.first);
-      expect((imageWidget.image as AssetImage).assetName,
-          'assets/images/student_hero_graduate_campus_female.png');
-
-      expect(find.textContaining('Maria!'), findsOneWidget);
-    });
+        expect(find.textContaining('Maria!'), findsOneWidget);
+      },
+    );
 
     testWidgets('renders floating pill nav bar on HomeScreen', (tester) async {
-      await tester.pumpWidget(_buildTestApp(
-        child: const HomeScreen(),
-      ));
+      await tester.pumpWidget(_buildTestApp(child: const HomeScreen()));
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Home'), findsOneWidget);

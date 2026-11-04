@@ -1,4 +1,5 @@
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'individual_support_tab.dart';
 // lib/features/provider/presentation/individual/individual_provider_shell.dart
 //
@@ -52,20 +53,34 @@ class _IndividualProviderShellState
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Theme(
+    data: workspaceTheme(Theme.of(context)),
+    child: Builder(builder: _buildWorkspace),
+  );
+
+  Widget _buildWorkspace(BuildContext context) {
     final identity = ref.watch(providerSubRoleProvider);
     final content = _currentIndex == 3
         ? ProviderOverview(
             individual: true,
             onSupport: () => setState(() => _currentIndex = 4),
-            onApplications: () => setState(() { _showAwaitingReview = false; _currentIndex = 0; }),
-            onPendingApplications: () => setState(() { _showAwaitingReview = true; _currentIndex = 0; }),
+            onApplications: () => setState(() {
+              _showAwaitingReview = false;
+              _currentIndex = 0;
+            }),
+            onPendingApplications: () => setState(() {
+              _showAwaitingReview = true;
+              _currentIndex = 0;
+            }),
             onScholarships: () => setState(() => _currentIndex = 1),
           )
         : _currentIndex == 4
         ? const IndividualSupportTab()
         : _currentIndex == 0
-        ? IndividualApplicationsTab(key: ValueKey(_showAwaitingReview), initialAwaitingReview: _showAwaitingReview)
+        ? IndividualApplicationsTab(
+            key: ValueKey(_showAwaitingReview),
+            initialAwaitingReview: _showAwaitingReview,
+          )
         : _tabs[_currentIndex];
     if (MediaQuery.sizeOf(context).width >= 900) {
       return Scaffold(
@@ -88,158 +103,228 @@ class _IndividualProviderShellState
                           minHeight: constraints.maxHeight,
                         ),
                         child: IntrinsicHeight(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const ScholarisLogo(
-                              badgeSize: 30,
-                              fontSize: 21,
-                              compact: true,
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Individual provider',
-                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
-                            ),
-                            const SizedBox(height: 28),
-                            for (final item in [
-                              (3, 'Overview', Icons.home_outlined),
-                              (1, 'My scholarships', Icons.school_outlined),
-                              (0, 'Applications', Icons.description_outlined),
-                              (
-                                4,
-                                'Budget & support',
-                                Icons.account_balance_wallet_outlined,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const ScholarisLogo(
+                                badgeSize: 30,
+                                fontSize: 21,
+                                compact: true,
                               ),
-                              (
-                                2,
-                                'Profile & settings',
-                                Icons.settings_outlined,
+                              const SizedBox(height: 12),
+                              Text(
+                                'Individual provider',
+                                style: AppTypography.style(
+                                  AppTextRole.caption,
+                                  fontSize: 12,
+                                  color: kOrgTextSecondary,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
-                            ])
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(999),
-                                  child: AnimatedContainer(
-                                    duration: isReducedMotion(context)
-                                        ? Duration.zero
-                                        : const Duration(milliseconds: 160),
-                                    curve: Curves.easeOutCubic,
-                                    decoration: BoxDecoration(
-                                      color: _currentIndex == item.$1
-                                          ? kOrgPrimary
-                                          : kOrgPrimary.withValues(alpha: 0),
-                                      borderRadius: BorderRadius.circular(999),
-                                    ),
-                                    child: Material(
-                                      color: Colors.transparent,
-                                      borderRadius: BorderRadius.circular(999),
-                                      child: ListTile(
-                                    dense: true,
-                                    minTileHeight: 44,
-                                    horizontalTitleGap: 12,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                    ),
-                                    selected: _currentIndex == item.$1,
-                                    selectedTileColor: Colors.transparent,
-                                    selectedColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(999),
-                                    ),
-                                    leading: Icon(
-                                      item.$3,
-                                      size: 20,
-                                      color: _currentIndex == item.$1
-                                          ? Colors.white
-                                          : kOrgTextSecondary,
-                                    ),
-                                    title: Text(
-                                      item.$2,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: AppTypography.style(AppTextRole.navigation, fontSize: 13, color: _currentIndex == item.$1 ? Colors.white : kOrgTextPrimary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
-                                    ),
-                                    onTap: () =>
-                                        setState(() { _showAwaitingReview = false; _currentIndex = item.$1; }),
+                              const SizedBox(height: 28),
+                              for (final item in [
+                                (3, 'Overview', Icons.home_outlined),
+                                (1, 'My scholarships', Icons.school_outlined),
+                                (0, 'Applications', Icons.description_outlined),
+                                (
+                                  4,
+                                  'Budget & support',
+                                  Icons.account_balance_wallet_outlined,
+                                ),
+                                (
+                                  2,
+                                  'Profile & settings',
+                                  Icons.settings_outlined,
+                                ),
+                              ])
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    borderRadius: BorderRadius.circular(999),
+                                    child: AnimatedContainer(
+                                      duration: isReducedMotion(context)
+                                          ? Duration.zero
+                                          : const Duration(milliseconds: 160),
+                                      curve: Curves.easeOutCubic,
+                                      decoration: BoxDecoration(
+                                        color: _currentIndex == item.$1
+                                            ? kOrgPrimary
+                                            : kOrgPrimary.withValues(alpha: 0),
+                                        borderRadius: BorderRadius.circular(
+                                          999,
+                                        ),
+                                      ),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(
+                                          999,
+                                        ),
+                                        child: ListTile(
+                                          dense: true,
+                                          minTileHeight: 44,
+                                          horizontalTitleGap: 12,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                              ),
+                                          selected: _currentIndex == item.$1,
+                                          selectedTileColor: Colors.transparent,
+                                          selectedColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              999,
+                                            ),
+                                          ),
+                                          leading: Icon(
+                                            item.$3,
+                                            size: 20,
+                                            color: _currentIndex == item.$1
+                                                ? Colors.white
+                                                : kOrgTextSecondary,
+                                          ),
+                                          title: Text(
+                                            item.$2,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: AppTypography.style(
+                                              AppTextRole.body,
+                                              fontSize: 13,
+                                              color: _currentIndex == item.$1
+                                                  ? Colors.white
+                                                  : kOrgTextPrimary,
+                                              height: 1.4,
+                                              letterSpacing: 0,
+                                            ),
+                                          ),
+                                          onTap: () => setState(() {
+                                            _showAwaitingReview = false;
+                                            _currentIndex = item.$1;
+                                          }),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            const Spacer(),
-                            const SizedBox(height: 24),
-                            const Divider(color: kOrgBorder),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 18,
-                                  backgroundColor: kOrgPrimary,
-                                  child: Text(
-                                    identity.initials,
-                                    style: AppTypography.style(AppTextRole.label, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                              const Spacer(),
+                              const SizedBox(height: 24),
+                              const Divider(color: kOrgBorder),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 18,
+                                    backgroundColor: kOrgPrimary,
+                                    child: Text(
+                                      identity.initials,
+                                      style: AppTypography.style(
+                                        AppTextRole.label,
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        identity.name,
-                                        maxLines: 2,
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          identity.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: AppTypography.style(
+                                            AppTextRole.label,
+                                            fontSize: 12,
+                                            height: 1.3,
+                                            color: kOrgTextSecondary,
+                                            letterSpacing: 0,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          'Individual provider',
+                                          style: AppTypography.style(
+                                            AppTextRole.caption,
+                                            fontSize: 11,
+                                            color: kOrgTextSecondary,
+                                            height: 1.4,
+                                            letterSpacing: 0,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextButton.icon(
+                                      onPressed: () =>
+                                          setState(() => _currentIndex = 2),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: kOrgTextSecondary,
+                                        padding: EdgeInsets.zero,
+                                        textStyle: AppTypography.style(
+                                          AppTextRole.button,
+                                          fontSize: 11,
+                                          height: 1.3,
+                                          color: kOrgTextSecondary,
+                                          letterSpacing: 0,
+                                        ),
+                                      ),
+                                      icon: const Icon(
+                                        Icons.settings_outlined,
+                                        size: 14,
+                                      ),
+                                      label: const Text(
+                                        'Preferences',
+                                        maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                        style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
                                       ),
-                                      const SizedBox(height: 3),
-                                      Text(
-                                        'Individual provider',
-                                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
-                                      ),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Row(children: [
-                            Expanded(child: TextButton.icon(
-                              onPressed: () =>
-                                  setState(() => _currentIndex = 2),
-                              style: TextButton.styleFrom(
-                                foregroundColor: kOrgTextSecondary,
-                                padding: EdgeInsets.zero,
-                                textStyle: AppTypography.style(AppTextRole.button, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                                  Expanded(
+                                    child: TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: kOrgError,
+                                        padding: EdgeInsets.zero,
+                                        textStyle: AppTypography.style(
+                                          AppTextRole.button,
+                                          fontSize: 11,
+                                          height: 1.3,
+                                          color: kOrgTextSecondary,
+                                          letterSpacing: 0,
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        if (await showLogoutConfirmationDialog(
+                                          context,
+                                        )) {
+                                          await handleProviderSignOut();
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.logout_rounded,
+                                        size: 14,
+                                      ),
+                                      label: const Text(
+                                        'Sign out',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              icon: const Icon(
-                                Icons.settings_outlined,
-                                size: 14,
-                              ),
-                              label: const Text('Preferences', maxLines: 1, overflow: TextOverflow.ellipsis),
-                            )),
-                            Expanded(child: TextButton.icon(
-                              style: TextButton.styleFrom(
-                                foregroundColor: kOrgError,
-                                padding: EdgeInsets.zero,
-                                textStyle: AppTypography.style(AppTextRole.button, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
-                              ),
-                              onPressed: () async {
-                                if (await showLogoutConfirmationDialog(
-                                  context,
-                                )) {
-                                  await handleProviderSignOut();
-                                }
-                              },
-                              icon: const Icon(Icons.logout_rounded, size: 14),
-                              label: const Text('Sign out', maxLines: 1, overflow: TextOverflow.ellipsis),
-                            )),
-                            ]),
-                          ],
-                        ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -287,12 +372,18 @@ class _IndividualProviderShellState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE3E2E7),
+                  color: const Color(0xFFE2E4E3),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
                   'BENEFACTOR',
-                  style: AppTypography.style(AppTextRole.badge, color: const Color(0xFF404942), fontSize: 9, letterSpacing: 0.8, height: opticalLeading(9, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: const Color(0xFF404942),
+                    fontSize: 9,
+                    letterSpacing: 0.8,
+                    height: 1.3,
+                  ),
                 ),
               ),
           ],
@@ -323,8 +414,10 @@ class _IndividualProviderShellState
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: const [3, 0, 1, 4, 2].indexOf(_currentIndex),
-        onDestinationSelected: (index) =>
-            setState(() { _showAwaitingReview = false; _currentIndex = const [3, 0, 1, 4, 2][index]; }),
+        onDestinationSelected: (index) => setState(() {
+          _showAwaitingReview = false;
+          _currentIndex = const [3, 0, 1, 4, 2][index];
+        }),
         backgroundColor: kOrgSurfaceWhite,
         indicatorColor: kOrgPrimary.withValues(alpha: 0.12),
         elevation: 4,

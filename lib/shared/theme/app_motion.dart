@@ -1,12 +1,13 @@
+import 'package:scholaris/shared/theme/app_typography.dart';
 // lib/shared/theme/app_motion.dart
 //
 // Centralized Scholaris Motion System Tokens & Components
 // Derived directly from scholaris-design-system.md Section 5 (Motion).
 
-import 'package:scholaris/shared/theme/app_typography.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 
@@ -162,7 +163,9 @@ double appleRubberBand({
 }) {
   if (dimension <= 0) return 0.0;
   final absOvershoot = overshoot.abs();
-  final resisted = (absOvershoot * dimension * constant) / (dimension + constant * absOvershoot);
+  final resisted =
+      (absOvershoot * dimension * constant) /
+      (dimension + constant * absOvershoot);
   return overshoot < 0 ? -resisted : resisted;
 }
 
@@ -174,7 +177,8 @@ double appleRubberBandInverse({
 }) {
   final absResisted = resistedOffset.abs();
   if (dimension <= 0 || absResisted >= dimension) return 0.0;
-  final raw = (absResisted * dimension) / (constant * (dimension - absResisted));
+  final raw =
+      (absResisted * dimension) / (constant * (dimension - absResisted));
   return resistedOffset < 0 ? -raw : raw;
 }
 
@@ -199,7 +203,9 @@ double projectMomentum({
   required double initialVelocity,
   double decelerationRate = 0.998,
 }) {
-  return (initialVelocity / 1000.0) * decelerationRate / (1.0 - decelerationRate);
+  return (initialVelocity / 1000.0) *
+      decelerationRate /
+      (1.0 - decelerationRate);
 }
 
 /// Custom scroll physics applying Apple's exact logarithmic rubber-banding formula (0.55)
@@ -226,10 +232,21 @@ class AppleBouncingScrollPhysics extends BouncingScrollPhysics {
       return offset;
     }
 
-    final double overscrollPastStart = math.max(position.minScrollExtent - position.pixels, 0.0);
-    final double overscrollPastEnd = math.max(position.pixels - position.maxScrollExtent, 0.0);
-    final double overscrollPast = math.max(overscrollPastStart, overscrollPastEnd);
-    final bool easing = (overscrollPastStart > 0.0 && offset > 0.0) || (overscrollPastEnd > 0.0 && offset < 0.0);
+    final double overscrollPastStart = math.max(
+      position.minScrollExtent - position.pixels,
+      0.0,
+    );
+    final double overscrollPastEnd = math.max(
+      position.pixels - position.maxScrollExtent,
+      0.0,
+    );
+    final double overscrollPast = math.max(
+      overscrollPastStart,
+      overscrollPastEnd,
+    );
+    final bool easing =
+        (overscrollPastStart > 0.0 && offset > 0.0) ||
+        (overscrollPastEnd > 0.0 && offset < 0.0);
 
     final double dimension = position.viewportDimension;
     if (easing) {
@@ -307,10 +324,7 @@ class PressableScaleState extends State<PressableScale>
   void initState() {
     super.initState();
     // Unbounded controller to allow spring physics (including slight overshoot if damping < 1.0)
-    controller = AnimationController.unbounded(
-      value: 1.0,
-      vsync: this,
-    );
+    controller = AnimationController.unbounded(value: 1.0, vsync: this);
   }
 
   @override
@@ -357,10 +371,7 @@ class PressableScaleState extends State<PressableScale>
       return widget.child;
     }
 
-    Widget content = ScaleTransition(
-      scale: controller,
-      child: widget.child,
-    );
+    Widget content = ScaleTransition(scale: controller, child: widget.child);
 
     if (widget.onTap != null) {
       content = GestureDetector(
@@ -410,29 +421,17 @@ Widget buildScholarisPageTransition({
     end: Offset.zero,
   ).animate(inCurved);
 
-  final inFade = Tween<double>(
-    begin: 0.0,
-    end: 1.0,
-  ).animate(inCurved);
+  final inFade = Tween<double>(begin: 0.0, end: 1.0).animate(inCurved);
 
-  final outCurved = CurvedAnimation(
-    parent: secondaryAnimation,
-    curve: kEaseIn,
-  );
+  final outCurved = CurvedAnimation(parent: secondaryAnimation, curve: kEaseIn);
 
-  final outFade = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  ).animate(outCurved);
+  final outFade = Tween<double>(begin: 1.0, end: 0.0).animate(outCurved);
 
   return SlideTransition(
     position: inSlide,
     child: FadeTransition(
       opacity: inFade,
-      child: FadeTransition(
-        opacity: outFade,
-        child: child,
-      ),
+      child: FadeTransition(opacity: outFade, child: child),
     ),
   );
 }
@@ -460,10 +459,7 @@ class ScholarisPageTransitionsBuilder extends PageTransitionsBuilder {
 
 /// Standalone PageRoute adhering to Section 5.3 (250ms horizontal slide + fade)
 class ScholarisPageRoute<T> extends PageRoute<T> {
-  ScholarisPageRoute({
-    required this.builder,
-    super.settings,
-  });
+  ScholarisPageRoute({required this.builder, super.settings});
 
   final WidgetBuilder builder;
 
@@ -533,22 +529,13 @@ class TabContentCrossFade extends StatelessWidget {
       layoutBuilder: (currentChild, previousChildren) {
         return Stack(
           alignment: Alignment.topLeft,
-          children: [
-            ...previousChildren,
-            ?currentChild,
-          ],
+          children: [...previousChildren, ?currentChild],
         );
       },
       transitionBuilder: (child, animation) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       },
-      child: KeyedSubtree(
-        key: activeKey,
-        child: child,
-      ),
+      child: KeyedSubtree(key: activeKey, child: child),
     );
   }
 }
@@ -618,10 +605,7 @@ class _ExpandableSectionState extends State<ExpandableSection>
     return ClipRect(
       child: SizeTransition(
         sizeFactor: _animation,
-        child: FadeTransition(
-          opacity: _animation,
-          child: widget.child,
-        ),
+        child: FadeTransition(opacity: _animation, child: widget.child),
       ),
     );
   }
@@ -664,7 +648,9 @@ class _StaggeredContentRevealState extends State<StaggeredContentReveal>
     super.initState();
     final childCount = widget.children.length;
     _totalDurationMs = childCount > 0
-        ? widget.containerLeadMs + ((childCount - 1) * widget.staggerOffsetMs) + widget.childDurationMs
+        ? widget.containerLeadMs +
+              ((childCount - 1) * widget.staggerOffsetMs) +
+              widget.childDurationMs
         : widget.containerDurationMs;
 
     _controller = AnimationController(
@@ -692,7 +678,10 @@ class _StaggeredContentRevealState extends State<StaggeredContentReveal>
       );
     }
 
-    final containerEnd = (widget.containerDurationMs / _totalDurationMs).clamp(0.0, 1.0);
+    final containerEnd = (widget.containerDurationMs / _totalDurationMs).clamp(
+      0.0,
+      1.0,
+    );
     final containerAnimation = CurvedAnimation(
       parent: _controller,
       curve: Interval(0.0, containerEnd, curve: kEaseOut),
@@ -707,14 +696,20 @@ class _StaggeredContentRevealState extends State<StaggeredContentReveal>
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: List.generate(widget.children.length, (index) {
-              final startMs = widget.containerLeadMs + (index * widget.staggerOffsetMs);
+              final startMs =
+                  widget.containerLeadMs + (index * widget.staggerOffsetMs);
               final endMs = startMs + widget.childDurationMs;
 
-              final startFraction = (startMs / _totalDurationMs).clamp(0.0, 1.0);
+              final startFraction = (startMs / _totalDurationMs).clamp(
+                0.0,
+                1.0,
+              );
               final endFraction = (endMs / _totalDurationMs).clamp(0.0, 1.0);
 
               final rawProgress = endFraction > startFraction
-                  ? ((_controller.value - startFraction) / (endFraction - startFraction)).clamp(0.0, 1.0)
+                  ? ((_controller.value - startFraction) /
+                            (endFraction - startFraction))
+                        .clamp(0.0, 1.0)
                   : 1.0;
               final childProgress = kEaseOut.transform(rawProgress);
 
@@ -804,7 +799,10 @@ class _SkeletonBandState extends State<SkeletonBand>
 
     // Only repeat shimmer if not in a headless widget test environment,
     // avoiding infinite pumpAndSettle ticker timeouts.
-    final isTest = WidgetsBinding.instance.runtimeType.toString().toLowerCase().contains('test');
+    final isTest = WidgetsBinding.instance.runtimeType
+        .toString()
+        .toLowerCase()
+        .contains('test');
     if (!isTest) {
       _shimmerController.repeat(reverse: true);
     }
@@ -883,7 +881,12 @@ void showScholarisToast(
               Flexible(
                 child: Text(
                   message,
-                  style: AppTypography.style(AppTextRole.body, fontSize: 13.5, color: Colors.white),
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 13.5,
+                    letterSpacing: -.1,
+                    color: Colors.white,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -932,12 +935,11 @@ class _StaggeredListItemState extends State<StaggeredListItem>
   void initState() {
     super.initState();
     // Unbounded controller to allow spring physics
-    _controller = AnimationController.unbounded(
-      value: 0.0,
-      vsync: this,
-    );
+    _controller = AnimationController.unbounded(value: 0.0, vsync: this);
 
-    final delay = Duration(milliseconds: widget.index.clamp(0, 15) * widget.staggerMs);
+    final delay = Duration(
+      milliseconds: widget.index.clamp(0, 15) * widget.staggerMs,
+    );
     _timer = Timer(delay, () {
       if (mounted) {
         final spring = widget.spring ?? AppleSpringDescription.pip;
@@ -989,6 +991,7 @@ class CountUpAnimation extends StatefulWidget {
     this.duration = const Duration(milliseconds: 800),
     this.style,
     this.formatWithCommas = true,
+    this.immediate = false,
   });
 
   final int targetValue;
@@ -998,6 +1001,7 @@ class CountUpAnimation extends StatefulWidget {
   final Duration duration;
   final TextStyle? style;
   final bool formatWithCommas;
+  final bool immediate;
 
   @override
   State<CountUpAnimation> createState() => _CountUpAnimationState();
@@ -1011,28 +1015,25 @@ class _CountUpAnimationState extends State<CountUpAnimation>
   void initState() {
     super.initState();
     _controller = AnimationController.unbounded(
-      value: 0.0,
+      value: widget.immediate ? widget.targetValue.toDouble() : 0.0,
       vsync: this,
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _animate(0.0, widget.targetValue.toDouble());
-      }
-    });
+    if (!widget.immediate) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _animate(0.0, widget.targetValue.toDouble());
+        }
+      });
+    }
   }
 
   void _animate(double from, double to) {
-    if (isReducedMotion(context)) {
+    if (isReducedMotion(context) || widget.immediate) {
       _controller.value = to;
       return;
     }
     final sp = widget.spring ?? AppleSpringDescription.pip;
-    final simulation = SpringSimulation(
-      sp,
-      from,
-      to,
-      0.0,
-    );
+    final simulation = SpringSimulation(sp, from, to, 0.0);
     _controller.animateWith(simulation);
   }
 
@@ -1040,7 +1041,11 @@ class _CountUpAnimationState extends State<CountUpAnimation>
   void didUpdateWidget(CountUpAnimation oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.targetValue != widget.targetValue) {
-      _animate(_controller.value, widget.targetValue.toDouble());
+      if (widget.immediate) {
+        _controller.value = widget.targetValue.toDouble();
+      } else {
+        _animate(_controller.value, widget.targetValue.toDouble());
+      }
     }
   }
 
@@ -1123,7 +1128,8 @@ Future<T?> showAppleSpringModalBottomSheet<T>({
 }
 
 /// Custom popup route for bottom sheets powered entirely by AppleSpringDescription.sheet
-class _ClampedSpringAnimation extends Animation<double> with AnimationWithParentMixin<double> {
+class _ClampedSpringAnimation extends Animation<double>
+    with AnimationWithParentMixin<double> {
   _ClampedSpringAnimation(this.parent);
 
   @override
@@ -1187,7 +1193,6 @@ class AppleSpringModalSheetRoute<T> extends PopupRoute<T> {
     return _ClampedSpringAnimation(controller!);
   }
 
-
   @override
   Widget buildPage(
     BuildContext context,
@@ -1214,10 +1219,12 @@ class _AppleSpringSheetContainer extends StatefulWidget {
   final bool enableDrag;
 
   @override
-  State<_AppleSpringSheetContainer> createState() => _AppleSpringSheetContainerState();
+  State<_AppleSpringSheetContainer> createState() =>
+      _AppleSpringSheetContainerState();
 }
 
-class _AppleSpringSheetContainerState extends State<_AppleSpringSheetContainer> {
+class _AppleSpringSheetContainerState
+    extends State<_AppleSpringSheetContainer> {
   double _sheetHeight = 0.0;
 
   @override
@@ -1244,7 +1251,10 @@ class _AppleSpringSheetContainerState extends State<_AppleSpringSheetContainer> 
     if (newRawValue > 1.0) {
       // Over-drag upwards: apply Apple rubber-band resistance
       final overshootPx = (newRawValue - 1.0) * _sheetHeight;
-      final resistedPx = appleRubberBand(overshoot: overshootPx, dimension: _sheetHeight);
+      final resistedPx = appleRubberBand(
+        overshoot: overshootPx,
+        dimension: _sheetHeight,
+      );
       controller.value = 1.0 + (resistedPx / _sheetHeight);
     } else {
       controller.value = newRawValue;
@@ -1270,11 +1280,16 @@ class _AppleSpringSheetContainerState extends State<_AppleSpringSheetContainer> 
       );
       controller
           .animateWith(
-            SpringSimulation(AppleSpringDescription.sheet, controller.value, target, relativeVel),
+            SpringSimulation(
+              AppleSpringDescription.sheet,
+              controller.value,
+              target,
+              relativeVel,
+            ),
           )
           .then((_) {
-        if (mounted) Navigator.of(context).pop();
-      });
+            if (mounted) Navigator.of(context).pop();
+          });
     } else {
       const target = 1.0;
       final relativeVel = calculateRelativeVelocity(
@@ -1283,7 +1298,12 @@ class _AppleSpringSheetContainerState extends State<_AppleSpringSheetContainer> 
         targetValue: target,
       );
       controller.animateWith(
-        SpringSimulation(AppleSpringDescription.sheet, controller.value, target, relativeVel),
+        SpringSimulation(
+          AppleSpringDescription.sheet,
+          controller.value,
+          target,
+          relativeVel,
+        ),
       );
     }
   }
@@ -1306,11 +1326,16 @@ class _AppleSpringSheetContainerState extends State<_AppleSpringSheetContainer> 
                     ? () {
                         controller
                             .animateWith(
-                              SpringSimulation(AppleSpringDescription.sheet, controller.value, 0.0, 0.0),
+                              SpringSimulation(
+                                AppleSpringDescription.sheet,
+                                controller.value,
+                                0.0,
+                                0.0,
+                              ),
                             )
                             .then((_) {
-                          if (mounted) Navigator.of(context).pop();
-                        });
+                              if (mounted) Navigator.of(context).pop();
+                            });
                       }
                     : null,
                 child: Container(
@@ -1373,7 +1398,8 @@ class _AppleSpringSheetContainerState extends State<_AppleSpringSheetContainer> 
     if (widget.route.backgroundColor != null || widget.route.shape != null) {
       content = Material(
         color: widget.route.backgroundColor ?? Colors.white,
-        shape: widget.route.shape ??
+        shape:
+            widget.route.shape ??
             const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             ),
@@ -1430,10 +1456,26 @@ ui.ImageFilter createAppleBlurFilter({
   final bL = 0.0722 * invS;
 
   final colorFilter = ui.ColorFilter.matrix(<double>[
-    rL + s, gL,     bL,     0, 0,
-    rL,     gL + s, bL,     0, 0,
-    rL,     gL,     bL + s, 0, 0,
-    0,      0,      0,      1, 0,
+    rL + s,
+    gL,
+    bL,
+    0,
+    0,
+    rL,
+    gL + s,
+    bL,
+    0,
+    0,
+    rL,
+    gL,
+    bL + s,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    0,
   ]);
 
   try {
@@ -1488,7 +1530,8 @@ class LiquidGlass extends StatelessWidget {
         decoration: BoxDecoration(
           color: tintColor.withValues(alpha: math.min(1.0, tintOpacity + 0.1)),
           borderRadius: BorderRadius.circular(borderRadius),
-          border: border ??
+          border:
+              border ??
               Border.all(
                 color: Colors.black.withValues(alpha: 0.08),
                 width: 1.0,
@@ -1513,7 +1556,8 @@ class LiquidGlass extends StatelessWidget {
               decoration: BoxDecoration(
                 color: tintColor.withValues(alpha: tintOpacity),
                 borderRadius: BorderRadius.circular(borderRadius),
-                border: border ??
+                border:
+                    border ??
                     Border.all(
                       color: Colors.white.withValues(alpha: 0.25),
                       width: 0.8,
@@ -1549,7 +1593,8 @@ class LiquidGlass extends StatelessWidget {
       content = DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
-          boxShadow: boxShadow ??
+          boxShadow:
+              boxShadow ??
               [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.06),
@@ -1581,9 +1626,9 @@ double opticalTracking(double fontSize) {
   if (fontSize >= 24) return fontSize * -0.015; // 28pt -> -0.42
   if (fontSize >= 20) return fontSize * -0.010; // 22pt -> -0.22
   if (fontSize >= 17) return fontSize * -0.005; // 18pt -> -0.09
-  if (fontSize >= 14) return 0.0;               // 14-16pt -> 0.0
-  if (fontSize >= 12) return fontSize * 0.018;  // 12pt -> +0.22
-  return fontSize * 0.028;                      // 11pt -> +0.31
+  if (fontSize >= 14) return 0.0; // 14-16pt -> 0.0
+  if (fontSize >= 12) return fontSize * 0.018; // 12pt -> +0.22
+  return fontSize * 0.028; // 11pt -> +0.31
 }
 
 /// Returns Apple optical leading (line height multiplier) according to HIG:

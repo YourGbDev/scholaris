@@ -4,8 +4,7 @@
 // Academic Momentum design specifications (`academic_momentum/DESIGN.md`).
 //
 // Typography:
-// - Native iOS: SF Pro through Flutter's native system-font proxies.
-// - Android/web/other platforms: bundled Inter; semantics in app_typography.dart.
+// - Platform-adaptive families and semantic roles live in app_typography.dart.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
@@ -59,16 +58,18 @@ const Color kPrimarySoft = Color(0x140F4D2E);
 
 // Surfaces & Neutrals
 const Color kBackground = Color(0xFFF8FAF8);
-// Calmer student browsing canvas; other roles keep their existing surfaces.
-const Color kStudentCanvas = Color(0xFFF3F6F3);
+// Student pages and quiet nested surfaces use neutral whites and grays.
+const Color kStudentCanvas = Color(0xFFFFFFFF);
+const Color kStudentSurfaceSubtle = Color(0xFFF6F6F6);
+const Color kStudentDivider = Color(0xFFE8E8E8);
 const Color kSurface = Color(0xFFFFFFFF);
-const Color kSurfaceDim = Color(0xFFD4DAEA);
+const Color kSurfaceDim = Color(0xFFD9DFDB);
 const Color kSurfaceBright = Color(0xFFFFFFFF);
 const Color kSurfaceContainerLowest = Color(0xFFFFFFFF);
-const Color kSurfaceContainerLow = Color(0xFFF1F3FF);
-const Color kSurfaceContainer = Color(0xFFE8EEFF);
-const Color kSurfaceContainerHigh = Color(0xFFE3E8F9);
-const Color kSurfaceContainerHighest = Color(0xFFDDE2F3);
+const Color kSurfaceContainerLow = Color(0xFFF5F7F5);
+const Color kSurfaceContainer = Color(0xFFEEF1EE);
+const Color kSurfaceContainerHigh = Color(0xFFE6EBE7);
+const Color kSurfaceContainerHighest = Color(0xFFDDE3DE);
 const Color kSurfaceWarm = Color(0xFFFFFFFF);
 const Color kSurfaceCard = Color(0xFFFFFFFF);
 
@@ -79,21 +80,23 @@ const Color kInverseSurface = Color(0xFF2A303D);
 const Color kInverseOnSurface = Color(0xFFECF0FF);
 const Color kOutline = Color(0xFF707971);
 const Color kOutlineVariant = Color(0xFFC0C9C0);
-const Color kBorderLight = Color(0xFFE2E8E5);
+const Color kBorderLight = Color(0xFFE2E4E3);
 const Color kPrimaryLight = Color(0xFFB3F1C6);
 
-const Color kTextPrimary = Color(0xFF161C27);
+const Color kTextPrimary = Color(0xFF111827);
 const Color kTextSecondary = Color(0xFF404942);
+// Substantial gray supporting copy, distinct from headings and status colors.
+const Color kTextSupporting = Color(0xFF626C65);
 
 // Informational benefit/qualification tags, separate from status and filter colors.
 const Color kScholarshipTagBackground = Color(0xFFEAEAEA);
-const Color kScholarshipTagForeground = Color(0xFF252525);
+const Color kScholarshipTagForeground = Color(0xFF374151);
 
 // Backward-compatible alias tokens
 const Color kLumiGold = Color(0xFFFABC28);
 const Color kLumiSoftOrange = Color(0xFFFFB74D);
-const Color kWarmCream = Color(0xFFF1F3FF);
-const Color kWarmCreamBorder = Color(0xFFE3E8F9);
+const Color kWarmCream = Color(0xFFF5F7F5);
+const Color kWarmCreamBorder = Color(0xFFE6EBE7);
 const Color kMatchGoldSoft = Color(0x28FABC28);
 const Color kMatchGoldBorder = Color(0x66FABC28);
 const Color kMatchGoldText = Color(0xFF5D4200);
@@ -107,17 +110,17 @@ const double kSpaceMd = 24.0;
 
 const Color kCardShadow = Color(0x0A1B3A5C);
 
-/// Faint neutral outline shared by the soft content-card surfaces.
+/// Neutral outline that keeps white cards distinct on a white canvas.
 const BorderSide kHairlineBorderSide = BorderSide(
-  color: Color(0x0A161C27),
-  width: 0.5,
+  color: Color(0xFFE2E4E3),
+  width: 0.75,
 );
 
 const Border kCardBorderCrisp = Border.fromBorderSide(kHairlineBorderSide);
 
 /// Shared soft elevation, matching the scholarship program cards.
 const List<BoxShadow> kCardElevationCrisp = [
-  BoxShadow(color: Color(0x050F172A), blurRadius: 16, offset: Offset(0, 4)),
+  BoxShadow(color: Color(0x08000000), blurRadius: 16, offset: Offset(0, 4)),
 ];
 
 /// Default for full-size content cards; status borders can override the border.
@@ -136,6 +139,8 @@ const LinearGradient kHeroSurface = LinearGradient(
 
 // --- Typography Helpers -----------------------------------------------------
 
+/// Honor each component's title/label weight; never promote all text to extra-bold.
+
 // --- ThemeData --------------------------------------------------------------
 
 ThemeData scholarisTheme() {
@@ -152,82 +157,112 @@ ThemeData scholarisTheme() {
     onSurface: kOnSurface,
   );
 
+  // Shared hierarchy for all roles; surfaces may refine size, never font family.
   final baseTextTheme = TextTheme(
     displayLarge: AppTypography.style(
-      AppTextRole.display,
-      fontSize: 36,
-      letterSpacing: opticalTracking(36),
-      height: opticalLeading(36, isBody: false),
+      AppTextRole.screenTitle,
+      fontSize: 32,
+      height: 1.25,
+      color: kTextPrimary,
+      letterSpacing: -0.6,
+    ),
+    displayMedium: AppTypography.style(
+      AppTextRole.screenTitle,
+      fontSize: 28,
+      height: 1.25,
+      color: kTextPrimary,
+      letterSpacing: -0.6,
+    ),
+    displaySmall: AppTypography.style(
+      AppTextRole.screenTitle,
+      fontSize: 24,
+      height: 1.25,
+      color: kTextPrimary,
+      letterSpacing: -0.3,
     ),
     headlineLarge: AppTypography.style(
       AppTextRole.screenTitle,
-      fontSize: 28,
-      letterSpacing: opticalTracking(28),
-      height: opticalLeading(28, isBody: false),
+      fontSize: 24,
+      height: 1.25,
+      color: kTextPrimary,
+      letterSpacing: -0.3,
     ),
     headlineMedium: AppTypography.style(
-      AppTextRole.sectionTitle,
+      AppTextRole.screenTitle,
       fontSize: 22,
-      letterSpacing: opticalTracking(22),
-      height: opticalLeading(22, isBody: false),
+      height: 1.25,
+      color: kTextPrimary,
+      letterSpacing: -0.3,
     ),
     headlineSmall: AppTypography.style(
-      AppTextRole.sectionTitle,
-      fontSize: 18,
-      letterSpacing: opticalTracking(18),
-      height: opticalLeading(18, isBody: false),
+      AppTextRole.screenTitle,
+      fontSize: 20,
+      height: 1.25,
+      color: kTextPrimary,
+      letterSpacing: -0.3,
+    ),
+    titleLarge: AppTypography.style(
+      AppTextRole.screenTitle,
+      fontSize: 17,
+      height: 1.25,
+      color: kTextPrimary,
+      letterSpacing: -0.15,
     ),
     titleMedium: AppTypography.style(
       AppTextRole.cardTitle,
-      fontSize: 16,
-      letterSpacing: opticalTracking(16),
-      height: opticalLeading(16, isBody: false),
+      fontSize: 15,
+      height: 1.3,
+      color: kTextPrimary,
+      letterSpacing: -.15,
     ),
     bodyLarge: AppTypography.style(
       AppTextRole.body,
-      fontSize: 16,
-      letterSpacing: opticalTracking(16),
-      height: opticalLeading(16, isBody: true),
+      fontSize: 14,
+      color: kTextSecondary,
+      height: 1.4,
+      letterSpacing: 0,
     ),
     bodyMedium: AppTypography.style(
       AppTextRole.body,
-      fontSize: 14,
-      letterSpacing: opticalTracking(14),
-      height: opticalLeading(14, isBody: true),
+      fontSize: 13,
+      color: kTextSecondary,
+      height: 1.4,
+      letterSpacing: 0,
     ),
     bodySmall: AppTypography.style(
       AppTextRole.caption,
       fontSize: 12,
-      letterSpacing: opticalTracking(12),
-      height: opticalLeading(12, isBody: true),
+      color: kTextSecondary,
+      height: 1.4,
+      letterSpacing: 0,
     ),
     labelLarge: AppTypography.style(
-      AppTextRole.label,
-      fontSize: 14,
-      letterSpacing: opticalTracking(14),
-      height: opticalLeading(14, isBody: false),
+      AppTextRole.button,
+      fontSize: 13,
+      height: 1.25,
+      letterSpacing: 0,
     ),
     labelMedium: AppTypography.style(
       AppTextRole.label,
       fontSize: 12,
-      letterSpacing: opticalTracking(12),
-      height: opticalLeading(12, isBody: false),
+      letterSpacing: -.1,
+      height: 1.4,
     ),
     labelSmall: AppTypography.style(
       AppTextRole.label,
       fontSize: 11,
-      letterSpacing: opticalTracking(11),
-      height: opticalLeading(11, isBody: false),
+      height: 1.3,
+      color: kTextSupporting,
+      letterSpacing: .6,
     ),
   );
 
-  final theme = ThemeData(
+  return applyScholarisTypography(ThemeData(
     useMaterial3: true,
     colorScheme: colorScheme,
     scaffoldBackgroundColor: kBackground,
     fontFamily: AppTypography.familyFor(14),
-    fontFamilyFallback: AppTypography.fallback,
-    textTheme: applyOpticalTypography(baseTextTheme),
+    textTheme: baseTextTheme,
     appBarTheme: AppBarTheme(
       backgroundColor: kSurfaceContainerLowest,
       elevation: 0,
@@ -236,8 +271,8 @@ ThemeData scholarisTheme() {
         AppTextRole.screenTitle,
         fontSize: 18,
         color: kOnSurface,
-        letterSpacing: -0.2,
-        height: opticalLeading(18, isBody: false),
+        height: 1.25,
+        letterSpacing: -0.15,
       ),
       iconTheme: const IconThemeData(color: kOnSurface),
     ),
@@ -251,9 +286,9 @@ ThemeData scholarisTheme() {
         ),
         textStyle: AppTypography.style(
           AppTextRole.button,
-          fontSize: 16,
-          letterSpacing: opticalTracking(16),
-          height: opticalLeading(16, isBody: false),
+          fontSize: 13,
+          height: 1.25,
+          letterSpacing: 0,
         ),
       ),
     ),
@@ -297,8 +332,8 @@ ThemeData scholarisTheme() {
         AppTextRole.body,
         color: Colors.white,
         fontSize: 13,
-        letterSpacing: 0.1,
-        height: opticalLeading(13, isBody: true),
+        letterSpacing: -.1,
+        height: 1.4,
       ),
       behavior: SnackBarBehavior.floating,
       shape: RoundedRectangleBorder(
@@ -322,12 +357,9 @@ ThemeData scholarisTheme() {
       backgroundColor: kSurfaceContainerLowest,
       surfaceTintColor: Colors.transparent,
     ),
-  );
-  return applyScholarisTypography(theme);
+  ));
 }
 
-/// Apply the same hierarchy to production and standalone preview themes.
-/// Component overrides keep their platform defaults for colors and geometry.
 ThemeData applyScholarisTypography(ThemeData theme) {
   final text = AppTypography.textTheme(theme.textTheme);
   final action = AppTypography.style(AppTextRole.button, base: text.labelLarge);
@@ -360,11 +392,26 @@ ThemeData applyScholarisTypography(ThemeData theme) {
       style: actions(theme.filledButtonTheme.style),
     ),
     inputDecorationTheme: theme.inputDecorationTheme.copyWith(
-      labelStyle: AppTypography.style(AppTextRole.label),
-      floatingLabelStyle: AppTypography.style(AppTextRole.label),
-      hintStyle: AppTypography.style(AppTextRole.placeholder),
-      helperStyle: AppTypography.style(AppTextRole.caption),
-      errorStyle: AppTypography.style(AppTextRole.caption),
+      labelStyle: AppTypography.style(
+        AppTextRole.label,
+        base: theme.inputDecorationTheme.labelStyle,
+      ),
+      floatingLabelStyle: AppTypography.style(
+        AppTextRole.label,
+        base: theme.inputDecorationTheme.floatingLabelStyle,
+      ),
+      hintStyle: AppTypography.style(
+        AppTextRole.placeholder,
+        base: theme.inputDecorationTheme.hintStyle,
+      ),
+      helperStyle: AppTypography.style(
+        AppTextRole.caption,
+        base: theme.inputDecorationTheme.helperStyle,
+      ),
+      errorStyle: AppTypography.style(
+        AppTextRole.caption,
+        base: theme.inputDecorationTheme.errorStyle,
+      ),
     ),
     navigationBarTheme: theme.navigationBarTheme.copyWith(
       labelTextStyle: WidgetStateProperty.resolveWith(
@@ -413,7 +460,10 @@ ThemeData applyScholarisTypography(ThemeData theme) {
       ),
     ),
     chipTheme: theme.chipTheme.copyWith(
-      labelStyle: AppTypography.style(AppTextRole.badge, base: text.labelLarge),
+      labelStyle: AppTypography.style(
+        AppTextRole.badge,
+        base: theme.chipTheme.labelStyle ?? text.labelLarge,
+      ),
     ),
     dialogTheme: theme.dialogTheme.copyWith(
       titleTextStyle: AppTypography.style(

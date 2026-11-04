@@ -95,14 +95,35 @@ class IndividualGrantTab extends ConsumerWidget {
                           children: [
                             Text(
                               'My scholarships',
-                              style: AppTypography.style(AppTextRole.screenTitle, fontSize: 28, color: kOrgTextPrimary, letterSpacing: opticalTracking(28), height: opticalLeading(28, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.screenTitle,
+                                fontSize:
+                                    MediaQuery.sizeOf(context).width >= 900
+                                    ? 24
+                                    : 20,
+                                height: 1.2,
+                                color: kOrgTextPrimary,
+                                letterSpacing:
+                                    ((MediaQuery.sizeOf(context).width >= 900
+                                            ? 24
+                                            : 20) >=
+                                        20
+                                    ? -.3
+                                    : -.15),
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               'Manage your scholarships, requirements, and available places.',
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+                              style: AppTypography.style(
+                                AppTextRole.subtitle,
+                                fontSize: 14,
+                                color: kOrgTextSecondary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ),
@@ -143,12 +164,24 @@ class IndividualGrantTab extends ConsumerWidget {
                           const SizedBox(height: 8),
                           Text(
                             'No grants published yet',
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: kOrgTextPrimary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 15,
+                              height: 1.2,
+                              color: kOrgTextPrimary,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Publish your first student grant opportunity to begin supporting scholars.',
-                            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              fontSize: 12,
+                              color: kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 16),
@@ -239,7 +272,13 @@ class IndividualGrantTab extends ConsumerWidget {
                                     ),
                                     child: Text(
                                       status,
-                                      style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOrgBadgeApprovedText, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.badge,
+                                        fontSize: 10,
+                                        color: kOrgBadgeApprovedText,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                   Row(
@@ -279,13 +318,28 @@ class IndividualGrantTab extends ConsumerWidget {
                                 ],
                               ),
                               const SizedBox(height: 6),
-                              Text(s.title, style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false))),
+                              Text(
+                                s.title,
+                                style: AppTypography.style(
+                                  AppTextRole.cardTitle,
+                                  fontSize: 16,
+                                  height: 1.2,
+                                  color: kOrgTextPrimary,
+                                  letterSpacing: -0.15,
+                                ),
+                              ),
                               const SizedBox(height: 2),
                               Text(
                                 s.description ?? '',
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                                style: AppTypography.style(
+                                  AppTextRole.body,
+                                  fontSize: 12,
+                                  color: kOrgTextSecondary,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                               const SizedBox(height: 12),
                               Wrap(
@@ -299,11 +353,23 @@ class IndividualGrantTab extends ConsumerWidget {
                                     children: [
                                       Text(
                                         'GRANT STIPEND',
-                                        style: AppTypography.style(AppTextRole.label, fontSize: 9, color: kOrgTextMuted, letterSpacing: opticalTracking(9), height: opticalLeading(9, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.label,
+                                          fontSize: 9,
+                                          color: kOrgTextMuted,
+                                          height: 1.3,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                       Text(
                                         '${s.formattedAmount} ${s.formattedFrequency}',
-                                        style: AppTypography.style(AppTextRole.metric, fontSize: 16, color: kOrgPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.metric,
+                                          fontSize: 16,
+                                          color: kOrgPrimary,
+                                          height: 1.2,
+                                          letterSpacing: -0.15,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -312,7 +378,13 @@ class IndividualGrantTab extends ConsumerWidget {
                                     children: [
                                       Text(
                                         'SCHOLAR CAPACITY',
-                                        style: AppTypography.style(AppTextRole.label, fontSize: 9, color: kOrgTextMuted, letterSpacing: opticalTracking(9), height: opticalLeading(9, isBody: false)),
+                                        style: AppTypography.style(
+                                          AppTextRole.label,
+                                          fontSize: 9,
+                                          color: kOrgTextMuted,
+                                          height: 1.3,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                       if (incomingAppsAsync.isLoading)
                                         const Text('Checking capacity…')
@@ -342,11 +414,23 @@ class IndividualGrantTab extends ConsumerWidget {
                                           children: [
                                             Text(
                                               '$approvedCount',
-                                              style: AppTypography.style(AppTextRole.metric, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                              style: AppTypography.style(
+                                                AppTextRole.metric,
+                                                fontSize: 14,
+                                                height: 1.2,
+                                                color: kOrgTextPrimary,
+                                                letterSpacing: -0.15,
+                                              ),
                                             ),
                                             Text(
                                               ' / $totalSlots Slot${totalSlots == 1 ? '' : 's'}',
-                                              style: AppTypography.style(AppTextRole.caption, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                              style: AppTypography.style(
+                                                AppTextRole.caption,
+                                                fontSize: 14,
+                                                height: 1.2,
+                                                color: kOrgTextPrimary,
+                                                letterSpacing: -0.15,
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -378,12 +462,24 @@ class IndividualGrantTab extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'GWA ≤ ${s.minGpa.toStringAsFixed(2)} requirement',
-                                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: ((11) <= 16 ? 1.45 : opticalLeading(11, isBody: true))),
+                                    style: AppTypography.style(
+                                      AppTextRole.caption,
+                                      fontSize: 11,
+                                      color: kOrgTextSecondary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                   if (status == 'Active Grant' && daysLeft >= 0)
                                     Text(
                                       '$daysLeft days left',
-                                      style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOrgPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.badge,
+                                        fontSize: 10,
+                                        color: kOrgPrimary,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                 ],
                               ),

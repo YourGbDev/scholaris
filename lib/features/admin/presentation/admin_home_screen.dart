@@ -22,6 +22,7 @@ import 'admin_theme.dart';
 import 'admin_users_tab.dart';
 
 import 'package:scholaris/admin/screens/admin_settings_screen.dart';
+import 'package:scholaris/admin/screens/admin_backup_screen.dart';
 import 'package:scholaris/admin/screens/disbursements_oversight_screen.dart';
 
 class AdminTabIndexNotifier extends Notifier<int> {
@@ -64,6 +65,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
     const AdminAuditLogsTab(),
     const AdminSettingsScreen(),
     const ReportsSafetyScreen(),
+    const AdminBackupScreen(),
   ];
 
   @override
@@ -105,7 +107,7 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
     final isDesktop = MediaQuery.sizeOf(context).width >= 768;
 
     return Theme(
-      data: Theme.of(context).copyWith(
+      data: workspaceTheme(Theme.of(context)).copyWith(
         cardTheme: const CardThemeData(
           color: Colors.white,
           surfaceTintColor: Colors.transparent,
@@ -118,108 +120,128 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
         ),
       ),
       child: FocusTraversalGroup(
-      policy: WidgetOrderTraversalPolicy(),
-      child: isDesktop
-          ? Scaffold(
-              backgroundColor: kAdminSurface,
-              body: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Persistent Left Sidebar on Desktop (>= 768px, 256px wide Apple design)
-                  SizedBox(
-                    width: 256,
-                    child: _buildSidebar(context, ref, tabIndex, isDrawer: false),
-                  ),
-                  // Main Work Surface with Apple Top Bar
-                  Expanded(
-                    child: Column(
-                      children: [
-                        _buildTopBar(context, ref),
-                        Expanded(
-                          child: OrgWorkspaceTransition(
-                            activeKey: ValueKey<int>(tabIndex),
-                            child: _buildTabs()[tabIndex],
+        policy: WidgetOrderTraversalPolicy(),
+        child: isDesktop
+            ? Scaffold(
+                backgroundColor: kAdminSurface,
+                body: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Persistent Left Sidebar on Desktop (>= 768px, 256px wide Apple design)
+                    SizedBox(
+                      width: 256,
+                      child: _buildSidebar(
+                        context,
+                        ref,
+                        tabIndex,
+                        isDrawer: false,
+                      ),
+                    ),
+                    // Main Work Surface with Apple Top Bar
+                    Expanded(
+                      child: Column(
+                        children: [
+                          _buildTopBar(context, ref),
+                          Expanded(
+                            child: OrgWorkspaceTransition(
+                              activeKey: ValueKey<int>(tabIndex),
+                              child: _buildTabs()[tabIndex],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : Scaffold(
+                backgroundColor: kAdminSurface,
+                appBar: AppBar(
+                  backgroundColor: kAdminSidebarBackground,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  shape: const Border(
+                    bottom: BorderSide(color: kAdminHairline, width: 1),
+                  ),
+                  leading: Builder(
+                    builder: (drawerContext) => IconButton(
+                      icon: const Icon(
+                        Icons.menu_rounded,
+                        color: kAdminNavyTrust,
+                      ),
+                      tooltip: 'Open navigation drawer',
+                      onPressed: () => Scaffold.of(drawerContext).openDrawer(),
                     ),
                   ),
-                ],
-              ),
-            )
-          : Scaffold(
-              backgroundColor: kAdminSurface,
-              appBar: AppBar(
-        backgroundColor: kAdminSidebarBackground,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        shape: const Border(
-          bottom: BorderSide(color: kAdminHairline, width: 1),
-        ),
-        leading: Builder(
-          builder: (drawerContext) => IconButton(
-            icon: const Icon(Icons.menu_rounded, color: kAdminNavyTrust),
-            tooltip: 'Open navigation drawer',
-            onPressed: () => Scaffold.of(drawerContext).openDrawer(),
-          ),
-        ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const ScholarisLogo(
-              compact: true,
-              showWordmark: false,
-              badgeSize: 28,
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                'Scholaris Admin',
-                style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 16, color: kAdminNavyTrust),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.shield_outlined, size: 20),
-            tooltip: 'Live safety report dialog',
-            onPressed: () {
-              showDialog<bool>(
-                animationStyle:
-                    isReducedMotion(context) ? AnimationStyle.noAnimation : null,
-                context: context,
-                builder: (ctx) => const StudentSafetyReportDialog(
-                  scholarshipId: 'individual-program',
-                  scholarshipTitle: 'Bright Futures Scholarship',
+                  title: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const ScholarisLogo(
+                        compact: true,
+                        showWordmark: false,
+                        badgeSize: 28,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Scholaris Admin',
+                          style: AppTypography.style(
+                            AppTextRole.bodyEmphasis,
+                            fontSize: 16,
+                            color: kAdminNavyTrust,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.shield_outlined, size: 20),
+                      tooltip: 'Live safety report dialog',
+                      onPressed: () {
+                        showDialog<bool>(
+                          animationStyle: isReducedMotion(context)
+                              ? AnimationStyle.noAnimation
+                              : null,
+                          context: context,
+                          builder: (ctx) => const StudentSafetyReportDialog(
+                            scholarshipId: 'individual-program',
+                            scholarshipTitle: 'Bright Futures Scholarship',
+                          ),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.logout_rounded,
+                        color: kAdminCoralConnect,
+                        size: 20,
+                      ),
+                      tooltip: 'Sign out',
+                      onPressed: () => _handleSignOut(context),
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.logout_rounded,
-              color: kAdminCoralConnect,
-              size: 20,
-            ),
-            tooltip: 'Sign out',
-            onPressed: () => _handleSignOut(context),
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        backgroundColor: kAdminSidebarBackground,
-        child: SafeArea(
-          child: _buildSidebar(context, ref, tabIndex, isDrawer: true),
-        ),
-      ),
-      body: OrgWorkspaceTransition(
-        activeKey: ValueKey<int>(tabIndex),
-        child: _buildTabs()[tabIndex],
-      ),
-    ),
+                drawer: Drawer(
+                  backgroundColor: kAdminSidebarBackground,
+                  child: SafeArea(
+                    child: _buildSidebar(
+                      context,
+                      ref,
+                      tabIndex,
+                      isDrawer: true,
+                    ),
+                  ),
+                ),
+                body: OrgWorkspaceTransition(
+                  activeKey: ValueKey<int>(tabIndex),
+                  child: _buildTabs()[tabIndex],
+                ),
+              ),
       ),
     );
   }
@@ -237,16 +259,30 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
           Expanded(
             child: Text(
               'Platform administration',
-              style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kAdminTextSecondary),
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                fontSize: 13,
+                color: kAdminTextSecondary,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
           TextButton.icon(
-            icon: const Icon(Icons.shield_outlined, size: 16, color: Color(0xFF93000A)),
-            label:  Text('Live safety report dialog', style: AppTypography.style(AppTextRole.button, fontSize: 12, color: Color(0xFF93000A))),
+            icon: const Icon(
+              Icons.shield_outlined,
+              size: 16,
+              color: Color(0xFF93000A),
+            ),
+            label: const Text(
+              'Live safety report dialog',
+              style: TextStyle(fontSize: 12, color: Color(0xFF93000A)),
+            ),
             onPressed: () {
               showDialog<bool>(
-                animationStyle:
-                    isReducedMotion(context) ? AnimationStyle.noAnimation : null,
+                animationStyle: isReducedMotion(context)
+                    ? AnimationStyle.noAnimation
+                    : null,
                 context: context,
                 builder: (ctx) => const StudentSafetyReportDialog(
                   scholarshipId: 'individual-program',
@@ -319,7 +355,13 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                   Expanded(
                     child: Text(
                       'Scholaris Admin',
-                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 16, color: kAdminNavyTrust),
+                      style: AppTypography.style(
+                        AppTextRole.bodyEmphasis,
+                        fontSize: 16,
+                        height: 1.4,
+                        color: kAdminTextPrimary,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                   if (isDrawer)
@@ -331,11 +373,15 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
                 ],
               ),
             ),
-             Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'SUPER ADMIN',
-                style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kAdminBridgeGreen),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  fontSize: 11,
+                  color: kAdminBridgeGreen,
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -352,12 +398,13 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
             link('Analytics', Icons.insights_outlined, 6),
             link('Audit Logs', Icons.fact_check_outlined, 7),
             link('Settings', Icons.settings_outlined, 8),
+            link('Database & Backups', Icons.cloud_sync_outlined, 10),
             const Divider(height: 32),
-             Padding(
+            const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 'Platform administration',
-                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kAdminTextSecondary),
+                style: TextStyle(fontSize: 12, color: kAdminTextSecondary),
               ),
             ),
             Padding(
@@ -379,7 +426,13 @@ class _AdminHomeScreenState extends ConsumerState<AdminHomeScreen> {
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
       child: Text(
         title,
-        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11.5, letterSpacing: 0.5, color: kSeqOutline),
+        style: AppTypography.style(
+          AppTextRole.sectionTitle,
+          fontSize: 11.5,
+          letterSpacing: 0.5,
+          color: kSeqOutline,
+          height: 1.4,
+        ),
       ),
     );
   }
@@ -426,7 +479,12 @@ class _SidebarNavItem extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: AppTypography.style(AppTextRole.navigation, fontSize: 13.5),
+                  style: AppTypography.style(
+                    AppTextRole.navigation,
+                    fontSize: 13.5,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],

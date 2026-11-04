@@ -32,6 +32,7 @@ test('bundled Inter includes four genuine distinct weights and its license', () 
     assert.ok(foundInter, `${name}: Inter family metadata missing`);
   }
   assert.match(fs.readFileSync('assets/fonts/inter/OFL.txt', 'utf8'), /SIL OPEN FONT LICENSE/);
+  assert.match(fs.readFileSync('pubspec.yaml', 'utf8'), /- assets\/fonts\/inter\/OFL\.txt/, 'Inter license must ship in the asset bundle');
 });
 test('permits semantic roles, central resolution, geometry and comments', () => {
   for (const code of ['AppTypography.style(AppTextRole.body, fontSize: 14)', 'ThemeData(fontFamily: AppTypography.familyFor(14))', '// fontWeight: FontWeight.w800\nconst TextStyle(color: Colors.red)', '/* GoogleFonts.inter() */ TextStyle(height: 1.4)']) {

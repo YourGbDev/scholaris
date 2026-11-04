@@ -7,11 +7,12 @@
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+export 'package:scholaris/shared/theme/workspace_theme.dart';
 
 // --- Color Palette -----------------------------------------------------------
 
 /// Neutral canvas behind the white administration panels.
-const Color kAdminSurface = Color(0xFFFAFAFA);
+const Color kAdminSurface = Colors.white;
 
 /// Primary operational green — nav active fill (#0F4D2E), primary CTAs, active highlights.
 const Color kAdminBridgeGreen = Color(0xFF0F4D2E);
@@ -32,7 +33,7 @@ const Color kAdminHairline = Color(0xFFE8E8E8);
 const Color kAdminTextPrimary = Color(0xFF1A1B1F);
 
 /// Muted secondary text for labels and captions (#5E6D66 / #707971).
-const Color kAdminTextSecondary = Color(0xFF5E6D66);
+const Color kAdminTextSecondary = Color(0xFF62666B);
 
 /// White sidebar surface, matching the provider workspace.
 const Color kAdminSidebarBackground = Color(0xFFFFFFFF);
@@ -44,12 +45,14 @@ const Color kAdminActiveNavBackground = Color(0xFF0F4D2E);
 const Color kAdminActiveNavText = Color(0xFFFFFFFF);
 
 /// Inactive navigation item text color (#404942).
-const Color kAdminInactiveNavText = Color(0xFF404942);
+const Color kAdminInactiveNavText = Color(0xFF62666B);
 
 // --- Border Radius Tokens ----------------------------------------------------
 
 /// Apple squircle card radius for stat tiles, content panels, and tables.
-const BorderRadius kAdminCardRadius = BorderRadius.all(Radius.circular(kRadiusCard));
+const BorderRadius kAdminCardRadius = BorderRadius.all(
+  Radius.circular(kRadiusCard),
+);
 
 /// Squircle alias for explicit Apple design references.
 const BorderRadius kAdminSquircleRadius = kAdminCardRadius;
@@ -75,25 +78,28 @@ const BoxDecoration kAdminCardDecoration = kSoftCardDecoration;
 
 /// Tabular figures helper for numeric typography (prevents digit horizontal jittering).
 TextStyle seqTabularFigures(TextStyle base) => base.copyWith(
-      fontFeatures: [
-        ...?base.fontFeatures,
-        const FontFeature.tabularFigures(),
-      ],
-    );
+  fontFeatures: [...?base.fontFeatures, const FontFeature.tabularFigures()],
+);
 
-/// Reference-code pill container helper for IDs, hashes, and IP addresses.
+/// Reference pill container helper for IDs, hashes, and IP addresses.
 Widget adminIdPill(String idText) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: kSeqSurfaceContainerLow,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.4)),
-      ),
-      child: Text(
-        idText,
-        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kSeqOnSurfaceVariant),
-      ),
-    );
+  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+  decoration: BoxDecoration(
+    color: kSeqSurfaceContainerLow,
+    borderRadius: BorderRadius.circular(6),
+    border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.4)),
+  ),
+  child: Text(
+    idText,
+    style: AppTypography.style(
+      AppTextRole.caption,
+      fontSize: 11,
+      color: kSeqOnSurfaceVariant,
+      height: 1.4,
+      letterSpacing: 0,
+    ),
+  ),
+);
 
 // =============================================================================
 // Sequoia Apple Design System Tokens (from scholaris_sequoia/DESIGN.md)
@@ -108,9 +114,9 @@ const Color kSeqSurfaceContainer = Color(0xFFF0F0F0);
 const Color kSeqSurfaceContainerHigh = Color(0xFFEAEAEA);
 const Color kSeqSurfaceContainerHighest = Color(0xFFE3E3E3);
 const Color kSeqOnSurface = Color(0xFF1A1B1F);
-const Color kSeqOnSurfaceVariant = Color(0xFF404942);
-const Color kSeqOutline = Color(0xFF5A625B);
-const Color kSeqOutlineVariant = Color(0xFFC0C9C0);
+const Color kSeqOnSurfaceVariant = Color(0xFF62666B);
+const Color kSeqOutline = Color(0xFF62666B);
+const Color kSeqOutlineVariant = Color(0xFFE2E4E3);
 const Color kSeqPrimary = Color(0xFF00351C);
 const Color kSeqPrimaryContainer = Color(0xFF0F4D2E);
 const Color kSeqOnPrimary = Color(0xFFFFFFFF);
@@ -138,5 +144,12 @@ const Color kSeqOnError = Color(0xFFFFFFFF);
 const Color kSeqErrorContainer = Color(0xFFFFDAD6);
 const Color kSeqOnErrorContainer = Color(0xFF93000A);
 
-// Sequoia Typography (Inter)
-
+// Shared semantic typography roles
+TextStyle seqPageTitle(BuildContext context, {Color color = kSeqOnSurface}) =>
+    AppTypography.style(
+      AppTextRole.screenTitle,
+      fontSize: MediaQuery.sizeOf(context).width >= 900 ? 24 : 20,
+      height: 1.2,
+      letterSpacing: -.3,
+      color: color,
+    );

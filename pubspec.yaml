@@ -52,6 +52,7 @@ flutter:
   shaders:
     - shaders/student_glass_lens.frag
   assets:
+    - assets/fonts/inter/OFL.txt
     - assets/animations/scholaris_ceremony.json
     - assets/animations/onboarding_slide1.json
     - assets/animations/onboarding_slide2_hero.json
@@ -65,6 +66,9 @@ flutter:
     - assets/animations/Successfully Done.json
     - assets/images/scholaris_hero_student.png
     - assets/mascots/
+    - assets/mascots/onboarding/
+    - assets/mascots/chat/
+    - assets/mascots/greetings/
     - assets/images/mascot_male.png
     - assets/images/mascot_male_welcome_wave.png
     - assets/images/student_hero_graduate_campus.png

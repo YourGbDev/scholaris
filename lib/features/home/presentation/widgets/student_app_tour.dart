@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'student_guide_greeting.dart';
+import '../../../../shared/widgets/mascot_pose_view.dart';
 import 'student_application_guide.dart';
 import '../../../scholarships/models/scholarship.dart';
 
@@ -30,6 +31,8 @@ class StudentTourLayer extends ConsumerStatefulWidget {
     this.profileScroll,
     this.discoverScroll,
     this.discoverDetails,
+    this.discoverCard,
+    this.scrollActivity,
     this.discoverEnd,
     this.studentName = 'Student',
     this.gender,
@@ -44,6 +47,8 @@ class StudentTourLayer extends ConsumerStatefulWidget {
   final ScrollController? profileScroll;
   final ScrollController? discoverScroll;
   final GlobalKey? discoverDetails;
+  final GlobalKey? discoverCard;
+  final ValueNotifier<ScrollNotification?>? scrollActivity;
   final GlobalKey? discoverEnd;
   final String studentName;
   final String? gender;
@@ -154,6 +159,8 @@ class _StudentTourLayerState extends ConsumerState<StudentTourLayer> {
         profileScroll: widget.profileScroll,
         discoverScroll: widget.discoverScroll,
         discoverDetails: widget.discoverDetails,
+        discoverCard: widget.discoverCard,
+        scrollActivity: widget.scrollActivity,
         discoverEnd: widget.discoverEnd,
         studentName: widget.studentName,
         gender: widget.gender,
@@ -177,7 +184,8 @@ class _StudentTourLayerState extends ConsumerState<StudentTourLayer> {
 
     return StudentGuideGreeting(
       title: 'Hi, ${widget.studentName.trim().split(' ').first}!',
-      message: 'It’s me, Ari! Let me show you around Scholaris. We’ll explore scholarships and try an application demo. Nothing is uploaded or sent.',
+      message:
+          'It’s me, ${getMascotName(gender: widget.gender)}! Let me show you around Scholaris. We’ll explore scholarships and try an application demo. Nothing is uploaded or sent.',
       gender: widget.gender,
       onContinue: _start,
       onSkip: _finish,

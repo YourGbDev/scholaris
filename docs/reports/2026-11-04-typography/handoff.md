@@ -1,3 +1,5 @@
+> **Release-source correction:** The initial migration used an outdated UI baseline. Build30 is superseded. Use the [current UI recovery handoff](recovery/README.md) and its correction commit for any new release.
+
 # Scholaris typography refinement — implementation handoff
 
 Implemented on `codex/typography-refinement`, based on source `1804904`.

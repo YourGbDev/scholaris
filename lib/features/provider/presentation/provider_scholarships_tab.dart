@@ -3,7 +3,6 @@
 // "My Scholarships" management tab for the Provider Console.
 // Built to match Stitch design reference: scholaris_provider_dashboard.
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -38,9 +37,7 @@ class _ProviderScholarshipsTabState
 
   void _openCreateScreen() {
     Navigator.of(context).push(
-      MaterialPageRoute<bool>(
-        builder: (_) => const ScholarshipFormScreen(),
-      ),
+      MaterialPageRoute<bool>(builder: (_) => const ScholarshipFormScreen()),
     );
   }
 
@@ -56,13 +53,20 @@ class _ProviderScholarshipsTabState
   }
 
   Future<void> _confirmDelete(
-      Scholarship scholarship, int applicantCount) async {
+    Scholarship scholarship,
+    int applicantCount,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(
           'Delete Scholarship?',
-          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.cardTitle,
+            fontSize: 18,
+            height: 1.2,
+            letterSpacing: -0.15,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -70,7 +74,12 @@ class _ProviderScholarshipsTabState
           children: [
             Text(
               'Are you sure you want to delete "${scholarship.title}"?',
-              style: AppTypography.style(AppTextRole.body, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.body,
+                fontSize: 14,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             if (applicantCount > 0) ...[
               const SizedBox(height: 12),
@@ -82,14 +91,23 @@ class _ProviderScholarshipsTabState
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.warning_amber_rounded,
-                        color: kError, size: 20),
+                    const Icon(
+                      Icons.warning_amber_rounded,
+                      color: kError,
+                      size: 20,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'This scholarship has $applicantCount student application(s). '
                         'Deactivating instead of deleting is strongly recommended.',
-                        style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kError, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.body,
+                          fontSize: 12,
+                          color: kError,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ],
@@ -101,12 +119,28 @@ class _ProviderScholarshipsTabState
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text('Cancel', style: AppTypography.style(AppTextRole.button, color: Colors.black54)),
+            child: Text(
+              'Cancel',
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: Colors.black54,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+            ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: kError),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text('Delete', style: AppTypography.style(AppTextRole.button, color: Colors.white)),
+            child: Text(
+              'Delete',
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: Colors.white,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+            ),
           ),
         ],
       ),
@@ -156,7 +190,9 @@ class _ProviderScholarshipsTabState
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: kPrimarySoft,
                             borderRadius: BorderRadius.circular(12),
@@ -164,12 +200,21 @@ class _ProviderScholarshipsTabState
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.verified_rounded,
-                                  size: 13, color: kPrimary),
+                              const Icon(
+                                Icons.verified_rounded,
+                                size: 13,
+                                color: kPrimary,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 'Accredited Govt Agency',
-                                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.badge,
+                                  fontSize: 10,
+                                  color: kPrimary,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                             ],
                           ),
@@ -177,14 +222,22 @@ class _ProviderScholarshipsTabState
                         const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black.withValues(alpha: 0.04),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             'DOST-SEI Portal',
-                            style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: Colors.black54, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
+                            style: AppTypography.style(
+                              AppTextRole.badge,
+                              fontSize: 10,
+                              color: Colors.black54,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ],
@@ -201,13 +254,24 @@ class _ProviderScholarshipsTabState
                         children: [
                           Text(
                             'My Scholarships',
-                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 22, color: kPrimary, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.screenTitle,
+                              fontSize: 15,
+                              color: kPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 1),
                           Text(
                             'Scholarship programs',
-                            style:
-                                AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 11,
+                              color: Colors.black54,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -218,8 +282,12 @@ class _ProviderScholarshipsTabState
                       icon: const Icon(Icons.add_rounded, size: 18),
                       label: Text(
                         'New Program',
-                        style:
-                            AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 13,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kPrimary,
@@ -291,11 +359,21 @@ class _ProviderScholarshipsTabState
                     height: 38,
                     child: TextField(
                       controller: _searchController,
-                      style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                      style: AppTypography.style(
+                        AppTextRole.input,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'Search programs...',
-                        hintStyle:
-                            AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: Colors.black38, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                        hintStyle: AppTypography.style(
+                          AppTextRole.placeholder,
+                          fontSize: 12,
+                          color: Colors.black38,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                         prefixIcon: const Icon(
                           Icons.search_rounded,
                           size: 18,
@@ -307,11 +385,12 @@ class _ProviderScholarshipsTabState
                                 onPressed: () {
                                   _searchController.clear();
                                   ref
-                                      .read(
-                                        providerScholarshipSearchQueryProvider
-                                            .notifier,
-                                      )
-                                      .state = '';
+                                          .read(
+                                            providerScholarshipSearchQueryProvider
+                                                .notifier,
+                                          )
+                                          .state =
+                                      '';
                                   setState(() {});
                                 },
                               )
@@ -333,10 +412,12 @@ class _ProviderScholarshipsTabState
                       ),
                       onChanged: (val) {
                         ref
-                            .read(
-                              providerScholarshipSearchQueryProvider.notifier,
-                            )
-                            .state = val;
+                                .read(
+                                  providerScholarshipSearchQueryProvider
+                                      .notifier,
+                                )
+                                .state =
+                            val;
                         setState(() {});
                       },
                     ),
@@ -346,25 +427,40 @@ class _ProviderScholarshipsTabState
                 _FilterChip(
                   label: 'All',
                   selected: statusFilter == 'all',
-                  onTap: () => ref
-                      .read(providerScholarshipStatusFilterProvider.notifier)
-                      .state = 'all',
+                  onTap: () =>
+                      ref
+                              .read(
+                                providerScholarshipStatusFilterProvider
+                                    .notifier,
+                              )
+                              .state =
+                          'all',
                 ),
                 const SizedBox(width: 6),
                 _FilterChip(
                   label: 'Active',
                   selected: statusFilter == 'active',
-                  onTap: () => ref
-                      .read(providerScholarshipStatusFilterProvider.notifier)
-                      .state = 'active',
+                  onTap: () =>
+                      ref
+                              .read(
+                                providerScholarshipStatusFilterProvider
+                                    .notifier,
+                              )
+                              .state =
+                          'active',
                 ),
                 const SizedBox(width: 6),
                 _FilterChip(
                   label: 'Closed',
                   selected: statusFilter == 'closed',
-                  onTap: () => ref
-                      .read(providerScholarshipStatusFilterProvider.notifier)
-                      .state = 'closed',
+                  onTap: () =>
+                      ref
+                              .read(
+                                providerScholarshipStatusFilterProvider
+                                    .notifier,
+                              )
+                              .state =
+                          'closed',
                 ),
               ],
             ),
@@ -383,8 +479,9 @@ class _ProviderScholarshipsTabState
               ),
               data: (scholarships) {
                 if (scholarships.isEmpty) {
-                  final query =
-                      ref.watch(providerScholarshipSearchQueryProvider);
+                  final query = ref.watch(
+                    providerScholarshipSearchQueryProvider,
+                  );
                   if (query.isNotEmpty || statusFilter != 'all') {
                     return const EmptyView(
                       icon: Icons.search_off_rounded,
@@ -413,13 +510,25 @@ class _ProviderScholarshipsTabState
                           const SizedBox(height: 14),
                           Text(
                             'No scholarship programs yet',
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 18,
+                              color: kPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'Publish your organization\'s scholarships so eligible Filipino students can discover and apply for them.',
                             textAlign: TextAlign.center,
-                            style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.black54, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              fontSize: 13,
+                              color: Colors.black54,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton.icon(
@@ -501,12 +610,24 @@ class _MetricPill extends StatelessWidget {
         children: [
           Text(
             '$count',
-            style: AppTypography.style(AppTextRole.metric, fontSize: 13, color: color, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.metric,
+              fontSize: 13,
+              color: color,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(width: 4),
           Text(
             label,
-            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: color, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 11,
+              color: color,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ],
       ),
@@ -533,15 +654,21 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? kPrimary : Colors.white,
+          color: selected ? const Color(0xFF25282A) : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: selected ? kPrimary : Colors.black12,
+            color: selected ? const Color(0xFF25282A) : kBorderLight,
           ),
         ),
         child: Text(
           label,
-          style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: selected ? Colors.white : Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 12,
+            color: selected ? Colors.white : Colors.black87,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ),
     );
@@ -574,8 +701,9 @@ class _ScholarshipCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color:
-              isActive ? Colors.black12 : Colors.black.withValues(alpha: 0.06),
+          color: isActive
+              ? Colors.black12
+              : Colors.black.withValues(alpha: 0.06),
         ),
         boxShadow: [
           BoxShadow(
@@ -600,14 +728,25 @@ class _ScholarshipCard extends StatelessWidget {
                     children: [
                       Text(
                         s.title,
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, color: isActive ? kPrimary : Colors.black54, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.cardTitle,
+                          fontSize: 15,
+                          color: isActive ? kPrimary : Colors.black54,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       if (s.provider != null) ...[
                         const SizedBox(height: 2),
                         Text(
                           s.provider!,
-                          style:
-                              AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 12,
+                            color: Colors.black54,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ],
@@ -615,8 +754,10 @@ class _ScholarshipCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: isActive
                         ? const Color(0xFF1B7A43).withValues(alpha: 0.12)
@@ -625,7 +766,15 @@ class _ScholarshipCard extends StatelessWidget {
                   ),
                   child: Text(
                     isActive ? 'Active' : 'Closed',
-                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: isActive ? const Color(0xFF1B7A43) : Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      fontSize: 11,
+                      color: isActive
+                          ? const Color(0xFF1B7A43)
+                          : Colors.black54,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ],
@@ -645,8 +794,11 @@ class _ScholarshipCard extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        const Icon(Icons.group_rounded,
-                            size: 16, color: kPrimary),
+                        const Icon(
+                          Icons.group_rounded,
+                          size: 16,
+                          color: kPrimary,
+                        ),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Column(
@@ -654,11 +806,23 @@ class _ScholarshipCard extends StatelessWidget {
                             children: [
                               Text(
                                 'Candidates',
-                                style: AppTypography.style(AppTextRole.label, fontSize: 10, color: Colors.black45, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 10,
+                                  color: Colors.black45,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                               Text(
                                 '$applicantCount Total',
-                                style: AppTypography.style(AppTextRole.metric, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.metric,
+                                  fontSize: 12,
+                                  color: Colors.black87,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
@@ -671,8 +835,11 @@ class _ScholarshipCard extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        const Icon(Icons.event_available_rounded,
-                            size: 16, color: Color(0xFFD97706)),
+                        const Icon(
+                          Icons.event_available_rounded,
+                          size: 16,
+                          color: Color(0xFFD97706),
+                        ),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Column(
@@ -680,11 +847,23 @@ class _ScholarshipCard extends StatelessWidget {
                             children: [
                               Text(
                                 'Deadline',
-                                style: AppTypography.style(AppTextRole.label, fontSize: 10, color: Colors.black45, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 10,
+                                  color: Colors.black45,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                               Text(
                                 deadlineStr,
-                                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.caption,
+                                  fontSize: 12,
+                                  color: Colors.black87,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
@@ -710,7 +889,9 @@ class _ScholarshipCard extends StatelessWidget {
                     foregroundColor: kPrimary,
                     side: BorderSide(color: kPrimary.withValues(alpha: 0.3)),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6),
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     visualDensity: VisualDensity.compact,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
@@ -722,7 +903,8 @@ class _ScholarshipCard extends StatelessWidget {
                   icon: const Icon(Icons.qr_code_rounded, size: 18),
                   tooltip: 'Show QR Code',
                   color: kPrimary,
-                  onPressed: () => showScholarshipQrDialog(context, scholarship),
+                  onPressed: () =>
+                      showScholarshipQrDialog(context, scholarship),
                   visualDensity: VisualDensity.compact,
                 ),
                 IconButton(
@@ -738,15 +920,20 @@ class _ScholarshipCard extends StatelessWidget {
                   children: [
                     Text(
                       isActive ? 'Active' : 'Closed',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: isActive ? kPrimary : Colors.black45, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        fontSize: 11,
+                        color: isActive ? kPrimary : Colors.black45,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                     const SizedBox(width: 4),
                     Switch.adaptive(
                       value: isActive,
                       activeTrackColor: kPrimary,
                       onChanged: onToggleActive,
-                      materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                   ],
                 ),

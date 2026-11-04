@@ -1,6 +1,9 @@
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
+
+import '../../../../shared/theme/app_theme.dart' show kSoftCardDecoration;
 import 'individual_support_summary.dart';
+import '../../../../shared/widgets/mascot_pose_view.dart'
+    show getMascotGreetingAssetPath;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,7 +57,13 @@ class ProviderOverview extends ConsumerWidget {
             children: [
               Text(
                 'Your workspace could not load.',
-                style: AppTypography.style(AppTextRole.cardTitle, fontSize: 20, color: kOrgTextPrimary, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.cardTitle,
+                  fontSize: 20,
+                  height: 1.2,
+                  color: kOrgTextPrimary,
+                  letterSpacing: -0.3,
+                ),
               ),
               const SizedBox(height: 12),
               const Text('Check your connection and try again.'),
@@ -164,18 +173,7 @@ class ProviderOverviewPanel extends StatelessWidget {
         final heroCard = Container(
           width: double.infinity,
           padding: EdgeInsets.all(compact ? 18 : 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(26),
-            border: Border.all(color: const Color(0xFFF0F0F0)),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x08000000),
-                blurRadius: 20,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
+          decoration: kSoftCardDecoration,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,7 +181,7 @@ class ProviderOverviewPanel extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     radius: 17,
-                    backgroundColor: Color(0xFFE1F1E5),
+                    backgroundColor: kWorkspaceSubtle,
                     child: Icon(
                       Icons.school_rounded,
                       size: 19,
@@ -198,7 +196,13 @@ class ProviderOverviewPanel extends StatelessWidget {
                           : hasActiveScholarship
                           ? 'YOUR IMPACT'
                           : 'GET STARTED',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgPrimary, letterSpacing: 1, height: opticalLeading(11, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        fontSize: 11,
+                        color: kOrgPrimary,
+                        letterSpacing: 1,
+                        height: 1.3,
+                      ),
                     ),
                   ),
                 ],
@@ -210,7 +214,13 @@ class ProviderOverviewPanel extends StatelessWidget {
                     : hasActiveScholarship
                     ? 'You’re all caught up'
                     : 'Start your first scholarship',
-                style: AppTypography.style(AppTextRole.cardTitle, fontSize: compact ? 20 : 23, color: kOrgPrimary, letterSpacing: opticalTracking(compact ? 20 : 23), height: opticalLeading(compact ? 20 : 23, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.cardTitle,
+                  fontSize: 17,
+                  color: kOrgPrimary,
+                  height: 1.2,
+                  letterSpacing: -0.15,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
@@ -219,7 +229,13 @@ class ProviderOverviewPanel extends StatelessWidget {
                           ? 'There are no applications awaiting review.'
                           : 'Visit your scholarships to create an opportunity for students.'
                     : '$pendingCount ${pendingCount == 1 ? 'application needs' : 'applications need'} a closer look. Take them one at a time.',
-                style: AppTypography.style(AppTextRole.body, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  fontSize: 14,
+                  color: kOrgTextSecondary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
               const SizedBox(height: 8),
               FilledButton.icon(
@@ -249,71 +265,78 @@ class ProviderOverviewPanel extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    individual
-                        ? 'YOUR INDIVIDUAL PROVIDER WORKSPACE'
-                        : 'YOUR ORGANIZATION WORKSPACE',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 10, color: kOrgTextSecondary, letterSpacing: 1.6, height: opticalLeading(10, isBody: false)),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    individual
-                        ? 'Hi, $firstName — a little support. A new beginning.'
-                        : 'Organization overview',
-                    style: AppTypography.style(AppTextRole.screenTitle, fontSize: compact ? 24 : 28, color: kOrgPrimary, letterSpacing: opticalTracking(compact ? 24 : 28), height: opticalLeading(compact ? 24 : 28, isBody: false)),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF1F7EF),
-                      borderRadius: BorderRadius.circular(26),
-                      border: Border.all(color: const Color(0xFFDDE5D4)),
-                      image: compact
-                          ? null
-                          : const DecorationImage(
-                              image: AssetImage(
-                                'assets/images/provider_hero_illustration.png',
-                              ),
-                              fit: BoxFit.cover,
-                              alignment: Alignment.topLeft,
-                            ),
-                    ),
-                    child: compact
-                        ? Column(
-                            children: [
-                              Image.asset(
-                                'assets/images/provider_hero_illustration.png',
-                                fit: BoxFit.cover,
-                                excludeFromSemantics: true,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  16,
-                                  0,
-                                  16,
-                                  20,
-                                ),
-                                child: heroCard,
-                              ),
-                            ],
-                          )
-                        : ConstrainedBox(
-                            constraints: const BoxConstraints(minHeight: 300),
-                            child: Row(
-                              children: [
-                                const Expanded(flex: 4, child: SizedBox()),
-                                Expanded(
-                                  flex: 6,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(24),
-                                    child: heroCard,
-                                  ),
-                                ),
-                              ],
+                  LayoutBuilder(
+                    builder: (context, header) {
+                      final portrait = Image.asset(
+                        getMascotGreetingAssetPath(gender: 'female'),
+                        width: compact ? 104 : 128,
+                        height: compact ? 96 : 118,
+                        fit: BoxFit.contain,
+                        filterQuality: FilterQuality.high,
+                        excludeFromSemantics: true,
+                      );
+                      final copy = Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'YOUR INDIVIDUAL PROVIDER WORKSPACE',
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 10,
+                              color: kOrgTextSecondary,
+                              letterSpacing: 1,
+                              height: 1.3,
                             ),
                           ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Hi, $firstName',
+                            style: AppTypography.style(
+                              AppTextRole.screenTitle,
+                              fontSize: compact ? 20 : 24,
+                              height: 1.2,
+                              color: kOrgTextPrimary,
+                              letterSpacing: ((compact ? 20 : 24) >= 20
+                                  ? -.3
+                                  : -.15),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'A little support. A new beginning.',
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 14,
+                              color: kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
+                          ),
+                        ],
+                      );
+                      final stacked =
+                          header.maxWidth < 300 ||
+                          MediaQuery.textScalerOf(context).scale(1) > 1.3;
+                      return stacked
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                portrait,
+                                const SizedBox(height: 12),
+                                copy,
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                portrait,
+                                const SizedBox(width: 20),
+                                Expanded(child: copy),
+                              ],
+                            );
+                    },
                   ),
+                  const SizedBox(height: 24),
+                  heroCard,
                   const SizedBox(height: 28),
                   Wrap(
                     spacing: 16,
@@ -375,7 +398,13 @@ class ProviderOverviewPanel extends StatelessWidget {
                     children: [
                       Text(
                         'Your scholarship programs',
-                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 21, color: kOrgTextPrimary, letterSpacing: opticalTracking(21), height: opticalLeading(21, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          fontSize: 17,
+                          height: 1.2,
+                          color: kOrgTextPrimary,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       OutlinedButton.icon(
                         style: OutlinedButton.styleFrom(
@@ -396,12 +425,24 @@ class ProviderOverviewPanel extends StatelessWidget {
                         children: [
                           Text(
                             'Your first opportunity starts here.',
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 18, color: kOrgTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 17,
+                              height: 1.2,
+                              color: kOrgTextPrimary,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Set your support, requirements, and application deadline in your scholarship workspace.',
-                            style: AppTypography.style(AppTextRole.caption, color: kOrgTextSecondary, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              color: kOrgTextSecondary,
+                              fontSize: 13.5,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -420,12 +461,24 @@ class ProviderOverviewPanel extends StatelessWidget {
                                   children: [
                                     Text(
                                       scholarship.title,
-                                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.cardTitle,
+                                        fontSize: 15,
+                                        height: 1.2,
+                                        color: kOrgTextPrimary,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
                                       '${scholarship.formattedAmount} ${scholarship.formattedFrequency}',
-                                      style: AppTypography.style(AppTextRole.metric, color: kOrgTextSecondary, fontSize: 13.5, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
+                                      style: AppTypography.style(
+                                        AppTextRole.metric,
+                                        color: kOrgTextSecondary,
+                                        fontSize: 13.5,
+                                        height: 1.4,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -444,7 +497,15 @@ class ProviderOverviewPanel extends StatelessWidget {
                                 ),
                                 child: Text(
                                   scholarship.isActive ? 'Active' : 'Closed',
-                                  style: AppTypography.style(AppTextRole.badge, color: scholarship.isActive ? kOrgPrimary : kOrgTextSecondary, fontSize: 11.5, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.badge,
+                                    color: scholarship.isActive
+                                        ? kOrgPrimary
+                                        : kOrgTextSecondary,
+                                    fontSize: 12,
+                                    height: 1.3,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ),
                             ],
@@ -457,7 +518,13 @@ class ProviderOverviewPanel extends StatelessWidget {
                     individual
                         ? 'Clear criteria. Thoughtful reviews. Decisions made by people.'
                         : 'Application and program information reflects recorded activity.',
-                    style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 12,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -484,12 +551,24 @@ class ProviderOverviewPanel extends StatelessWidget {
         child: ProviderOverviewCard(
           heading: Text(
             label,
-            style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 12,
+              color: kOrgTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           child: OrgMetricCount(
             motionId: 'individual-overview.$label',
             targetValue: value,
-            style: AppTypography.style(AppTextRole.metric, fontSize: 30, color: kOrgTextPrimary, letterSpacing: opticalTracking(30), height: opticalLeading(30, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.metric,
+              fontSize: 28,
+              height: 1.2,
+              color: kOrgTextPrimary,
+              letterSpacing: -0.3,
+            ),
           ),
         ),
       ),

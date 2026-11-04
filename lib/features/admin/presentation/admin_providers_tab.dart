@@ -34,9 +34,8 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                     Expanded(
                       child: Text(
                         'Provider approvals',
-                        style: AppTypography.style(AppTextRole.screenTitle,
-                          base: Theme.of(context).textTheme.headlineSmall,
-                          color: _green),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(color: _green),
                       ),
                     ),
                     IconButton(
@@ -184,8 +183,10 @@ class _AdminProvidersTabState extends ConsumerState<AdminProvidersTab> {
                         children: [
                           Text(
                             v.displayName,
-                            style: AppTypography.style(AppTextRole.cardTitle,
-                              base: Theme.of(context).textTheme.titleMedium),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              base: Theme.of(context).textTheme.titleMedium,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           Text(
@@ -278,8 +279,8 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
       final action = status == 'approved'
           ? 'Approve'
           : status == 'changes_requested'
-              ? 'Request changes from'
-              : 'Reject';
+          ? 'Request changes from'
+          : 'Reject';
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -403,157 +404,171 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
           policy: WidgetOrderTraversalPolicy(),
           child: Dialog(
             insetPadding: const EdgeInsets.all(16),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 680),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 680),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          org
-                              ? 'Organization review'
-                              : 'Individual provider review',
-                          style: AppTypography.style(AppTextRole.sectionTitle, base: Theme.of(context).textTheme.titleLarge),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              org
+                                  ? 'Organization review'
+                                  : 'Individual provider review',
+                              style: Theme.of(context).textTheme.titleLarge,
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: 'Close review',
+                            onPressed: _busy
+                                ? null
+                                : () => Navigator.pop(context),
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        v.displayName,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        '${_statusLabel(v.status)} • Submitted ${_date(v.submittedAt)}',
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Submitted information',
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          color: _green,
                         ),
                       ),
-                      IconButton(
-                        tooltip: 'Close review',
-                        onPressed: _busy ? null : () => Navigator.pop(context),
-                        icon: const Icon(Icons.close),
+                      const Text(
+                        'These are provider declarations and uploads. Their presence does not establish authenticity or available funding.',
                       ),
+                      if (org) ...[
+                        _info('Organization type', v.orgType),
+                        _info('Registration number (masked)', v.maskedIdNumber),
+                        _info('Representative', v.repName),
+                        _info('Position', v.repPosition),
+                        _info('Email', v.repEmail),
+                        _info('Phone', v.repPhone),
+                      ] else ...[
+                        _info('Email', v.email),
+                        _info('Phone', v.phone),
+                        _info('Government ID type', v.govIdType),
+                        _info('ID number (masked)', v.maskedIdNumber),
+                        _info('Stated source of funds', v.sourceOfFunds),
+                        _info('Proposed giving budget', v.monthlyGivingBudget),
+                        _info('TIN (masked)', v.maskedTin),
+                      ],
+                      const Divider(height: 32),
+                      Text(
+                        'Submitted documents',
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          color: _green,
+                        ),
+                      ),
+                      const Text(
+                        'Available files open through a temporary private link. Review their contents before deciding.',
+                      ),
+                      if (org) ...[
+                        _document('SEC certificate', v.secCertPath),
+                        _document('BIR Form 2303', v.bir2303Path),
+                        _document('Board resolution', v.boardResolutionPath),
+                      ] else ...[
+                        _document('Government ID (front)', v.govIdFrontPath),
+                        _document('Selfie with ID', v.selfieIdPath),
+                      ],
+                      const Divider(height: 32),
+                      TextField(
+                        controller: _note,
+                        enabled: !_busy && v.isPending,
+                        minLines: 3,
+                        maxLines: 6,
+                        maxLength: 1000,
+                        decoration: const InputDecoration(
+                          labelText: 'Review note (required)',
+                          helperText: '10–1000 characters. Explain the evidence reviewed and your decision.',
+                          helperMaxLines: 4,
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      if (_error != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Semantics(
+                            liveRegion: true,
+                            child: Text(
+                              _error!,
+                              style: const TextStyle(color: Color(0xFF93000A)),
+                            ),
+                          ),
+                        ),
+                      if (actor == null || actor.isEmpty)
+                        const Text('Sign in again before making a decision.'),
+                      if (!v.isPending)
+                        const Text(
+                          'This submission has already been reviewed. Decisions are available only for pending submissions.',
+                        ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Review note is required for Request changes and Rejection. It will be sent to the provider.',
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: [
+                          OutlinedButton(
+                            onPressed: canDecide
+                                ? () => _decide('changes_requested')
+                                : null,
+                            child: const Text('Request changes'),
+                          ),
+                          FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: const Color(0xFF93000A),
+                            ),
+                            onPressed: canDecide
+                                ? () => _decide('rejected')
+                                : null,
+                            child: const Text('Reject'),
+                          ),
+                          FilledButton(
+                            style: FilledButton.styleFrom(
+                              backgroundColor: _green,
+                            ),
+                            onPressed: canDecide
+                                ? () => _decide('approved')
+                                : null,
+                            child: const Text('Approve'),
+                          ),
+                        ],
+                      ),
+                      if (_saving)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 12),
+                          child: LinearProgressIndicator(
+                            semanticsLabel: 'Saving review decision',
+                          ),
+                        ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    v.displayName,
-                    style: AppTypography.style(AppTextRole.cardTitle, base: Theme.of(context).textTheme.titleMedium),
-                  ),
-                  Text(
-                    '${_statusLabel(v.status)} • Submitted ${_date(v.submittedAt)}',
-                  ),
-                  const SizedBox(height: 16),
-                   Text(
-                    'Submitted information',
-                    style: AppTypography.style(AppTextRole.sectionTitle, color: _green),
-                  ),
-                  const Text(
-                    'These are provider declarations and uploads. Their presence does not establish authenticity or available funding.',
-                  ),
-                  if (org) ...[
-                    _info('Organization type', v.orgType),
-                    _info('Registration number (masked)', v.maskedIdNumber),
-                    _info('Representative', v.repName),
-                    _info('Position', v.repPosition),
-                    _info('Email', v.repEmail),
-                    _info('Phone', v.repPhone),
-                  ] else ...[
-                    _info('Email', v.email),
-                    _info('Phone', v.phone),
-                    _info('Government ID type', v.govIdType),
-                    _info('ID number (masked)', v.maskedIdNumber),
-                    _info('Stated source of funds', v.sourceOfFunds),
-                    _info('Proposed giving budget', v.monthlyGivingBudget),
-                    _info('TIN (masked)', v.maskedTin),
-                  ],
-                  const Divider(height: 32),
-                   Text(
-                    'Submitted documents',
-                    style: AppTypography.style(AppTextRole.sectionTitle, color: _green),
-                  ),
-                  const Text(
-                    'Available files open through a temporary private link. Review their contents before deciding.',
-                  ),
-                  if (org) ...[
-                    _document('SEC certificate', v.secCertPath),
-                    _document('BIR Form 2303', v.bir2303Path),
-                    _document('Board resolution', v.boardResolutionPath),
-                  ] else ...[
-                    _document('Government ID (front)', v.govIdFrontPath),
-                    _document('Selfie with ID', v.selfieIdPath),
-                  ],
-                  const Divider(height: 32),
-                  TextField(
-                    controller: _note,
-                    enabled: !_busy && v.isPending,
-                    minLines: 3,
-                    maxLines: 6,
-                    maxLength: 1000,
-                    decoration: const InputDecoration(
-                      labelText: 'Review note (required)',
-                      helperText: '10–1000 characters. Explain the evidence reviewed and your decision.',
-                      helperMaxLines: 4,
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  if (_error != null)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Semantics(
-                        liveRegion: true,
-                        child: Text(
-                          _error!,
-                          style: AppTypography.style(AppTextRole.caption, color: Color(0xFF93000A)),
-                        ),
-                      ),
-                    ),
-                  if (actor == null || actor.isEmpty)
-                    const Text('Sign in again before making a decision.'),
-                  if (!v.isPending)
-                    const Text(
-                      'This submission has already been reviewed. Decisions are available only for pending submissions.',
-                    ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    'Review note is required for Request changes and Rejection. It will be sent to the provider.',
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: [
-                      OutlinedButton(
-                        onPressed: canDecide
-                            ? () => _decide('changes_requested')
-                            : null,
-                        child: const Text('Request changes'),
-                      ),
-                      FilledButton(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF93000A),
-                        ),
-                        onPressed: canDecide ? () => _decide('rejected') : null,
-                        child: const Text('Reject'),
-                      ),
-                      FilledButton(
-                        style: FilledButton.styleFrom(backgroundColor: _green),
-                        onPressed: canDecide ? () => _decide('approved') : null,
-                        child: const Text('Approve'),
-                      ),
-                    ],
-                  ),
-                  if (_saving)
-                    const Padding(
-                      padding: EdgeInsets.only(top: 12),
-                      child: LinearProgressIndicator(
-                        semanticsLabel: 'Saving review decision',
-                      ),
-                    ),
-                ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    ),
-  ),
-);
+    );
   }
 
   Widget _info(String label, String? value) => Padding(
@@ -561,7 +576,7 @@ class _ProviderReviewDialogState extends ConsumerState<_ProviderReviewDialog> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: AppTypography.style(AppTextRole.label, color: Color(0xFF555D58))),
+        Text(label, style: const TextStyle(color: Color(0xFF555D58))),
         SelectableText(
           value?.trim().isNotEmpty == true ? value! : 'Not provided',
         ),

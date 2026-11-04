@@ -1,0 +1,15 @@
+{
+  "latestUiCommit": "78c377810df0ce3fd37e4f50fc663566fc2e31b4",
+  "protected": [
+    {
+      "file": "landing/index.html",
+      "unchanged": true
+    },
+    {
+      "file": "docs/reviews/2026-10-28-final-checking-readiness.md",
+      "unchanged": true
+    }
+  ],
+  "legacyFontFiles": "Original Medium/SemiBold assets preserved; only Inter is registered.",
+  "archives": "No archive files were modified or built."
+}

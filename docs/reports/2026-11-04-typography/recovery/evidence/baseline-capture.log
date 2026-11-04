@@ -1,0 +1,32 @@
+00:00 +0: loading C:/scholaris/test/typography_visual_capture_test.dart
+00:00 +0: C:/scholaris/test/current_ui_visual_capture_test.dart: (setUpAll)
+00:00 +0: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 320.0 text 1.0
+00:00 +1: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 320.0 text 1.0
+00:00 +2: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 320.0 text 1.0
+00:00 +3: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-1 at 320.0 matched capture
+00:00 +4: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 320.0 text 2.0
+00:01 +5: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 320.0 text 2.0
+00:01 +6: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-2 at 320.0 matched capture
+00:01 +7: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 1.0
+00:01 +8: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 1.0
+00:01 +9: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-3 at 320.0 matched capture
+00:01 +10: C:/scholaris/test/current_ui_visual_capture_test.dart: current Home at 390.0 text 2.0
+00:01 +11: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-3 at 390.0 matched capture
+00:01 +12: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-4 at 320.0 matched capture
+00:01 +13: C:/scholaris/test/typography_visual_capture_test.dart: onboarding-feature-4 at 390.0 matched capture
+00:01 +14: C:/scholaris/test/typography_visual_capture_test.dart: authentication at 320.0 matched capture
+00:01 +15: C:/scholaris/test/typography_visual_capture_test.dart: authentication at 390.0 matched capture
+00:01 +16: C:/scholaris/test/typography_visual_capture_test.dart: authentication-errors at 320.0 matched capture
+00:02 +17: C:/scholaris/test/typography_visual_capture_test.dart: authentication-errors at 390.0 matched capture
+00:02 +18: C:/scholaris/test/typography_visual_capture_test.dart: provider-organization at 320.0 matched capture
+00:02 +19: C:/scholaris/test/typography_visual_capture_test.dart: provider-organization at 390.0 matched capture
+00:02 +20: C:/scholaris/test/typography_visual_capture_test.dart: provider-individual at 320.0 matched capture
+00:02 +21: C:/scholaris/test/typography_visual_capture_test.dart: provider-individual at 390.0 matched capture
+00:03 +22: C:/scholaris/test/typography_visual_capture_test.dart: admin at 320.0 matched capture
+00:03 +23: C:/scholaris/test/typography_visual_capture_test.dart: admin at 390.0 matched capture
+00:03 +24: C:/scholaris/test/typography_visual_capture_test.dart: scholarship-card at 320.0 matched capture
+00:03 +25: C:/scholaris/test/typography_visual_capture_test.dart: scholarship-card at 390.0 matched capture
+00:03 +26: C:/scholaris/test/typography_visual_capture_test.dart: logout-dialog at 320.0 matched capture
+00:03 +27: C:/scholaris/test/typography_visual_capture_test.dart: logout-dialog at 390.0 matched capture
+00:03 +28: C:/scholaris/test/typography_visual_capture_test.dart: (tearDownAll)
+00:03 +28: All tests passed!

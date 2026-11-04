@@ -15,10 +15,7 @@ import '../../providers/avatar_provider.dart';
 import 'avatar_display.dart';
 
 class AvatarSelectorSheet extends ConsumerWidget {
-  const AvatarSelectorSheet({
-    super.key,
-    required this.userId,
-  });
+  const AvatarSelectorSheet({super.key, required this.userId});
 
   final String userId;
 
@@ -65,18 +62,33 @@ class AvatarSelectorSheet extends ConsumerWidget {
                     children: [
                       Text(
                         'Profile Avatar',
-                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kNavyTrust, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          fontSize: 17,
+                          color: kNavyTrust,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       Text(
                         'Choose a cartoon doodle or upload a real photo.',
-                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: const Color(0xFF707971), letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.subtitle,
+                          fontSize: 12,
+                          color: const Color(0xFF707971),
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close_rounded),
-                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                  constraints: const BoxConstraints(
+                    minWidth: 44,
+                    minHeight: 44,
+                  ),
                   padding: const EdgeInsets.all(10),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
@@ -93,12 +105,22 @@ class AvatarSelectorSheet extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF8D6E63)),
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: Color(0xFF8D6E63),
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Note: Doodle avatars are great for browsing, but submitting applications requires a verified face photo for scholarship committee deliberation.',
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFF5D4037), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 11,
+                        color: const Color(0xFF5D4037),
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ],
@@ -121,13 +143,27 @@ class AvatarSelectorSheet extends ConsumerWidget {
                     avatarState.isRealPhoto
                         ? 'Verified Real Photo'
                         : AvatarItem.findById(avatarState.avatarId).name,
-                    style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 13,
+                      color: kNavyTrust,
+                      height: 1.2,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                   Text(
                     avatarState.isRealPhoto
                         ? 'Eligible for scholarship deliberation'
                         : 'Placeholder Avatar',
-                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: avatarState.isRealPhoto ? kPrimary : const Color(0xFFBA1A1A), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.subtitle,
+                      fontSize: 11,
+                      color: avatarState.isRealPhoto
+                          ? kPrimary
+                          : const Color(0xFFBA1A1A),
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -136,7 +172,13 @@ class AvatarSelectorSheet extends ConsumerWidget {
 
             Text(
               'Cartoon Doodle Avatars',
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 13,
+                color: kNavyTrust,
+                height: 1.2,
+                letterSpacing: -0.15,
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -150,7 +192,8 @@ class AvatarSelectorSheet extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final preset = AvatarItem.presets[index];
                   final isSelected =
-                      !avatarState.isRealPhoto && avatarState.avatarId == preset.id;
+                      !avatarState.isRealPhoto &&
+                      avatarState.avatarId == preset.id;
 
                   return PressableScale(
                     child: Semantics(
@@ -165,52 +208,72 @@ class AvatarSelectorSheet extends ConsumerWidget {
                         },
                         child: Container(
                           width: 72,
-                        padding: const EdgeInsets.symmetric(vertical: 6),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? kPrimary.withValues(alpha: 0.08)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected ? kPrimary : Colors.transparent,
-                            width: 2,
+                          padding: const EdgeInsets.symmetric(vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? kPrimary.withValues(alpha: 0.08)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isSelected ? kPrimary : Colors.transparent,
+                              width: 2,
+                            ),
                           ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            AvatarDisplay(
-                              avatarId: preset.id,
-                              isRealPhoto: false,
-                              size: 46,
-                              showVerifiedBadge: false,
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              preset.name.split(' ').first,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTypography.style(AppTextRole.label, fontSize: 10, color: isSelected ? kPrimary : const Color(0xFF404942), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
-                            ),
-                          ],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              AvatarDisplay(
+                                avatarId: preset.id,
+                                isRealPhoto: false,
+                                size: 46,
+                                showVerifiedBadge: false,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                preset.name.split(' ').first,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 10,
+                                  color: isSelected
+                                      ? kPrimary
+                                      : const Color(0xFF404942),
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
               ),
             ),
             const SizedBox(height: 18),
 
             Text(
               'Identity Verification Photo',
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: kNavyTrust, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 13,
+                color: kNavyTrust,
+                height: 1.2,
+                letterSpacing: -0.15,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
               'Scholarship providers require a real photograph for official verification.',
-              style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: const Color(0xFF707971), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                fontSize: 11,
+                color: const Color(0xFF707971),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 10),
 
@@ -227,18 +290,32 @@ class AvatarSelectorSheet extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      icon: const Icon(Icons.camera_alt_rounded, size: 18, color: kPrimary),
+                      icon: const Icon(
+                        Icons.camera_alt_rounded,
+                        size: 18,
+                        color: kPrimary,
+                      ),
                       label: Text(
                         'Take Photo',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 12,
+                          color: kPrimary,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       onPressed: () async {
                         HapticFeedback.lightImpact();
-                        await notifier.uploadRealPhoto(path: 'camera_photo_$userId.jpg');
+                        await notifier.uploadRealPhoto(
+                          path: 'camera_photo_$userId.jpg',
+                        );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Verified real photo set successfully!'),
+                              content: Text(
+                                'Verified real photo set successfully!',
+                              ),
                               backgroundColor: Color(0xFF145131),
                             ),
                           );
@@ -264,15 +341,24 @@ class AvatarSelectorSheet extends ConsumerWidget {
                       icon: const Icon(Icons.photo_library_rounded, size: 18),
                       label: Text(
                         'From Gallery',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 12,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       onPressed: () async {
                         HapticFeedback.lightImpact();
-                        await notifier.uploadRealPhoto(path: 'gallery_photo_$userId.jpg');
+                        await notifier.uploadRealPhoto(
+                          path: 'gallery_photo_$userId.jpg',
+                        );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Verified real photo uploaded successfully!'),
+                              content: Text(
+                                'Verified real photo uploaded successfully!',
+                              ),
                               backgroundColor: Color(0xFF145131),
                             ),
                           );

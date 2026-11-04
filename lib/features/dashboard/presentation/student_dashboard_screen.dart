@@ -2,17 +2,15 @@ import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // lib/features/dashboard/presentation/student_dashboard_screen.dart
 //
-// 100% Stitch V2 Student Dashboard Screen.
-// Implements design-reference/stitch_scholaris_mobile_app/scholaris_student_dashboard/code.html
+// Scholaris student overview: current application, saved work and opportunities.
 //
 // Features:
 // - Sticky header with Scholaris logo, notifications, and account settings
 // - Personalized greeting with student name & daily opportunities counter
-// - Compact graduate hero with a live match summary and Explore matches action
+// - Contextual application progress or a compact introduction to matches
 // - 3 Quick-Stat tactile tiles: Saved, In Progress, Action Needed
 // - Recommended for you section with scholarship cards and a See all action
 // - "Pro-Tip for Applicants" bento box with gold lightbulb badge and statistical insight
-
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -35,11 +33,19 @@ import 'package:scholaris/shared/theme/app_motion.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/scholarship_card.dart';
-
+import 'package:scholaris/shared/widgets/mascot_pose_view.dart';
+import 'package:scholaris/shared/widgets/greeting_mascot.dart';
+import 'package:scholaris/shared/widgets/typography_diagnostics.dart';
 
 class StudentDashboardScreen extends ConsumerStatefulWidget {
-  const StudentDashboardScreen({super.key, this.savedGuideKey, this.progressGuideKey, this.scrollController,
-    this.recommendationsGuideKey, this.detailsGuideKey});
+  const StudentDashboardScreen({
+    super.key,
+    this.savedGuideKey,
+    this.progressGuideKey,
+    this.scrollController,
+    this.recommendationsGuideKey,
+    this.detailsGuideKey,
+  });
   final GlobalKey? savedGuideKey;
   final GlobalKey? progressGuideKey;
   final ScrollController? scrollController;
@@ -53,11 +59,13 @@ class StudentDashboardScreen extends ConsumerStatefulWidget {
 
 class _StudentDashboardScreenState
     extends ConsumerState<StudentDashboardScreen> {
-  Widget _wrapSection({required int index, required Widget child}) => StudentTabReveal(
-    order: const [0, 1, 2, 3, 4, 5][index.clamp(0, 5)],
+  Widget _wrapSection({required int index, required Widget child}) =>
+      StudentTabReveal(
+        order: const [0, 1, 2, 3, 4, 5][index.clamp(0, 5)],
         structural: index < 5,
         immediate: index <= 2,
-        child: child);
+        child: child,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +80,22 @@ class _StudentDashboardScreenState
       ref.watch(applicationsProvider).valueOrNull ?? const <Application>[],
     );
 
-    final info = dashboardAsync.valueOrNull ??
+    // A saved-set update briefly recomputes the aggregate. Keep its existing
+    // layout while the source data is ready, but hide retained data when an
+    // auth transition or real source refresh is still loading.
+    final sourcesReady = [
+      profileAsync,
+      matchesAsync,
+      ref.watch(scholarshipsProvider),
+      ref.watch(applicationsProvider),
+      ref.watch(bookmarksProvider),
+    ].every((value) => value.hasValue && !value.isLoading && !value.hasError);
+    final summaryReady =
+        dashboardAsync.hasValue &&
+        !dashboardAsync.hasError &&
+        (!dashboardAsync.isLoading || sourcesReady);
+    final info =
+        (summaryReady ? dashboardAsync.valueOrNull : null) ??
         const DashboardInfo(
           matchCount: 0,
           closingSoonCount: 0,
@@ -88,7 +111,9 @@ class _StudentDashboardScreenState
         : 'Student';
 
     // Calculate total matched value in Philippine Peso for downstream recommendations
-    final opportunitiesCount = info.matchCount > 0 ? info.matchCount : matches.length;
+    final opportunitiesCount = info.matchCount > 0
+        ? info.matchCount
+        : matches.length;
     final effectiveOpportunityCount = opportunitiesCount;
 
     final rawApps =
@@ -123,57 +148,41 @@ class _StudentDashboardScreenState
               ),
               padding: EdgeInsets.fromLTRB(
                 20,
-                16,
+                4,
                 20,
                 MediaQuery.of(context).padding.bottom + 64 + 16,
               ),
               children: [
                 // 1. Sticky Header
-                _wrapSection(
-                  index: 0,
-                  child: _buildHeader(context),
-                ),
+                _wrapSection(index: 0, child: _buildHeader(context)),
                 const SizedBox(height: 16),
 
                 // 2. Date & Dynamic Tagalog Greeting
                 _wrapSection(
                   index: 1,
-                  child: _buildDateAndGreeting(greetingName),
-                ),
-                const SizedBox(height: 6),
-
-                // 3. Free-Floating Mascot Hero Section
-                _wrapSection(
-                  index: 2,
-                  child: _buildMascotHeroSection(
+                  child: _buildDateAndGreeting(
+                    greetingName,
                     profile: profile,
-                    matchCount: matchesAsync.hasError ? null : matchesAsync.valueOrNull?.length,
+                    profileLoading: profileAsync.isLoading,
+                    matchCount: matchesAsync.valueOrNull?.length,
                     matchesFailed: matchesAsync.hasError,
                   ),
                 ),
-                const SizedBox(height: 16),
-
+                const SizedBox(height: 12),
                 if (activeApp != null) ...[
                   _wrapSection(
-                    index: 3,
+                    index: 2,
                     child: _buildActiveAppBanner(context, ref, activeApp),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                 ],
 
                 // 4. Quick-Stat 3-Tile Grid
                 _wrapSection(
                   index: 4,
-                  child: _buildQuickStatGrid(
-                    context,
-                    ref,
-                    info,
-                    ref.watch(applicationsProvider).hasValue
-                        ? ref.watch(applicationsProvider).value!.where(ApplicationFilters.isActive).length
-                        : info.appliedCount,
-                  ),
+                  child: _buildQuickStatGrid(context, ref, info, summaryReady),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 28),
 
                 // 4b. Deadline Alert & Urgency Sections (when closing soon)
                 if (info.closingSoonCount > 0) ...[
@@ -201,10 +210,7 @@ class _StudentDashboardScreenState
                 const SizedBox(height: 20),
 
                 // 6. Pro-Tip for Applicants Bento Box
-                _wrapSection(
-                  index: 5,
-                  child: _buildProTipBentoBox(),
-                ),
+                _wrapSection(index: 5, child: _buildProTipBentoBox()),
               ],
             ),
           ),
@@ -214,52 +220,62 @@ class _StudentDashboardScreenState
   }
 
   // --- 1. Sticky Header ---
-  Widget _buildHeader(
-    BuildContext context,
-  ) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Scholaris Brand Logo
-        Expanded(child: StudentTabReveal(
-          order: 0,
-          immediate: true,
-          child: FittedBox(fit: BoxFit.scaleDown, alignment: Alignment.centerLeft, child: Row(
+  Widget _buildHeader(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final brand = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: const Color(0xFF0F4D2E), // primary-container
+                color: kPrimary,
                 borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF0F4D2E).withValues(alpha: 0.15),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
-              child: const Center(
-                child: Icon(
-                  Icons.school_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
+              child: const Icon(
+                Icons.school_rounded,
+                color: Colors.white,
+                size: 20,
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              'Scholaris',
-              style: AppTypography.style(AppTextRole.label, fontSize: 20, color: const Color(0xFF161C27), letterSpacing: -0.5, height: opticalLeading(20, isBody: false)),
+            Flexible(
+              child: GestureDetector(
+                onLongPress: () => showTypographyDiagnostics(context),
+                child: Text(
+                  'Scholaris',
+                  style: AppTypography.style(
+                    AppTextRole.screenTitle,
+                    fontSize: 18,
+                    height: 1.25,
+                    color: kTextPrimary,
+                    letterSpacing: -0.15,
+                  ),
+                ),
+              ),
             ),
           ],
-          )),
-        )),
-
-        const StudentHeaderActions(),
-      ],
+        );
+        if (MediaQuery.textScalerOf(context).scale(20) > 26) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              brand,
+              const Align(
+                alignment: Alignment.centerRight,
+                child: StudentHeaderActions(),
+              ),
+            ],
+          );
+        }
+        return Row(
+          children: [
+            Expanded(child: brand),
+            const StudentHeaderActions(),
+          ],
+        );
+      },
     );
   }
 
@@ -310,17 +326,19 @@ class _StudentDashboardScreenState
           },
           borderRadius: BorderRadius.circular(kRadiusCard),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: kSoftCardDecoration,
             child: Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: app.status == ApplicationStatus.underReview ? const Color(0xFFFEF3D6) : bgColor.withValues(alpha: 0.25),
+                    color: app.status == ApplicationStatus.underReview
+                        ? const Color(0xFFFEF3D6)
+                        : bgColor.withValues(alpha: 0.25),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, size: 16, color: iconColor),
+                  child: Icon(icon, size: 15, color: iconColor),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -329,13 +347,24 @@ class _StudentDashboardScreenState
                     children: [
                       Text(
                         title,
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: const Color(0xFF161C27), letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.cardTitle,
+                          fontSize: 13,
+                          height: 1.3,
+                          color: kTextPrimary,
+                          letterSpacing: -.15,
+                        ),
                       ),
+                      const SizedBox(height: 2),
                       Text(
                         subtitle,
-                        style: AppTypography.style(AppTextRole.subtitle, fontSize: 14, height: 1.4, color: const Color(0xFF404942), letterSpacing: opticalTracking(14)),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.style(
+                          AppTextRole.subtitle,
+                          fontSize: 13,
+                          color: kTextSecondary,
+                          height: 1.45,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -355,7 +384,13 @@ class _StudentDashboardScreenState
   }
 
   // --- 2. Dynamic Date & Tagalog Greeting ---
-  Widget _buildDateAndGreeting(String greetingName) {
+  Widget _buildDateAndGreeting(
+    String greetingName, {
+    required StudentProfile? profile,
+    required bool profileLoading,
+    required int? matchCount,
+    required bool matchesFailed,
+  }) {
     final now = DateTime.now();
     final dateStr = _formatDate(now);
     final greetingStr = '${_getTagalogGreeting(now)}, $greetingName!';
@@ -365,12 +400,96 @@ class _StudentDashboardScreenState
       children: [
         Text(
           dateStr,
-          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF657168), letterSpacing: 0.8, height: opticalLeading(12, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 11,
+            height: 1.3,
+            color: kTextSupporting,
+            letterSpacing: .6,
+          ),
         ),
-        const SizedBox(height: 3),
-        Text(
-          greetingStr,
-          style: AppTypography.style(AppTextRole.display, fontSize: 28, color: const Color(0xFF0F4D2E), letterSpacing: -0.5, height: opticalLeading(28, isBody: false)),
+        const SizedBox(height: 12),
+        LayoutBuilder(
+          key: const ValueKey('student-home-welcome-card'),
+          builder: (context, constraints) {
+            final baseWidth = constraints.maxWidth < 330 ? 118.0 : 130.0;
+            final portraitWidth =
+                getMascotName(gender: profile?.gender) == 'Ari'
+                ? baseWidth
+                : baseWidth * 1.05;
+            final word = TextPainter(
+              text: TextSpan(
+                text: 'Magandang',
+                style: AppTypography.style(
+                  AppTextRole.screenTitle,
+                  fontSize: 20,
+                  height: 1.2,
+                  color: kPrimary,
+                  letterSpacing: -.4,
+                ),
+              ),
+              textDirection: Directionality.of(context),
+              textScaler: MediaQuery.textScalerOf(context),
+            )..layout();
+            final stacked =
+                constraints.maxWidth - portraitWidth - 16 < word.width + 12;
+            word.dispose();
+            final content = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  greetingStr,
+                  style: AppTypography.style(
+                    AppTextRole.screenTitle,
+                    fontSize: 20,
+                    height: 1.2,
+                    color: kPrimary,
+                    letterSpacing: -.4,
+                  ).copyWith(color: kOnSurface),
+                ),
+                const SizedBox(height: 8),
+                _buildMatchIntroduction(
+                  profileLoading: profileLoading,
+                  matchCount: matchCount,
+                  matchesFailed: matchesFailed,
+                ),
+              ],
+            );
+            final portrait = SizedBox(
+              key: const ValueKey('student-home-companion'),
+              width: portraitWidth,
+              height: getMascotName(gender: profile?.gender) == 'Ari'
+                  ? 148
+                  : 158,
+              child: profile == null
+                  ? null
+                  : GreetingMascotPortrait(
+                      gender: profile.gender,
+                      height: getMascotName(gender: profile.gender) == 'Ari'
+                          ? 148
+                          : 158,
+                    ),
+            );
+            if (stacked) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(child: portrait),
+                  const SizedBox(height: 12),
+                  content,
+                ],
+              );
+            }
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                portrait,
+                const SizedBox(width: 16),
+                Expanded(child: content),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -418,87 +537,61 @@ class _StudentDashboardScreenState
     }
   }
 
-  // One quiet hero with real text and a real, accessible action.
-  Widget _buildMascotHeroSection({
-    required StudentProfile? profile,
+  Widget _buildMatchIntroduction({
+    required bool profileLoading,
     required int? matchCount,
     required bool matchesFailed,
   }) {
-    if (profile == null) {
-      return const SizedBox(key: ValueKey('student-hero-loading'), height: 220);
-    }
-    final isFemale = profile.gender?.trim().toLowerCase() == 'female';
-    final asset = isFemale
-        ? 'assets/images/student_hero_graduate_campus_female.png'
-        : 'assets/images/student_hero_graduate_campus.png';
-    final matchDescription = matchCount == 1 ? 'scholarship matches' : 'scholarships match';
-    final countLabel = matchesFailed ? 'Matches unavailable' : matchCount == null
-        ? 'Finding matches…' : '$matchCount $matchDescription your profile.';
-    final summaryStyle = AppTypography.style(AppTextRole.body,
-      fontSize: 13, height: 1.4, color: const Color(0xFF485356));
-    final summary = Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-      Text('YOUR NEXT CHAPTER', style: AppTypography.style(AppTextRole.label, fontSize: 11, color: const Color(0xFF485356), letterSpacing: .15)),
-      const SizedBox(height: 8),
-      Text('Find your next opportunity.',
-        style: AppTypography.style(AppTextRole.display, fontSize: 22, color: kPrimary, height: 1.15, letterSpacing: -.5)),
-      const SizedBox(height: 10),
-      Text.rich(
-        matchesFailed || matchCount == null
-          ? TextSpan(text: countLabel)
-          : TextSpan(children: [
-              TextSpan(text: '$matchCount',
-                style: AppTypography.style(AppTextRole.metric, base: summaryStyle)),
-              TextSpan(text: ' $matchDescription your profile.'),
-            ]),
-        key: const ValueKey('stat-count-matches'),
-        style: summaryStyle,
-      ),
-      const SizedBox(height: 12),
-      Padding(
-        padding: const EdgeInsets.only(left: 12),
-        child: FilledButton(
+    final matchVerb = matchCount == 1
+        ? 'scholarship matches'
+        : 'scholarships match';
+    final countLabel = matchesFailed
+        ? 'Matches unavailable'
+        : profileLoading
+        ? 'Getting your overview…'
+        : matchCount == null
+        ? 'Finding matches…'
+        : '$matchCount $matchVerb your profile.';
+    return Column(
+      key: profileLoading ? const ValueKey('student-overview-loading') : null,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          countLabel,
+          key: const ValueKey('stat-count-matches'),
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            fontSize: 13,
+            color: kTextSecondary,
+            height: 1.45,
+            letterSpacing: 0,
+          ),
+        ),
+        const SizedBox(height: 12),
+        TextButton.icon(
           onPressed: () {
             HapticFeedback.lightImpact();
             ref.read(homeTabIndexProvider.notifier).selectTab(1);
           },
-          style: FilledButton.styleFrom(backgroundColor: kPrimary, foregroundColor: Colors.white,
-            minimumSize: const Size(0, 44), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
-          child: const Text('Explore matches'),
+          style: TextButton.styleFrom(
+            minimumSize: const Size(44, 44),
+            foregroundColor: kPrimary,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.zero,
+          ),
+          label: Text(
+            'Explore matches',
+            style: AppTypography.style(
+              AppTextRole.button,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
+          ),
+          icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+          iconAlignment: IconAlignment.end,
         ),
-      ),
-    ]);
-    Widget portrait(double height) => Transform.scale(
-      scale: isFemale ? .94 : 1,
-      alignment: Alignment.bottomLeft,
-      child: Image.asset(asset, height: height, fit: BoxFit.contain,
-        alignment: Alignment.bottomLeft, excludeFromSemantics: true));
-    return Padding(
-      padding: const EdgeInsets.only(top: 18),
-      child: LayoutBuilder(builder: (context, box) {
-        final stacked = box.maxWidth < 320 || MediaQuery.textScalerOf(context).scale(14) > 20;
-        return Stack(clipBehavior: Clip.none, children: [
-          Positioned.fill(child: ClipRRect(borderRadius: BorderRadius.circular(kRadiusCard),
-            child: Stack(children: [
-              const Positioned.fill(child: ColoredBox(color: Color(0xFFEDF4EF))),
-              Positioned(left: -65, top: -20, width: 280, height: 360,
-                child: DecoratedBox(decoration: BoxDecoration(
-                  color: const Color(0xFFE0EDE1), borderRadius: BorderRadius.circular(160)))),
-            ]))),
-          if (stacked)
-            Padding(padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Center(child: Transform.translate(offset: const Offset(0, -24), child: portrait(210))),
-                summary,
-              ]))
-          else ...[
-            Padding(padding: EdgeInsets.fromLTRB(box.maxWidth * .5, 24, 16, 20), child: summary),
-            Positioned(left: 0, top: -18, bottom: 0, width: box.maxWidth * .55,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(kRadiusCard)),
-                child: portrait(290))),
-          ],
-        ]);
-      }),
+      ],
     );
   }
 
@@ -507,68 +600,95 @@ class _StudentDashboardScreenState
     BuildContext context,
     WidgetRef ref,
     DashboardInfo info,
-    int appliedCount,
+    bool summaryReady,
   ) {
     final urgentCount = info.closingSoonCount;
 
-    return Row(
-      children: [
-        // Tile 1: Saved
-        Expanded(
-          key: widget.savedGuideKey,
-          child: _StatCard(
-            itemKey: const ValueKey('stat-chip-saved'),
-            countKey: const ValueKey('stat-count-saved'),
-            icon: Icons.bookmark_rounded,
-            iconBg: const Color(0xFFE4EEE6),
-            iconColor: kPrimary,
-            count: '${info.savedCount}',
-            label: 'Saved',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SavedScreen()),
-              );
-            },
-          ),
+    final tiles = <Widget>[
+      // Tile 1: Saved
+      SizedBox(
+        key: widget.savedGuideKey,
+        child: _StatCard(
+          itemKey: const ValueKey('stat-chip-saved'),
+          countKey: const ValueKey('stat-count-saved'),
+          icon: Icons.bookmark_rounded,
+          iconBg: const Color(0xFFE4EEE6),
+          iconColor: kPrimary,
+          count: summaryReady ? '${info.savedCount}' : '—',
+          label: 'Saved',
+          onTap: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const SavedScreen()));
+          },
         ),
-        const SizedBox(width: 10),
+      ),
 
-        // Tile 2: In Progress
-        Expanded(
-          key: widget.progressGuideKey,
-          child: _StatCard(
-            itemKey: const ValueKey('stat-chip-applied'),
-            countKey: const ValueKey('stat-count-applied'),
-            icon: Icons.pending_actions_rounded,
-            iconBg: const Color(0xFFE4EEE6),
-            iconColor: kPrimary,
-            count: '$appliedCount',
-            label: 'In Progress',
-            onTap: () {
-              ref.read(homeTabIndexProvider.notifier).selectTab(2);
-            },
-          ),
+      // Tile 2: In Progress
+      SizedBox(
+        key: widget.progressGuideKey,
+        child: _StatCard(
+          itemKey: const ValueKey('stat-chip-applied'),
+          countKey: const ValueKey('stat-count-applied'),
+          icon: Icons.pending_actions_rounded,
+          iconBg: const Color(0xFFE4EEE6),
+          iconColor: kPrimary,
+          count: summaryReady ? '${info.appliedCount}' : '—',
+          label: 'In Progress',
+          onTap: () {
+            ref.read(homeTabIndexProvider.notifier).selectTab(2);
+          },
         ),
-        const SizedBox(width: 10),
+      ),
 
-        // Tile 3: Action Needed
-        Expanded(
-          child: _StatCard(
-            itemKey: const ValueKey('stat-chip-urgent'),
-            countKey: const ValueKey('stat-count-closing-soon'),
-            icon: Icons.notification_important_rounded,
-            iconBg: urgentCount > 0 ? const Color(0xFFFEF3D6) : const Color(0xFFE4EEE6),
-            iconColor: urgentCount > 0 ? const Color(0xFFD97706) : kPrimary,
-            count: urgentCount > 0 ? '$urgentCount Action' : '0 Action',
-            rawCount: '$urgentCount',
-            label: urgentCount > 0 ? 'Closing soon' : 'Up to date',
-            isUrgent: urgentCount > 0,
-            onTap: () {
-              ref.read(homeTabIndexProvider.notifier).selectTab(2);
-            },
-          ),
+      // Tile 3: Action Needed
+      SizedBox(
+        child: _StatCard(
+          itemKey: const ValueKey('stat-chip-urgent'),
+          countKey: const ValueKey('stat-count-closing-soon'),
+          icon: Icons.notification_important_rounded,
+          iconBg: urgentCount > 0
+              ? const Color(0xFFFEF3D6)
+              : const Color(0xFFE4EEE6),
+          iconColor: urgentCount > 0 ? const Color(0xFFD97706) : kPrimary,
+          count: !summaryReady
+              ? '—'
+              : urgentCount > 0
+              ? '$urgentCount Action'
+              : '0 Action',
+          rawCount: summaryReady ? '$urgentCount' : '—',
+          label: !summaryReady || urgentCount > 0
+              ? 'Closing soon'
+              : 'Up to date',
+          isUrgent: urgentCount > 0,
+          onTap: () {
+            ref.read(homeTabIndexProvider.notifier).selectTab(2);
+          },
         ),
-      ],
+      ),
+    ];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stacked = MediaQuery.textScalerOf(context).scale(13) > 18;
+        if (stacked) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < tiles.length; i++) ...[
+                if (i > 0) const SizedBox(height: 8),
+                tiles[i],
+              ],
+            ],
+          );
+        }
+        return Row(
+          children: [
+            for (var i = 0; i < tiles.length; i++) ...[
+              if (i > 0) const SizedBox(width: 10),
+              Expanded(child: tiles[i]),
+            ],
+          ],
+        );
+      },
     );
   }
 
@@ -585,75 +705,102 @@ class _StudentDashboardScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StudentTabReveal(order: 1,
+        StudentTabReveal(
+          order: 1,
           structural: true,
-          child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Text(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final heading = Text(
                 'Recommended for you',
                 key: widget.recommendationsGuideKey,
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 21, color: const Color(0xFF161C27), letterSpacing: -0.34, height: opticalLeading(21, isBody: false)),
-              ),
-            ),
-            const SizedBox(width: 8),
-            PressableScale(
-              child: InkWell(
-                borderRadius: BorderRadius.circular(6),
-                onTap: () {
-                  ref.read(homeTabIndexProvider.notifier).selectTab(1);
-                },
-                child: Container(
-                  constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          totalCount > 0 ? 'See all ($totalCount)' : 'See all',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 12.5, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
-                        ),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          size: 16,
-                          color: Color(0xFF0F4D2E),
-                        ),
-                      ],
-                    ),
-                  ),
+                style: AppTypography.style(
+                  AppTextRole.screenTitle,
+                  fontSize: 17,
+                  height: 1.25,
+                  color: kTextPrimary,
+                  letterSpacing: -0.15,
                 ),
-              ),
-            ),
-          ],
-        )),
+              );
+              final action = TextButton(
+                onPressed: () =>
+                    ref.read(homeTabIndexProvider.notifier).selectTab(1),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(44, 44),
+                  foregroundColor: kPrimary,
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      totalCount > 0 ? 'See all ($totalCount)' : 'See all',
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right_rounded, size: 16),
+                  ],
+                ),
+              );
+              if (MediaQuery.textScalerOf(context).scale(18) > 26) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    heading,
+                    Align(alignment: Alignment.centerRight, child: action),
+                  ],
+                );
+              }
+              return Row(
+                children: [
+                  Expanded(child: heading),
+                  const SizedBox(width: 12),
+                  action,
+                ],
+              );
+            },
+          ),
+        ),
         const SizedBox(height: 12),
         matchesAsync.when(
-            loading: () => StudentTabReveal(order: 3, child: _buildDashboardSkeleton()),
+          loading: () =>
+              StudentTabReveal(order: 3, child: _buildDashboardSkeleton()),
           error: (_, _) => const SizedBox.shrink(),
           data: (items) {
             final list = items.isNotEmpty
                 ? items.take(3).toList()
-                : (ref.watch(scholarshipsProvider).valueOrNull ?? const <Scholarship>[]).take(3).toList();
+                : (ref.watch(scholarshipsProvider).valueOrNull ??
+                          const <Scholarship>[])
+                      .take(3)
+                      .toList();
             if (list.isEmpty) {
-              return StudentTabReveal(order: 3, child: Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFE2E8E5)),
-                ),
-                child: Center(
-                  child: Text(
-                    'Complete your profile to discover matched scholarships.',
-                    textAlign: TextAlign.center,
-                    style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+              return StudentTabReveal(
+                order: 3,
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFFE2E8E5)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Complete your profile to discover matched scholarships.',
+                      textAlign: TextAlign.center,
+                      style: AppTypography.style(
+                        AppTextRole.body,
+                        fontSize: 13,
+                        color: const Color(0xFF404942),
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    ),
                   ),
                 ),
-              ));
+              );
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -673,7 +820,7 @@ class _StudentDashboardScreenState
                       order: 1 + i,
                       child: ScholarshipCard(
                         scholarship: s,
-                        viewDetailsKey: i == 0 ? widget.detailsGuideKey : null,
+                        cardGuideKey: i == 0 ? widget.detailsGuideKey : null,
                         studentProfile: profile,
                         reasons: reasons,
                         isBookmarked: bookmarkIds.contains(s.id),
@@ -687,9 +834,9 @@ class _StudentDashboardScreenState
             );
           },
         ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget _buildDashboardSkeleton() {
     return Column(
@@ -724,8 +871,8 @@ class _StudentDashboardScreenState
     );
   }
 
-  void _toggleBookmark(WidgetRef ref, String scholarshipId) {
-    ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
+  Future<void> _toggleBookmark(WidgetRef ref, String scholarshipId) async {
+    await ref.read(bookmarksProvider.notifier).toggle(scholarshipId);
   }
 
   Widget _buildClosingSoonSection(
@@ -742,22 +889,33 @@ class _StudentDashboardScreenState
       key: const ValueKey('closing-soon-section'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StudentTabReveal(order: 2,
+        StudentTabReveal(
+          order: 2,
           structural: true,
           child: Row(
-          children: [
-            const Icon(
-              Icons.hourglass_top_rounded,
-              size: 18,
-              color: Color(0xFFBA1A1A),
-            ),
-            const SizedBox(width: 6),
-            Expanded(child: Text(
-              'Closing Soon (${info.closingSoonCount})',
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: const Color(0xFFC62828), letterSpacing: -0.32, height: opticalLeading(16, isBody: false)),
-            )),
-          ],
-        )),
+            children: [
+              const Icon(
+                Icons.hourglass_top_rounded,
+                size: 18,
+                color: Color(0xFFBA1A1A),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  'Closing Soon (${info.closingSoonCount})',
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    fontSize: 16,
+                    color: const Color(0xFFC62828),
+                    letterSpacing: 0,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+
         const SizedBox(height: 10),
         ListView.separated(
           shrinkWrap: true,
@@ -827,19 +985,36 @@ class _StudentDashboardScreenState
               children: [
                 Text(
                   'Pro-Tip for Applicants',
-                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: const Color(0xFF161C27), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 13,
+                    color: const Color(0xFF161C27),
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 3),
                 RichText(
                   text: TextSpan(
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: const Color(0xFF404942), height: 1.45, letterSpacing: opticalTracking(12)),
+                    style: AppTypography.style(
+                      AppTextRole.caption,
+                      fontSize: 12,
+                      color: const Color(0xFF404942),
+                      height: 1.45,
+                      letterSpacing: 0,
+                    ),
                     children: [
                       const TextSpan(
                         text: 'Scholarships that require personal essays receive ',
                       ),
                       TextSpan(
                         text: '40% fewer applicants',
-                        style: AppTypography.style(AppTextRole.bodyEmphasis, color: const Color(0xFF0F4D2E)),
+                        style: AppTypography.style(
+                          AppTextRole.bodyEmphasis,
+                          color: const Color(0xFF0F4D2E),
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const TextSpan(
                         text: ', doubling your acceptance likelihood.',
@@ -855,8 +1030,6 @@ class _StudentDashboardScreenState
     );
   }
 }
-
-
 
 class _StatCard extends StatelessWidget {
   const _StatCard({
@@ -885,6 +1058,7 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final unknown = count == '—';
     final numericValue =
         int.tryParse(rawCount ?? count.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
 
@@ -900,7 +1074,7 @@ class _StatCard extends StatelessWidget {
             onTap();
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             decoration: kSoftCardDecoration,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -909,25 +1083,29 @@ class _StatCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: 26,
-                      height: 26,
+                      width: 24,
+                      height: 24,
                       decoration: BoxDecoration(
                         color: isUrgent ? const Color(0xFFFEF3D6) : iconBg,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         icon,
-                        size: 16,
+                        size: 14,
                         color: isUrgent ? const Color(0xFFD97706) : iconColor,
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Flexible(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: CountUpAnimation(
-                          targetValue: numericValue,
-                          style: AppTypography.style(AppTextRole.metric, fontSize: 24, color: const Color(0xFF161C27), letterSpacing: opticalTracking(24), height: opticalLeading(24, isBody: false)),
+                      child: Text(
+                        unknown ? '—' : '$numericValue',
+                        semanticsLabel: unknown ? 'Loading' : '$numericValue',
+                        style: AppTypography.style(
+                          AppTextRole.metric,
+                          fontSize: 16,
+                          letterSpacing: -.2,
+                          color: const Color(0xFF0F172A),
+                          height: 1.4,
                         ),
                       ),
                     ),
@@ -939,7 +1117,7 @@ class _StatCard extends StatelessWidget {
                     width: 0,
                     child: ExcludeSemantics(
                       child: Text(
-                        '$numericValue',
+                        unknown ? '—' : '$numericValue',
                         key: countKey,
                         style: const TextStyle(
                           fontSize: 0,
@@ -948,13 +1126,17 @@ class _StatCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   label,
                   textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.style(AppTextRole.label, fontSize: 13, color: isUrgent ? const Color(0xFF8A5B00) : const Color(0xFF263D2C), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 13,
+                    letterSpacing: -.1,
+                    color: isUrgent ? const Color(0xFF8A5B00) : kTextSupporting,
+                    height: 1.4,
+                  ),
                 ),
               ],
             ),

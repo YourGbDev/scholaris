@@ -1,4 +1,3 @@
-import 'package:scholaris/shared/theme/app_typography.dart';
 import '../../shared/theme/app_motion.dart';
 
 import 'package:flutter/material.dart';
@@ -20,7 +19,7 @@ class SupportConcernsScreen extends ConsumerWidget {
       children: [
         Text(
           'Support concerns',
-          style: AppTypography.style(AppTextRole.screenTitle, base: Theme.of(context).textTheme.headlineMedium),
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: 8),
         const Text(
@@ -242,7 +241,7 @@ class _ConcernPayments extends ConsumerWidget {
                 paymentId == null
                     ? 'Related payment records'
                     : 'Requested payment record',
-                style: AppTypography.style(AppTextRole.sectionTitle, base: Theme.of(context).textTheme.titleMedium),
+                style: Theme.of(context).textTheme.titleMedium,
               ),
               if (payments.isEmpty)
                 const Text(

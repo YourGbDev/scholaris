@@ -1,5 +1,5 @@
+import 'helpers/load_app_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:scholaris/features/scholarships/presentation/scholarship_detail_screen.dart';
 import 'package:scholaris/features/applications/presentation/submit_application_review_dialog.dart';
 
@@ -13,11 +13,7 @@ import 'package:scholaris/features/home/presentation/widgets/student_swipe_cue.d
 
 void main() {
   setUpAll(() async {
-    await (FontLoader('Inter')
-          ..addFont(rootBundle.load('assets/fonts/inter/Inter-Regular.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/inter/Inter-SemiBold.ttf'))
-          ..addFont(rootBundle.load('assets/fonts/inter/Inter-Bold.ttf')))
-        .load();
+    await loadAppFonts();
   });
   setUp(() {
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -79,20 +75,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(ScholarshipDetailScreen), findsNothing);
       expect(find.byType(SubmitApplicationReviewDialog), findsOneWidget);
+      expect(find.text('Review & submit demo'), findsOneWidget);
       final review = tester.widget<SubmitApplicationReviewDialog>(
         find.byType(SubmitApplicationReviewDialog),
       );
-      review.tour!.onSubmit!();
-      await tester.pumpAndSettle();
-      expect(find.text('Review your application'), findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey('guide-advance')));
-      await tester.pumpAndSettle();
-      expect(find.text('Review your application'), findsOneWidget);
       review.tour!.scrollController.jumpTo(
         review.tour!.scrollController.position.maxScrollExtent,
       );
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('guide-advance')));
       await tester.pumpAndSettle();
       await tester.tap(
         find.bySemanticsLabel('Guide action: Submit Application (Final)'),

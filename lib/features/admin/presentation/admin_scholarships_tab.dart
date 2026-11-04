@@ -49,7 +49,8 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
     );
     for (final s in list) {
       final pInfo = s.createdBy != null ? providersMap[s.createdBy] : null;
-      final providerName = pInfo?['organization'] ??
+      final providerName =
+          pInfo?['organization'] ??
           pInfo?['full_name'] ??
           s.provider ??
           'Independent Fiduciary';
@@ -65,12 +66,22 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle_rounded, color: kSeqPrimaryFixed, size: 20),
+            const Icon(
+              Icons.check_circle_rounded,
+              color: kSeqPrimaryFixed,
+              size: 20,
+            ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 'Audit Briefing CSV generated & copied to clipboard (${list.length} programs).',
-                style: AppTypography.style(AppTextRole.body, color: kSeqOnPrimary, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  color: kSeqOnPrimary,
+                  fontSize: 14,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -125,8 +136,9 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
 
             // Metrics Computation
             final totalGrants = allScholarships.length;
-            final activeGrants =
-                allScholarships.where((s) => s.isActive).length;
+            final activeGrants = allScholarships
+                .where((s) => s.isActive)
+                .length;
             final pausedGrants = totalGrants - activeGrants;
 
             double totalCapital = 0;
@@ -136,8 +148,10 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               totalSlots += (s.slots ?? 0);
             }
 
-            final totalApplicationsReceived =
-                demandMap.values.fold<int>(0, (sum, count) => sum + count);
+            final totalApplicationsReceived = demandMap.values.fold<int>(
+              0,
+              (sum, count) => sum + count,
+            );
 
             // Filtering
             final filtered = allScholarships.where((s) {
@@ -154,7 +168,8 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               if (_selectedScope != 'all') {
                 final loc = (s.locationRestriction ?? '').toLowerCase();
                 if (_selectedScope == 'ncr' && !loc.contains('ncr')) return false;
-                if (_selectedScope == 'regional' && (loc.isEmpty || loc.contains('ncr'))) {
+                if (_selectedScope == 'regional' &&
+                    (loc.isEmpty || loc.contains('ncr'))) {
                   return false;
                 }
                 if (_selectedScope == 'nationwide' && loc.isNotEmpty) return false;
@@ -164,25 +179,32 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               if (_selectedProviderFilter != 'all') {
                 final v = s.createdBy != null ? verifMap[s.createdBy] : null;
                 final pType = v?.providerType ?? 'foundation';
-                if (_selectedProviderFilter == 'org' && pType != 'organization' && pType != 'foundation') {
+                if (_selectedProviderFilter == 'org' &&
+                    pType != 'organization' &&
+                    pType != 'foundation') {
                   return false;
                 }
-                if (_selectedProviderFilter == 'individual' && pType != 'individual') {
+                if (_selectedProviderFilter == 'individual' &&
+                    pType != 'individual') {
                   return false;
                 }
               }
 
               // 4. Search query
               if (searchQuery.isNotEmpty) {
-                final pInfo = s.createdBy != null ? providersMap[s.createdBy] : null;
-                final providerName = (pInfo?['organization'] ??
-                        pInfo?['full_name'] ??
-                        s.provider ??
-                        '')
-                    .toString()
-                    .toLowerCase();
-                final text = '${s.title} $providerName ${s.coverage} ${s.description ?? ''} ${(s.requiredCourses ?? []).join(" ")} ${s.locationRestriction ?? ''}'
-                    .toLowerCase();
+                final pInfo = s.createdBy != null
+                    ? providersMap[s.createdBy]
+                    : null;
+                final providerName =
+                    (pInfo?['organization'] ??
+                            pInfo?['full_name'] ??
+                            s.provider ??
+                            '')
+                        .toString()
+                        .toLowerCase();
+                final text =
+                    '${s.title} $providerName ${s.coverage} ${s.description ?? ''} ${(s.requiredCourses ?? []).join(" ")} ${s.locationRestriction ?? ''}'
+                        .toLowerCase();
                 if (!text.contains(searchQuery)) return false;
               }
 
@@ -195,7 +217,12 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(context, allScholarships, providersMap, demandMap),
+                  _buildHeader(
+                    context,
+                    allScholarships,
+                    providersMap,
+                    demandMap,
+                  ),
                   const SizedBox(height: 24),
                   _buildMetricGrid(
                     context,
@@ -253,15 +280,33 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             Text(
               'Scholarship Oversight & Moderation',
               style: isWide
-                  ? AppTypography.style(AppTextRole.screenTitle, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface)
-                  : AppTypography.style(AppTextRole.screenTitle, fontSize: 24, height: 30 / 24, letterSpacing: -0.019 * 24, color: kSeqOnSurface),
+                  ? AppTypography.style(
+                      AppTextRole.screenTitle,
+                      fontSize: 24,
+                      height: 1.2,
+                      color: kSeqOnSurface,
+                      letterSpacing: -.4,
+                    )
+                  : AppTypography.style(
+                      AppTextRole.screenTitle,
+                      fontSize: 20,
+                      height: 1.2,
+                      color: kSeqOnSurface,
+                      letterSpacing: -.4,
+                    ),
             ),
             const SizedBox(height: 4),
             ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 820),
               child: Text(
                 'Platform-wide governance across active grant listings. Monitor quota fulfillment and verified philanthropic capital allocation.',
-                style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                style: AppTypography.style(
+                  AppTextRole.subtitle,
+                  color: kSeqOnSurfaceVariant,
+                  fontSize: 14,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -304,16 +349,27 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             style: OutlinedButton.styleFrom(
               backgroundColor: kSeqSurfaceContainerHigh,
               foregroundColor: kSeqOnSurface,
-              side: BorderSide(color: kSeqOutlineVariant.withValues(alpha: 0.5)),
+              side: BorderSide(
+                color: kSeqOutlineVariant.withValues(alpha: 0.5),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             icon: const Icon(Icons.ios_share_rounded, size: 16),
             label: Text(
               'Export Audit Briefing (CSV)',
-              style: AppTypography.style(AppTextRole.button, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12, color: kSeqOnSurface),
+              style: AppTypography.style(
+                AppTextRole.button,
+                fontSize: 12,
+                height: 16 / 12,
+                color: kSeqOnSurface,
+                letterSpacing: 0,
+              ),
             ),
-            onPressed: () => _exportCsv(allScholarships, providersMap, demandMap),
+            onPressed: () =>
+                _exportCsv(allScholarships, providersMap, demandMap),
           ),
         ),
         PressableScale(
@@ -322,12 +378,20 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               backgroundColor: kSeqPrimaryContainer,
               foregroundColor: kSeqOnPrimary,
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             icon: const Icon(Icons.flag_rounded, size: 16),
             label: Text(
               'Flag Program for Review',
-              style: AppTypography.style(AppTextRole.button, color: Colors.white, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: Colors.white,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
             ),
             onPressed: () => _showFlagProgramModal(context, allScholarships),
           ),
@@ -352,9 +416,9 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
     String formatCapital(double val) {
       final whole = val.round();
       final formatted = whole.toString().replaceAllMapped(
-            RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-            (Match m) => '${m[1]},',
-          );
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
       return '₱$formatted';
     }
 
@@ -364,7 +428,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         title: 'Monitored Grants',
         icon: Icons.school_rounded,
         iconColor: kSeqPrimaryContainer,
-        iconBg: kSeqPrimaryFixed,
+        iconBg: kWorkspaceSubtle,
         value: '$totalGrants',
         numericValue: totalGrants,
         badge: 'Live Catalog',
@@ -382,7 +446,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         title: 'Total Listed Value',
         icon: Icons.account_balance_wallet_rounded,
         iconColor: kSeqSecondary,
-        iconBg: kSeqSecondaryFixed,
+        iconBg: kWorkspaceSubtle,
         value: formatCapital(totalCapital),
         numericValue: totalCapital.round(),
         prefix: '₱',
@@ -403,9 +467,9 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         iconColor: kSeqPrimary,
         iconBg: kSeqSurfaceContainerHigh,
         value: totalSlots.toString().replaceAllMapped(
-              RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-              (Match m) => '${m[1]},',
-            ),
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        ),
         numericValue: totalSlots,
         badge: 'Scholar Intake',
         badgeBg: kSeqSurfaceContainerHigh,
@@ -422,12 +486,14 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         title: 'Moderation Attention',
         icon: Icons.assignment_late_rounded,
         iconColor: pausedGrants > 0 ? kSeqError : kSeqTertiaryContainer,
-        iconBg: pausedGrants > 0 ? kSeqErrorContainer : kSeqTertiaryFixed,
+        iconBg: pausedGrants > 0 ? kSeqErrorContainer : kWorkspaceSubtle,
         value: '$pausedGrants',
         numericValue: pausedGrants,
         badge: pausedGrants > 0 ? 'Requires Action' : 'All Clear',
         badgeBg: pausedGrants > 0 ? kSeqErrorContainer : kSeqPrimaryFixed,
-        badgeFg: pausedGrants > 0 ? kSeqOnErrorContainer : kSeqOnPrimaryFixedVariant,
+        badgeFg: pausedGrants > 0
+            ? kSeqOnErrorContainer
+            : kSeqOnPrimaryFixedVariant,
         subtitle: pausedGrants > 0
             ? '$pausedGrants listings currently paused / inactive'
             : 'Zero listing escalations pending',
@@ -451,9 +517,21 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
     } else if (width >= 600) {
       return Column(
         children: [
-          Row(children: [Expanded(child: card1), const SizedBox(width: 14), Expanded(child: card2)]),
+          Row(
+            children: [
+              Expanded(child: card1),
+              const SizedBox(width: 14),
+              Expanded(child: card2),
+            ],
+          ),
           const SizedBox(height: 14),
-          Row(children: [Expanded(child: card3), const SizedBox(width: 14), Expanded(child: card4)]),
+          Row(
+            children: [
+              Expanded(child: card3),
+              const SizedBox(width: 14),
+              Expanded(child: card4),
+            ],
+          ),
         ],
       );
     } else {
@@ -499,7 +577,13 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               Flexible(
                 child: Text(
                   title,
-                  style: AppTypography.style(AppTextRole.label, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    color: kSeqOnSurfaceVariant,
+                    fontSize: 12,
+                    height: 16 / 12,
+                    letterSpacing: 0,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -507,7 +591,10 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               Container(
                 width: 28,
                 height: 28,
-                decoration: BoxDecoration(color: iconBg, borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Icon(icon, size: 16, color: iconColor),
               ),
             ],
@@ -525,19 +612,44 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                         targetValue: numericValue,
                         prefix: prefix ?? '',
                         suffix: suffix ?? '',
-                        style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface)),
+                        style: seqTabularFigures(
+                          AppTypography.style(
+                            AppTextRole.metric,
+                            fontSize: 24,
+                            height: 1.2,
+                            color: kSeqOnSurface,
+                            letterSpacing: -.4,
+                          ),
+                        ),
                       )
                     : Text(
                         value,
-                        style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 32, height: 38 / 32, letterSpacing: -0.021 * 32, color: kSeqOnSurface)),
+                        style: seqTabularFigures(
+                          AppTypography.style(
+                            AppTextRole.metric,
+                            fontSize: 24,
+                            height: 1.2,
+                            color: kSeqOnSurface,
+                            letterSpacing: -.4,
+                          ),
+                        ),
                       ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(color: badgeBg, borderRadius: BorderRadius.circular(6)),
+                decoration: BoxDecoration(
+                  color: badgeBg,
+                  borderRadius: BorderRadius.circular(6),
+                ),
                 child: Text(
                   badge,
-                  style: AppTypography.style(AppTextRole.badge, color: badgeFg, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    color: badgeFg,
+                    fontSize: 11,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -545,7 +657,13 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           const SizedBox(height: 8),
           Text(
             subtitle,
-            style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              color: kSeqOutline,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -581,7 +699,10 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             Container(width: 6, color: kSeqPrimaryContainer),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 child: Row(
                   children: [
                     Container(
@@ -605,12 +726,24 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                         children: [
                           Text(
                             'Institutional Compliance & Moderation Framework',
-                            style: AppTypography.style(AppTextRole.cardTitle, color: kSeqPrimary, fontSize: 14, height: 18 / 14, letterSpacing: -0.008 * 14),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              color: kSeqPrimary,
+                              fontSize: 13,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Platform staff maintain active oversight and program standards. Program evaluation and award autonomy remain strictly with accredited provider review committees.',
-                            style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              color: kSeqOnSurfaceVariant,
+                              fontSize: 13,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -650,10 +783,23 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           Expanded(
             child: TextField(
               controller: _searchController,
-              style: AppTypography.style(AppTextRole.input, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14, color: kSeqOnSurface),
+              style: AppTypography.style(
+                AppTextRole.input,
+                fontSize: 14,
+                height: 1.4,
+                color: kTextSupporting,
+                letterSpacing: 0,
+              ),
               decoration: InputDecoration(
-                hintText: 'Filter grants by title, provider, field, university...',
-                hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                hintText:
+                    'Filter grants by title, provider, field, university...',
+                hintStyle: AppTypography.style(
+                  AppTextRole.placeholder,
+                  color: kSeqOutline,
+                  fontSize: 13,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -666,12 +812,17 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           ),
           if (searchQuery.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.close_rounded, size: 16, color: kSeqOutline),
+              icon: const Icon(
+                Icons.close_rounded,
+                size: 16,
+                color: kSeqOutline,
+              ),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               onPressed: () {
                 _searchController.clear();
-                ref.read(adminScholarshipSearchQueryProvider.notifier).state = '';
+                ref.read(adminScholarshipSearchQueryProvider.notifier).state =
+                    '';
               },
             ),
         ],
@@ -689,10 +840,26 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildTabPill('all', 'All Grants ($totalCount)', statusFilter == 'all'),
-            _buildTabPill('active', 'Active Intake ($activeCount)', statusFilter == 'active'),
-            _buildTabPill('inactive', 'Paused / Inactive ($pausedCount)', statusFilter == 'inactive'),
-            _buildTabPill('flagged', 'Escalations / Needs Review', statusFilter == 'flagged'),
+            _buildTabPill(
+              'all',
+              'All Grants ($totalCount)',
+              statusFilter == 'all',
+            ),
+            _buildTabPill(
+              'active',
+              'Active Intake ($activeCount)',
+              statusFilter == 'active',
+            ),
+            _buildTabPill(
+              'inactive',
+              'Paused / Inactive ($pausedCount)',
+              statusFilter == 'inactive',
+            ),
+            _buildTabPill(
+              'flagged',
+              'Escalations / Needs Review',
+              statusFilter == 'flagged',
+            ),
           ],
         ),
       ),
@@ -708,18 +875,39 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           decoration: BoxDecoration(
             color: kSeqSurfaceContainerLowest,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35)),
+            border: Border.all(
+              color: kSeqOutlineVariant.withValues(alpha: 0.35),
+            ),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _selectedScope,
-              style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
-              icon: const Icon(Icons.expand_more_rounded, size: 16, color: kSeqOutline),
+              style: AppTypography.style(
+                AppTextRole.input,
+                color: kSeqOnSurface,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
+              icon: const Icon(
+                Icons.expand_more_rounded,
+                size: 16,
+                color: kSeqOutline,
+              ),
               items: const [
-                DropdownMenuItem(value: 'all', child: Text('Scope: All Jurisdictions')),
-                DropdownMenuItem(value: 'nationwide', child: Text('Nationwide Only')),
+                DropdownMenuItem(
+                  value: 'all',
+                  child: Text('Scope: All Jurisdictions'),
+                ),
+                DropdownMenuItem(
+                  value: 'nationwide',
+                  child: Text('Nationwide Only'),
+                ),
                 DropdownMenuItem(value: 'ncr', child: Text('NCR Cluster')),
-                DropdownMenuItem(value: 'regional', child: Text('Regional Priority')),
+                DropdownMenuItem(
+                  value: 'regional',
+                  child: Text('Regional Priority'),
+                ),
               ],
               onChanged: (val) {
                 if (val != null) setState(() => _selectedScope = val);
@@ -733,17 +921,38 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           decoration: BoxDecoration(
             color: kSeqSurfaceContainerLowest,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: kSeqOutlineVariant.withValues(alpha: 0.35)),
+            border: Border.all(
+              color: kSeqOutlineVariant.withValues(alpha: 0.35),
+            ),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _selectedProviderFilter,
-              style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
-              icon: const Icon(Icons.expand_more_rounded, size: 16, color: kSeqOutline),
+              style: AppTypography.style(
+                AppTextRole.input,
+                color: kSeqOnSurface,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
+              icon: const Icon(
+                Icons.expand_more_rounded,
+                size: 16,
+                color: kSeqOutline,
+              ),
               items: const [
-                DropdownMenuItem(value: 'all', child: Text('All Provider Entities')),
-                DropdownMenuItem(value: 'org', child: Text('Institutional Foundations')),
-                DropdownMenuItem(value: 'individual', child: Text('Individual Benefactors')),
+                DropdownMenuItem(
+                  value: 'all',
+                  child: Text('All Provider Entities'),
+                ),
+                DropdownMenuItem(
+                  value: 'org',
+                  child: Text('Institutional Foundations'),
+                ),
+                DropdownMenuItem(
+                  value: 'individual',
+                  child: Text('Individual Benefactors'),
+                ),
               ],
               onChanged: (val) {
                 if (val != null) setState(() => _selectedProviderFilter = val);
@@ -770,10 +979,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 8,
             runSpacing: 8,
-            children: [
-              segmentedPills,
-              dropdownFilters,
-            ],
+            children: [segmentedPills, dropdownFilters],
           ),
         ],
       ),
@@ -798,13 +1004,19 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                       color: Color(0x0F000000),
                       blurRadius: 4,
                       offset: Offset(0, 1),
-                    )
+                    ),
                   ]
                 : null,
           ),
           child: Text(
             label,
-            style: AppTypography.style(AppTextRole.navigation, color: isSelected ? kSeqOnSurface : kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+            style: AppTypography.style(
+              AppTextRole.navigation,
+              color: isSelected ? kSeqOnSurface : kSeqOnSurfaceVariant,
+              fontSize: 12,
+              height: 16 / 12,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ),
@@ -831,12 +1043,24 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               const SizedBox(height: 12),
               Text(
                 'No matching scholarship programs found',
-                style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOnSurface, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  color: kSeqOnSurface,
+                  fontSize: 17,
+                  height: 1.25,
+                  letterSpacing: -.15,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 'Try adjusting search parameters, jurisdiction filters, or intake status.',
-                style: AppTypography.style(AppTextRole.body, color: kSeqOnSurfaceVariant, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  color: kSeqOnSurfaceVariant,
+                  fontSize: 14,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -873,7 +1097,8 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
   ) {
     final width = MediaQuery.sizeOf(context).width;
 
-    final providerDisplayName = pInfo?['organization'] ??
+    final providerDisplayName =
+        pInfo?['organization'] ??
         pInfo?['full_name'] ??
         s.provider ??
         'Independent Benefactor';
@@ -882,24 +1107,25 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
 
     // Icon choice based on courses/title
     IconData categoryIcon = Icons.school_rounded;
-    Color iconBg = kSeqPrimaryFixed;
-    Color iconColor = kSeqPrimaryContainer;
+    Color iconBg = kWorkspaceSubtle;
+    Color iconColor = kSeqOnSurfaceVariant;
     final titleLower = s.title.toLowerCase();
     if (titleLower.contains('technology') ||
         titleLower.contains('stem') ||
         titleLower.contains('engineering')) {
       categoryIcon = Icons.terminal_rounded;
-      iconBg = kSeqPrimaryFixed;
-      iconColor = kSeqPrimaryContainer;
-    } else if (titleLower.contains('science') || titleLower.contains('research')) {
+      iconBg = kWorkspaceSubtle;
+      iconColor = kSeqOnSurfaceVariant;
+    } else if (titleLower.contains('science') ||
+        titleLower.contains('research')) {
       categoryIcon = Icons.science_rounded;
-      iconBg = kSeqSecondaryFixed;
-      iconColor = kSeqSecondary;
+      iconBg = kWorkspaceSubtle;
+      iconColor = kSeqOnSurfaceVariant;
     } else if (titleLower.contains('nursing') ||
         titleLower.contains('medical') ||
         titleLower.contains('health')) {
       categoryIcon = Icons.medical_services_rounded;
-      iconBg = kSeqTertiaryFixed;
+      iconBg = kWorkspaceSubtle;
       iconColor = kSeqTertiary;
     }
 
@@ -934,13 +1160,24 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                       children: [
                         Text(
                           s.title,
-                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+                          style: AppTypography.style(
+                            AppTextRole.cardTitle,
+                            fontSize: 17,
+                            height: 1.25,
+                            color: kSeqOnSurface,
+                            letterSpacing: -.15,
+                          ),
                         ),
                         // Status Pill
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
-                            color: s.isActive ? kSeqPrimaryFixed : kSeqErrorContainer,
+                            color: s.isActive
+                                ? kSeqPrimaryFixed
+                                : kSeqErrorContainer,
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Row(
@@ -950,28 +1187,49 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                                 width: 6,
                                 height: 6,
                                 decoration: BoxDecoration(
-                                  color: s.isActive ? kSeqPrimaryContainer : kSeqError,
+                                  color: s.isActive
+                                      ? kSeqPrimaryContainer
+                                      : kSeqError,
                                   shape: BoxShape.circle,
                                 ),
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                s.isActive ? 'Active Intake' : 'Paused / Inactive',
-                                style: AppTypography.style(AppTextRole.badge, color: s.isActive ? kSeqOnPrimaryFixedVariant : kSeqOnErrorContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                                s.isActive
+                                    ? 'Active Intake'
+                                    : 'Paused / Inactive',
+                                style: AppTypography.style(
+                                  AppTextRole.badge,
+                                  color: s.isActive
+                                      ? kSeqOnPrimaryFixedVariant
+                                      : kSeqOnErrorContainer,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
                         ),
                         // ID Pill
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: kSeqSurfaceContainerHigh,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             'SCH-${(s.id.length >= 8 ? s.id.substring(0, 8) : s.id).toUpperCase()}',
-                            style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kSeqOnSurfaceVariant),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              fontSize: 10,
+                              color: kSeqOnSurfaceVariant,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ],
@@ -984,18 +1242,40 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                       children: [
                         Text(
                           'Provider: ',
-                          style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            color: kSeqOutline,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         Text(
                           providerDisplayName,
-                          style: AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                          style: AppTypography.style(
+                            AppTextRole.bodyEmphasis,
+                            color: kSeqOnSurface,
+                            fontSize: 11,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         if (isAccredited) ...[
                           const SizedBox(width: 4),
-                          const Icon(Icons.verified_rounded, size: 14, color: kSeqPrimaryContainer),
+                          const Icon(
+                            Icons.verified_rounded,
+                            size: 14,
+                            color: kSeqPrimaryContainer,
+                          ),
                           Text(
                             'Accredited Entity',
-                            style: AppTypography.style(AppTextRole.badge, color: kSeqPrimaryContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                            style: AppTypography.style(
+                              AppTextRole.badge,
+                              color: kSeqPrimaryContainer,
+                              fontSize: 11,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ],
@@ -1108,10 +1388,14 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             spacing: 6,
             runSpacing: 6,
             children: [
-              _criteriaChip(Icons.grade_rounded, 'GWA ≤ ${s.minGpa.toStringAsFixed(2)}'),
+              _criteriaChip(
+                Icons.grade_rounded,
+                'GWA ≤ ${s.minGpa.toStringAsFixed(2)}',
+              ),
               if (s.coverage.isNotEmpty)
                 _criteriaChip(Icons.payments_rounded, s.coverage),
-              if (s.locationRestriction != null && s.locationRestriction!.isNotEmpty)
+              if (s.locationRestriction != null &&
+                  s.locationRestriction!.isNotEmpty)
                 _criteriaChip(Icons.location_on_rounded, s.locationRestriction!)
               else
                 _criteriaChip(Icons.public_rounded, 'Nationwide Eligible'),
@@ -1141,8 +1425,13 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           alignment: Alignment.centerLeft,
           child: Text(
             label,
-            style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)
-                .copyWith(letterSpacing: 0.5),
+            style: AppTypography.style(
+              AppTextRole.label,
+              color: kSeqOutline,
+              fontSize: 11,
+              height: 1.4,
+              letterSpacing: 0,
+            ).copyWith(letterSpacing: 0.5),
           ),
         ),
         const SizedBox(height: 2),
@@ -1151,7 +1440,15 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           alignment: Alignment.centerLeft,
           child: Text(
             value,
-            style: seqTabularFigures(AppTypography.style(AppTextRole.metric, fontSize: 18, color: valColor, letterSpacing: -0.3)),
+            style: seqTabularFigures(
+              AppTypography.style(
+                AppTextRole.metric,
+                fontSize: 18,
+                color: valColor,
+                letterSpacing: -0.3,
+                height: 1.4,
+              ),
+            ),
           ),
         ),
         FittedBox(
@@ -1159,7 +1456,13 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           alignment: Alignment.centerLeft,
           child: Text(
             sub,
-            style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              color: kSeqOnSurfaceVariant,
+              fontSize: 11,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],
@@ -1182,7 +1485,13 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           Flexible(
             child: Text(
               text,
-              style: AppTypography.style(AppTextRole.badge, color: kScholarshipTagForeground, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                color: kScholarshipTagForeground,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -1204,12 +1513,20 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               backgroundColor: kSeqSurfaceContainerHigh,
               foregroundColor: kSeqOnSurface,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             onPressed: () => _showInspectDossierModal(context, s),
             child: Text(
               'Inspect Dossier',
-              style: AppTypography.style(AppTextRole.button, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10, color: kSeqOnSurface),
+              style: AppTypography.style(
+                AppTextRole.button,
+                fontSize: 11,
+                height: 1.4,
+                color: kSeqOnSurface,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ),
@@ -1221,8 +1538,12 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               backgroundColor: s.isActive
                   ? kSeqErrorContainer.withValues(alpha: 0.5)
                   : kSeqPrimaryFixed,
-              foregroundColor: s.isActive ? kSeqError : kSeqOnPrimaryFixedVariant,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              foregroundColor: s.isActive
+                  ? kSeqError
+                  : kSeqOnPrimaryFixedVariant,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             onPressed: () async {
               final newActive = !s.isActive;
@@ -1237,14 +1558,22 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                           ? 'Program "${s.title}" activated for live intake.'
                           : 'Program "${s.title}" paused by administration.',
                     ),
-                    backgroundColor: newActive ? kSeqPrimaryContainer : kSeqError,
+                    backgroundColor: newActive
+                        ? kSeqPrimaryContainer
+                        : kSeqError,
                   ),
                 );
               }
             },
             child: Text(
               s.isActive ? 'Pause Program' : 'Activate Program',
-              style: AppTypography.style(AppTextRole.button, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10, color: kSeqOnSurface),
+              style: AppTypography.style(
+                AppTextRole.button,
+                fontSize: 11,
+                height: 1.4,
+                color: kSeqOnSurface,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ),
@@ -1325,12 +1654,24 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                   children: [
                     Text(
                       'Oversight Intelligence & Allocation Portfolio',
-                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+                      style: AppTypography.style(
+                        AppTextRole.sectionTitle,
+                        fontSize: 17,
+                        height: 1.25,
+                        color: kSeqOnSurface,
+                        letterSpacing: -.15,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'National aggregate distribution for administrative governance & program compliance.',
-                      style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                      style: AppTypography.style(
+                        AppTextRole.subtitle,
+                        color: kSeqOnSurfaceVariant,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -1413,11 +1754,23 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           children: [
             Text(
               'Disciplinary Sector Distribution',
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, height: 18 / 14, letterSpacing: -0.008 * 14, color: kSeqOnSurface),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 13,
+                height: 1.4,
+                color: kSeqOnSurface,
+                letterSpacing: 0,
+              ),
             ),
             Text(
               'Live Catalog Breakdown',
-              style: AppTypography.style(AppTextRole.subtitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -1473,13 +1826,22 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                   Container(
                     width: 8,
                     height: 8,
-                    decoration: BoxDecoration(color: barColor, shape: BoxShape.circle),
+                    decoration: BoxDecoration(
+                      color: barColor,
+                      shape: BoxShape.circle,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       label,
-                      style: AppTypography.style(AppTextRole.label, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kSeqOnSurface,
+                        fontSize: 12,
+                        height: 16 / 12,
+                        letterSpacing: 0,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -1490,7 +1852,13 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             const SizedBox(width: 8),
             Text(
               '$pct%',
-              style: AppTypography.style(AppTextRole.metric, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12),
+              style: AppTypography.style(
+                AppTextRole.metric,
+                color: kSeqOnSurface,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -1510,11 +1878,23 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           children: [
             Text(
               '${formatVal(capital)} Committed Pool',
-              style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             Text(
               '$grantsCount Active Listings',
-              style: AppTypography.style(AppTextRole.caption, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -1538,11 +1918,23 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
           children: [
             Text(
               'Regional Geographic Alignment',
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, height: 18 / 14, letterSpacing: -0.008 * 14, color: kSeqOnSurface),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 13,
+                height: 1.4,
+                color: kSeqOnSurface,
+                letterSpacing: 0,
+              ),
             ),
             Text(
               'Jurisdiction Scope',
-              style: AppTypography.style(AppTextRole.subtitle, color: kSeqPrimaryContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                color: kSeqPrimaryContainer,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -1558,15 +1950,30 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               Row(
                 children: [
                   Expanded(
-                    child: _geoClusterBox('NATIONWIDE', '$nationwideCount', 'Open Scope', kSeqPrimaryContainer),
+                    child: _geoClusterBox(
+                      'NATIONWIDE',
+                      '$nationwideCount',
+                      'Open Scope',
+                      kSeqPrimaryContainer,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _geoClusterBox('NCR CLUSTER', '$ncrCount', 'Metro Manila', kSeqSecondary),
+                    child: _geoClusterBox(
+                      'NCR CLUSTER',
+                      '$ncrCount',
+                      'Metro Manila',
+                      kSeqSecondary,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _geoClusterBox('REGIONAL', '$regionalCount', 'Luz / Vis / Min', kSeqTertiary),
+                    child: _geoClusterBox(
+                      'REGIONAL',
+                      '$regionalCount',
+                      'Luz / Vis / Min',
+                      kSeqTertiary,
+                    ),
                   ),
                 ],
               ),
@@ -1584,23 +1991,56 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         color: kSeqSurfaceContainerLowest,
         borderRadius: BorderRadius.circular(8),
         boxShadow: const [
-          BoxShadow(color: Color(0x08000000), blurRadius: 4, offset: Offset(0, 1)),
+          BoxShadow(
+            color: Color(0x08000000),
+            blurRadius: 4,
+            offset: Offset(0, 1),
+          ),
         ],
       ),
       child: Column(
         children: [
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(label, style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+            child: Text(
+              label,
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+            ),
           ),
           const SizedBox(height: 2),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(value, style: AppTypography.style(AppTextRole.metric, color: color, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19)),
+            child: Text(
+              value,
+              style: AppTypography.style(
+                AppTextRole.metric,
+                color: color,
+                fontSize: 17,
+                height: 1.25,
+                letterSpacing: -.15,
+              ),
+            ),
           ),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(sub, style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10), maxLines: 1, overflow: TextOverflow.ellipsis),
+            child: Text(
+              sub,
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                color: kSeqOnSurfaceVariant,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
         ],
       ),
@@ -1620,7 +2060,13 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             Expanded(
               child: Text(
                 s.title,
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 17,
+                  height: 1.25,
+                  color: kSeqOnSurface,
+                  letterSpacing: -.15,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1634,7 +2080,15 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               ),
               child: Text(
                 s.isActive ? 'Active Intake' : 'Paused / Inactive',
-                style: AppTypography.style(AppTextRole.badge, color: s.isActive ? kSeqOnPrimaryFixedVariant : kSeqOnErrorContainer, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  color: s.isActive
+                      ? kSeqOnPrimaryFixedVariant
+                      : kSeqOnErrorContainer,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -1647,31 +2101,69 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _dossierRow('Grant Reference ID', s.id),
-                _dossierRow('Canonical Provider', s.provider ?? 'Independent Fiduciary'),
-                _dossierRow('Funding Pool Amount', '${s.formattedAmount} ${s.formattedFrequency}'),
+                _dossierRow(
+                  'Canonical Provider',
+                  s.provider ?? 'Independent Fiduciary',
+                ),
+                _dossierRow(
+                  'Funding Pool Amount',
+                  '${s.formattedAmount} ${s.formattedFrequency}',
+                ),
                 _dossierRow('Coverage Breakdown', s.coverage),
-                _dossierRow('Intake Capacity Slots', '${s.slots ?? 0} allocated slots'),
-                _dossierRow('Application Deadline', s.deadline.toIso8601String().split('T').first),
+                _dossierRow(
+                  'Intake Capacity Slots',
+                  '${s.slots ?? 0} allocated slots',
+                ),
+                _dossierRow(
+                  'Application Deadline',
+                  s.deadline.toIso8601String().split('T').first,
+                ),
                 _dossierRow('Minimum GWA', s.minGpa.toStringAsFixed(2)),
                 if (s.maxMonthlyIncome != null)
                   _dossierRow(
                     'Income Ceiling',
                     '₱${s.maxMonthlyIncome!.toStringAsFixed(0)} / month',
                   ),
-                if (s.locationRestriction != null && s.locationRestriction!.isNotEmpty)
-                  _dossierRow('Jurisdiction Restriction', s.locationRestriction!),
+                if (s.locationRestriction != null &&
+                    s.locationRestriction!.isNotEmpty)
+                  _dossierRow(
+                    'Jurisdiction Restriction',
+                    s.locationRestriction!,
+                  ),
                 if (s.requiredCourses != null && s.requiredCourses!.isNotEmpty)
-                  _dossierRow('Required Courses', s.requiredCourses!.join(', ')),
-                if (s.requiredYearLevels != null && s.requiredYearLevels!.isNotEmpty)
+                  _dossierRow(
+                    'Required Courses',
+                    s.requiredCourses!.join(', '),
+                  ),
+                if (s.requiredYearLevels != null &&
+                    s.requiredYearLevels!.isNotEmpty)
                   _dossierRow(
                     'Target Year Levels',
                     s.requiredYearLevels!.map((y) => 'Year $y').join(', '),
                   ),
                 if (s.description != null && s.description!.isNotEmpty) ...[
                   const SizedBox(height: 10),
-                  Text('Program Description:', style: AppTypography.style(AppTextRole.sectionTitle, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+                  Text(
+                    'Program Description:',
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      color: kSeqOutline,
+                      fontSize: 11,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(s.description!, style: AppTypography.style(AppTextRole.body, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0)),
+                  Text(
+                    s.description!,
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      color: kSeqOnSurface,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -1684,7 +2176,16 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               minimumSize: const Size(0, 36),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
-            child: Text('Close', style: AppTypography.style(AppTextRole.button, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12)),
+            child: Text(
+              'Close',
+              style: AppTypography.style(
+                AppTextRole.button,
+                color: kSeqOutline,
+                fontSize: 12,
+                height: 16 / 12,
+                letterSpacing: 0,
+              ),
+            ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
@@ -1692,7 +2193,9 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               foregroundColor: s.isActive ? kSeqOnError : kSeqOnPrimary,
               minimumSize: const Size(0, 36),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             onPressed: () async {
               Navigator.of(dialogContext).pop();
@@ -1709,7 +2212,8 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
   }
 
   Widget _dossierRow(String label, String value) {
-    final isMono = label.contains('ID') ||
+    final isMono =
+        label.contains('ID') ||
         label.contains('Amount') ||
         label.contains('Slots') ||
         label.contains('Deadline') ||
@@ -1722,7 +2226,16 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
         children: [
           SizedBox(
             width: 170,
-            child: Text(label, style: AppTypography.style(AppTextRole.label, color: kSeqOutline, fontSize: 10, height: 12 / 10, letterSpacing: 0.03 * 10)),
+            child: Text(
+              label,
+              style: AppTypography.style(
+                AppTextRole.label,
+                color: kSeqOutline,
+                fontSize: 11,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+            ),
           ),
           Expanded(
             child: isMono && label.contains('ID')
@@ -1733,8 +2246,22 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                 : Text(
                     value,
                     style: isMono
-                        ? seqTabularFigures(AppTypography.style(AppTextRole.body, fontSize: 12.5, color: kSeqOnSurface))
-                        : AppTypography.style(AppTextRole.bodyEmphasis, color: kSeqOnSurface, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                        ? seqTabularFigures(
+                            AppTypography.style(
+                              AppTextRole.body,
+                              fontSize: 12.5,
+                              color: kSeqOnSurface,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
+                          )
+                        : AppTypography.style(
+                            AppTextRole.bodyEmphasis,
+                            color: kSeqOnSurface,
+                            fontSize: 13,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                   ),
           ),
         ],
@@ -1751,10 +2278,18 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
       builder: (dialogContext) => StatefulBuilder(
         builder: (ctx, setModalState) => AlertDialog(
           backgroundColor: kSeqSurfaceContainerLowest,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             'Flag Program for Administrative Review',
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, height: 24 / 19, letterSpacing: -0.015 * 19, color: kSeqOnSurface),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 17,
+              height: 1.25,
+              color: kSeqOnSurface,
+              letterSpacing: -.15,
+            ),
           ),
           content: SizedBox(
             width: 480,
@@ -1764,28 +2299,54 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               children: [
                 Text(
                   'Record a compliance notice or quota violation for administrative follow-up.',
-                  style: AppTypography.style(AppTextRole.subtitle, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                  style: AppTypography.style(
+                    AppTextRole.subtitle,
+                    color: kSeqOnSurfaceVariant,
+                    fontSize: 13,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<Scholarship>(
                   initialValue: selected,
                   isExpanded: true,
-                  style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                  style: AppTypography.style(
+                    AppTextRole.input,
+                    color: kSeqOnSurface,
+                    fontSize: 14,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   dropdownColor: kSeqSurfaceContainerLowest,
                   decoration: InputDecoration(
                     labelText: 'Select Program',
-                    labelStyle: AppTypography.style(AppTextRole.label, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                    labelStyle: AppTypography.style(
+                      AppTextRole.label,
+                      color: kSeqOnSurfaceVariant,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   items: all
-                      .map((s) => DropdownMenuItem(
-                            value: s,
-                            child: Text(
-                              s.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                      .map(
+                        (s) => DropdownMenuItem(
+                          value: s,
+                          child: Text(
+                            s.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.style(
+                              AppTextRole.input,
+                              color: kSeqOnSurface,
+                              fontSize: 14,
+                              height: 1.4,
+                              letterSpacing: 0,
                             ),
-                          ))
+                          ),
+                        ),
+                      )
                       .toList(),
                   onChanged: (val) {
                     if (val != null) setModalState(() => selected = val);
@@ -1795,12 +2356,30 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                 TextField(
                   controller: noteCtrl,
                   maxLines: 3,
-                  style: AppTypography.style(AppTextRole.input, color: kSeqOnSurface, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                  style: AppTypography.style(
+                    AppTextRole.input,
+                    color: kSeqOnSurface,
+                    fontSize: 14,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Compliance / Moderation Reason',
-                    labelStyle: AppTypography.style(AppTextRole.label, color: kSeqOnSurfaceVariant, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                    labelStyle: AppTypography.style(
+                      AppTextRole.label,
+                      color: kSeqOnSurfaceVariant,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                     hintText: 'e.g. Quota allocation audit or residency clause inquiry...',
-                    hintStyle: AppTypography.style(AppTextRole.placeholder, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: 0),
+                    hintStyle: AppTypography.style(
+                      AppTextRole.placeholder,
+                      color: kSeqOutline,
+                      fontSize: 13,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ],
@@ -1811,23 +2390,42 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
               onPressed: () => Navigator.of(dialogContext).pop(),
               style: TextButton.styleFrom(
                 minimumSize: const Size(0, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
               ),
-              child: Text('Cancel', style: AppTypography.style(AppTextRole.button, color: kSeqOutline, fontSize: 12, height: 16 / 12, letterSpacing: -0.002 * 12)),
+              child: Text(
+                'Cancel',
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  color: kSeqOutline,
+                  fontSize: 12,
+                  height: 16 / 12,
+                  letterSpacing: 0,
+                ),
+              ),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: kSeqError,
                 foregroundColor: kSeqOnError,
                 minimumSize: const Size(0, 36),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               onPressed: () async {
                 if (selected != null && noteCtrl.text.trim().isNotEmpty) {
                   Navigator.of(dialogContext).pop();
                   try {
-                    await ref.read(adminScholarshipsControllerProvider).flagScholarship(
+                    await ref
+                        .read(adminScholarshipsControllerProvider)
+                        .flagScholarship(
                           scholarship: selected!,
                           reason: noteCtrl.text.trim(),
                         );
@@ -1836,7 +2434,13 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                         SnackBar(
                           content: Text(
                             'Program "${selected!.title}" flagged for review.',
-                            style: AppTypography.style(AppTextRole.body, color: kSeqOnError, fontSize: 14, height: 20 / 14, letterSpacing: -0.006 * 14),
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              color: kSeqOnError,
+                              fontSize: 14,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           backgroundColor: kSeqError,
                         ),
@@ -1845,7 +2449,11 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
                   } catch (_) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Could not save the flag. Please try again.')),
+                        const SnackBar(
+                          content: Text(
+                            'Could not save the flag. Please try again.',
+                          ),
+                        ),
                       );
                     }
                   }
@@ -1886,10 +2494,7 @@ class _AdminScholarshipsTabState extends ConsumerState<AdminScholarshipsTab> {
             ),
           ),
           const SizedBox(height: 20),
-          Container(
-            height: 60,
-            decoration: kAdminCardDecoration,
-          ),
+          Container(height: 60, decoration: kAdminCardDecoration),
           const SizedBox(height: 18),
           ...List.generate(
             3,

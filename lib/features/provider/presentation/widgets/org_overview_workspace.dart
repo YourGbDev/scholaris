@@ -1,4 +1,3 @@
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
@@ -62,12 +61,24 @@ class OrgOverviewWorkspace extends StatelessWidget {
                       children: [
                         Text(
                           'No scholarship programs yet',
-                          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kOrgTextPrimary, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.cardTitle,
+                            fontSize: 17,
+                            height: 1.2,
+                            color: kOrgTextPrimary,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Add a program to define eligibility, requirements, and deadlines.',
-                          style: AppTypography.style(AppTextRole.body, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+                          style: AppTypography.style(
+                            AppTextRole.body,
+                            fontSize: 14,
+                            color: kOrgTextSecondary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -81,7 +92,16 @@ class OrgOverviewWorkspace extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(s.title, style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false))),
+                              Text(
+                                s.title,
+                                style: AppTypography.style(
+                                  AppTextRole.cardTitle,
+                                  fontSize: 16,
+                                  height: 1.2,
+                                  color: kOrgTextPrimary,
+                                  letterSpacing: -0.15,
+                                ),
+                              ),
                               const SizedBox(height: 10),
                               Wrap(
                                 spacing: 16,
@@ -100,12 +120,26 @@ class OrgOverviewWorkspace extends StatelessWidget {
                                     ),
                                     child: Text(
                                       s.isActive ? 'Active' : 'Closed',
-                                      style: AppTypography.style(AppTextRole.badge, color: s.isActive ? kOrgPrimary : kOrgTextSecondary, fontSize: 11.5, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.badge,
+                                        color: s.isActive
+                                            ? kOrgPrimary
+                                            : kOrgTextSecondary,
+                                        fontSize: 12,
+                                        height: 1.3,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                   Text(
                                     '${s.formattedAmount} ${s.formattedFrequency}',
-                                    style: AppTypography.style(AppTextRole.metric, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+                                    style: AppTypography.style(
+                                      AppTextRole.metric,
+                                      fontSize: 13,
+                                      color: kOrgTextSecondary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -128,7 +162,13 @@ class OrgOverviewWorkspace extends StatelessWidget {
           if (deadlines.isEmpty)
             Text(
               'No upcoming deadlines for active programs.',
-              style: AppTypography.style(AppTextRole.caption, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 14,
+                color: kOrgTextSecondary,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           for (final s in deadlines.take(3))
             Padding(
@@ -140,7 +180,7 @@ class OrgOverviewWorkspace extends StatelessWidget {
                     width: 48,
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEDF2E6),
+                      color: const Color(0xFFF6F6F6),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Column(
@@ -152,7 +192,13 @@ class OrgOverviewWorkspace extends StatelessWidget {
                         ),
                         Text(
                           '${s.deadline.day}',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 21, color: kOrgPrimary, letterSpacing: opticalTracking(21), height: opticalLeading(21, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 17,
+                            color: kOrgPrimary,
+                            height: 1.2,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                       ],
                     ),
@@ -162,12 +208,27 @@ class OrgOverviewWorkspace extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(s.title, style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false))),
+                        Text(
+                          s.title,
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 13,
+                            height: 1.3,
+                            color: kOrgTextSecondary,
+                            letterSpacing: 0,
+                          ),
+                        ),
                         const SizedBox(height: 6),
                         Text(
                           MaterialLocalizations.of(context)
                               .formatFullDate(s.deadline),
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 12,
+                            color: kOrgTextSecondary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -178,7 +239,16 @@ class OrgOverviewWorkspace extends StatelessWidget {
           const SizedBox(height: 20),
           const Divider(color: kOrgBorder),
           const SizedBox(height: 20),
-          Text('Workspace', style: AppTypography.style(AppTextRole.screenTitle, fontSize: 18, color: kOrgTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false))),
+          Text(
+            'Workspace',
+            style: AppTypography.style(
+              AppTextRole.screenTitle,
+              fontSize: 17,
+              height: 1.2,
+              color: kOrgTextPrimary,
+              letterSpacing: -0.15,
+            ),
+          ),
           const SizedBox(height: 12),
           if (onTeam != null)
             _workspaceAction(
@@ -217,14 +287,28 @@ class OrgOverviewWorkspace extends StatelessWidget {
                         children: [
                           Text(
                             'Organization overview',
-                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: compact ? 28 : 32, color: kOrgTextPrimary, letterSpacing: opticalTracking(compact ? 28 : 32), height: opticalLeading(compact ? 28 : 32, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.screenTitle,
+                              fontSize: compact ? 20 : 24,
+                              height: 1.2,
+                              color: kOrgTextPrimary,
+                              letterSpacing: ((compact ? 20 : 24) >= 20
+                                  ? -.3
+                                  : -.15),
+                            ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             name.trim().isEmpty
                                 ? 'Scholarship administration'
                                 : name,
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 15, color: kOrgTextSecondary, letterSpacing: opticalTracking(15), height: ((15) <= 16 ? 1.45 : opticalLeading(15, isBody: true))),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 15,
+                              color: kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -270,14 +354,26 @@ class OrgOverviewWorkspace extends StatelessWidget {
                         pendingCount == 0
                             ? 'No applications awaiting review'
                             : '$pendingCount ${pendingCount == 1 ? 'application' : 'applications'} awaiting review',
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: compact ? 20 : 23, color: kOrgPrimary, letterSpacing: opticalTracking(compact ? 20 : 23), height: opticalLeading(compact ? 20 : 23, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.cardTitle,
+                          fontSize: 17,
+                          color: kOrgPrimary,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         pendingCount == 0
                             ? 'Submitted applications will appear in your review queue.'
                             : 'Review submitted requirements and record your team’s decision.',
-                        style: AppTypography.style(AppTextRole.body, fontSize: 14, color: kOrgTextSecondary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+                        style: AppTypography.style(
+                          AppTextRole.body,
+                          fontSize: 14,
+                          color: kOrgTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(height: 18),
                       FilledButton.icon(
@@ -322,12 +418,24 @@ class OrgOverviewWorkspace extends StatelessWidget {
   Widget _metric(String label, int count) => ProviderOverviewCard(
     heading: Text(
       label,
-      style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+      style: AppTypography.style(
+        AppTextRole.label,
+        fontSize: 13,
+        color: kOrgTextSecondary,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
     ),
     child: OrgMetricCount(
       motionId: 'overview.$label',
       targetValue: count,
-      style: AppTypography.style(AppTextRole.metric, fontSize: 28, color: kOrgTextPrimary, letterSpacing: opticalTracking(28), height: opticalLeading(28, isBody: false)),
+      style: AppTypography.style(
+        AppTextRole.metric,
+        fontSize: 28,
+        height: 1.2,
+        color: kOrgTextPrimary,
+        letterSpacing: -0.3,
+      ),
     ),
   );
   Widget _sectionHeading(String title, [Widget? action]) => Wrap(
@@ -335,7 +443,16 @@ class OrgOverviewWorkspace extends StatelessWidget {
     spacing: 16,
     runSpacing: 4,
     children: [
-      Text(title, style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 19, color: kOrgTextPrimary, letterSpacing: opticalTracking(19), height: opticalLeading(19, isBody: false))),
+      Text(
+        title,
+        style: AppTypography.style(
+          AppTextRole.sectionTitle,
+          fontSize: 17,
+          height: 1.2,
+          color: kOrgTextPrimary,
+          letterSpacing: -0.15,
+        ),
+      ),
       ?action,
     ],
   );
@@ -349,10 +466,25 @@ class OrgOverviewWorkspace extends StatelessWidget {
     child: ListTile(
       contentPadding: EdgeInsets.zero,
       leading: Icon(icon, color: kOrgTextSecondary, size: 20),
-      title: Text(title, style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false))),
+      title: Text(
+        title,
+        style: AppTypography.style(
+          AppTextRole.button,
+          fontSize: 13,
+          height: 1.3,
+          color: kOrgTextSecondary,
+          letterSpacing: 0,
+        ),
+      ),
       subtitle: Text(
         description,
-        style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+        style: AppTypography.style(
+          AppTextRole.body,
+          fontSize: 12,
+          color: kOrgTextSecondary,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
       ),
       trailing: const Icon(Icons.chevron_right_rounded, size: 18),
       onTap: action,

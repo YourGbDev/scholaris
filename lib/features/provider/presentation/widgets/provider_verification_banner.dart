@@ -4,6 +4,7 @@
 // Appears at the top of the provider shells without blocking access.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -135,12 +136,24 @@ class ProviderVerificationBanner extends ConsumerWidget {
               children: [
                 Text(
                   title,
-                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: titleColor),
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 13,
+                    color: titleColor,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   message,
-                  style: AppTypography.style(AppTextRole.body, fontSize: 12, color: bodyColor, height: 1.35),
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 12,
+                    color: bodyColor,
+                    height: 1.35,
+                    letterSpacing: 0,
+                  ),
                 ),
                 if ((isRejected || status == 'changes_requested') &&
                     onUpdateDocuments != null) ...[
@@ -155,8 +168,15 @@ class ProviderVerificationBanner extends ConsumerWidget {
                         foregroundColor: const Color(0xFF991B1B),
                         side: const BorderSide(color: Color(0xFFFECACA)),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 12),
-                        textStyle: AppTypography.style(AppTextRole.button, fontSize: 11.5),
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
+                        textStyle: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 11.5,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ),
@@ -173,7 +193,13 @@ class ProviderVerificationBanner extends ConsumerWidget {
               ),
               child: Text(
                 'PENDING',
-                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF92400E), letterSpacing: 0.5),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  fontSize: 10,
+                  color: const Color(0xFF92400E),
+                  letterSpacing: 0.5,
+                  height: 1.4,
+                ),
               ),
             ),
         ],
@@ -187,8 +213,9 @@ class ProviderVerificationBanner extends ConsumerWidget {
     ProviderVerification verification,
   ) {
     showDialog<void>(
-      animationStyle:
-          isReducedMotion(context) ? AnimationStyle.noAnimation : null,
+      animationStyle: isReducedMotion(context)
+          ? AnimationStyle.noAnimation
+          : null,
       context: context,
       builder: (dlgCtx) => _ProviderResubmitDialog(
         verification: verification,
@@ -312,7 +339,9 @@ class _ProviderResubmitDialogState
       if (result != null && result.files.isNotEmpty) {
         final file = result.files.first;
         if (file.bytes == null) {
-          setState(() => _error = 'Could not read file data. Please try another file.');
+          setState(
+            () => _error = 'Could not read file data. Please try another file.',
+          );
           return;
         }
         final err = ProviderVerificationRepository.validateFile(
@@ -451,13 +480,20 @@ class _ProviderResubmitDialogState
                   const SizedBox(height: 2),
                   Row(
                     children: [
-                      const Icon(Icons.check_circle_rounded, size: 14, color: Color(0xFF0F4D2E)),
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        size: 14,
+                        color: Color(0xFF0F4D2E),
+                      ),
                       const SizedBox(width: 4),
                       Flexible(
                         child: Text(
                           selectedName,
                           overflow: TextOverflow.ellipsis,
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Color(0xFF0F4D2E)),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF0F4D2E),
+                          ),
                         ),
                       ),
                     ],
@@ -477,7 +513,7 @@ class _ProviderResubmitDialogState
             OutlinedButton.icon(
               onPressed: _submitting ? null : onPick,
               icon: const Icon(Icons.upload_file, size: 14),
-              label:  Text('Upload new', style: AppTypography.style(AppTextRole.button, fontSize: 12)),
+              label: const Text('Upload new', style: TextStyle(fontSize: 12)),
             ),
         ],
       ),
@@ -511,23 +547,30 @@ class _ProviderResubmitDialogState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                         Text(
+                        Text(
                           'Reviewer feedback:',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 12, color: Color(0xFF912018)),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 12,
+                            color: Color(0xFF912018),
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           note,
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: Color(0xFFB42318)),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFFB42318),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 16),
                 ],
-                 Text(
+                const Text(
                   'Please correct your information below. Once submitted, your accreditation application will return to pending review.',
-                  style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Color(0xFF475467)),
+                  style: TextStyle(fontSize: 13, color: Color(0xFF475467)),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
@@ -543,8 +586,9 @@ class _ProviderResubmitDialogState
                 TextFormField(
                   controller: _idOrRegController,
                   decoration: InputDecoration(
-                    labelText:
-                        isOrg ? 'SEC / DTI Registration Number' : 'ID Number',
+                    labelText: isOrg
+                        ? 'SEC / DTI Registration Number'
+                        : 'ID Number',
                     border: const OutlineInputBorder(),
                   ),
                   validator: (v) =>
@@ -565,24 +609,30 @@ class _ProviderResubmitDialogState
                 const SizedBox(height: 16),
                 const Divider(),
                 const SizedBox(height: 8),
-                 Text(
+                Text(
                   'Replacement documents (optional unless requested)',
-                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: Color(0xFF344054)),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    fontSize: 13,
+                    color: Color(0xFF344054),
+                  ),
                 ),
                 const SizedBox(height: 4),
-                 Text(
+                const Text(
                   'Select replacement files to update your accreditation dossier. Existing files will be preserved if not replaced.',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Color(0xFF667085)),
+                  style: TextStyle(fontSize: 12, color: Color(0xFF667085)),
                 ),
                 const SizedBox(height: 12),
                 if (isOrg) ...[
                   _buildDocRow(
                     label: 'SEC / DTI Registration Certificate',
                     selectedName: _secName,
-                    onPick: () => _pickDocument(onPicked: (b, n) {
-                      _secBytes = b;
-                      _secName = n;
-                    }),
+                    onPick: () => _pickDocument(
+                      onPicked: (b, n) {
+                        _secBytes = b;
+                        _secName = n;
+                      },
+                    ),
                     onClear: () => setState(() {
                       _secBytes = null;
                       _secName = null;
@@ -591,22 +641,27 @@ class _ProviderResubmitDialogState
                   _buildDocRow(
                     label: 'BIR Certificate of Registration (Form 2303)',
                     selectedName: _birName,
-                    onPick: () => _pickDocument(onPicked: (b, n) {
-                      _birBytes = b;
-                      _birName = n;
-                    }),
+                    onPick: () => _pickDocument(
+                      onPicked: (b, n) {
+                        _birBytes = b;
+                        _birName = n;
+                      },
+                    ),
                     onClear: () => setState(() {
                       _birBytes = null;
                       _birName = null;
                     }),
                   ),
                   _buildDocRow(
-                    label: 'Board Resolution / Secretary Certificate (Optional)',
+                    label:
+                        'Board Resolution / Secretary Certificate (Optional)',
                     selectedName: _boardName,
-                    onPick: () => _pickDocument(onPicked: (b, n) {
-                      _boardBytes = b;
-                      _boardName = n;
-                    }),
+                    onPick: () => _pickDocument(
+                      onPicked: (b, n) {
+                        _boardBytes = b;
+                        _boardName = n;
+                      },
+                    ),
                     onClear: () => setState(() {
                       _boardBytes = null;
                       _boardName = null;
@@ -616,10 +671,12 @@ class _ProviderResubmitDialogState
                   _buildDocRow(
                     label: 'Government-Issued Photo ID',
                     selectedName: _govIdName,
-                    onPick: () => _pickDocument(onPicked: (b, n) {
-                      _govIdBytes = b;
-                      _govIdName = n;
-                    }),
+                    onPick: () => _pickDocument(
+                      onPicked: (b, n) {
+                        _govIdBytes = b;
+                        _govIdName = n;
+                      },
+                    ),
                     onClear: () => setState(() {
                       _govIdBytes = null;
                       _govIdName = null;
@@ -628,10 +685,12 @@ class _ProviderResubmitDialogState
                   _buildDocRow(
                     label: 'Selfie with ID (Optional)',
                     selectedName: _selfieName,
-                    onPick: () => _pickDocument(onPicked: (b, n) {
-                      _selfieBytes = b;
-                      _selfieName = n;
-                    }),
+                    onPick: () => _pickDocument(
+                      onPicked: (b, n) {
+                        _selfieBytes = b;
+                        _selfieName = n;
+                      },
+                    ),
                     onClear: () => setState(() {
                       _selfieBytes = null;
                       _selfieName = null;
@@ -642,7 +701,10 @@ class _ProviderResubmitDialogState
                   const SizedBox(height: 12),
                   Text(
                     _error!,
-                    style: AppTypography.style(AppTextRole.caption, color: Color(0xFFB42318), fontSize: 12),
+                    style: const TextStyle(
+                      color: Color(0xFFB42318),
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ],

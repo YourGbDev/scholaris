@@ -1,4 +1,4 @@
-import 'package:scholaris/shared/theme/app_theme.dart';
+import 'package:scholaris/shared/theme/app_theme.dart' show applyScholarisTypography;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/features/applications/providers/application_document_provider.dart';
 import 'package:scholaris/features/applications/models/application_document.dart';
@@ -167,7 +167,6 @@ Widget buildApp({bool? individualPreview}) {
       ),
       theme: applyScholarisTypography(ThemeData(
         fontFamily: AppTypography.familyFor(14),
-        fontFamilyFallback: AppTypography.fallback,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F4D2E)),
       )),
       home: showAdminSupport

@@ -5,6 +5,7 @@
 // Completely removes Lottie animations per Stitch V2 guidelines.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -32,11 +33,11 @@ class SuccessOverlay {
   static Future<void> show(
     BuildContext context, {
     String title = 'Finding your scholarship matches...',
-    String? subtitle =
-        'Analyzing university grants, DOST, and private subsidies tailored to you.',
+    String? subtitle = 'Analyzing university grants, DOST, and private subsidies tailored to you.',
     MascotPose pose = MascotPose.searching,
   }) {
-    final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
     return showGeneralDialog(
       context: context,
@@ -82,10 +83,7 @@ class _SuccessPageState extends State<_SuccessPage>
   @override
   void initState() {
     super.initState();
-    _scaleController = AnimationController.unbounded(
-      value: 0.0,
-      vsync: this,
-    );
+    _scaleController = AnimationController.unbounded(value: 0.0, vsync: this);
     if (!widget.reduceMotion) {
       _scaleController.animateWith(
         SpringSimulation(AppleSpringDescription.sheet, 0.0, 1.0, 0.0),
@@ -141,22 +139,31 @@ class _SuccessPageState extends State<_SuccessPage>
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          MascotPoseView(
-            pose: widget.pose,
-            height: 110,
-          ),
+          MascotPoseView(pose: widget.pose, height: 110),
           const SizedBox(height: 14),
           Text(
             widget.title,
             textAlign: TextAlign.center,
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: const Color(0xFF161C27), letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 17,
+              color: const Color(0xFF161C27),
+              height: 1.25,
+              letterSpacing: -0.15,
+            ),
           ),
           if (widget.subtitle != null) ...[
             const SizedBox(height: 6),
             Text(
               widget.subtitle!,
               textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.subtitle, fontSize: 12.5, color: const Color(0xFF404942), height: 1.35, letterSpacing: opticalTracking(12.5)),
+              style: AppTypography.style(
+                AppTextRole.subtitle,
+                fontSize: 12.5,
+                color: const Color(0xFF404942),
+                height: 1.35,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ],
@@ -170,13 +177,9 @@ class _SuccessPageState extends State<_SuccessPage>
         body: Center(
           child: widget.reduceMotion
               ? cardWidget
-              : ScaleTransition(
-                  scale: _scaleController,
-                  child: cardWidget,
-                ),
+              : ScaleTransition(scale: _scaleController, child: cardWidget),
         ),
       ),
     );
   }
 }
-

@@ -67,8 +67,8 @@ void main() {
     expect(text.titleSmall!.fontWeight, FontWeight.w600);
     expect(text.labelSmall!.fontWeight, FontWeight.w500);
     expect(text.bodyMedium!.fontWeight, FontWeight.w400);
-    expect(text.bodyMedium!.fontSize, 14);
-    expect(text.bodyMedium!.height, 1.45);
+    expect(text.bodyMedium!.fontSize, 13);
+    expect(text.bodyMedium!.height, 1.4);
   });
   test(
     'preview themes keep custom button dimensions and all actions semibold',
@@ -86,7 +86,7 @@ void main() {
         scholarisTheme().elevatedButtonTheme.style!.textStyle!
             .resolve({})!
             .fontSize,
-        16,
+        13,
       );
     },
   );

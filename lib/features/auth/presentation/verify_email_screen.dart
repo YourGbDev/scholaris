@@ -8,6 +8,7 @@
 // Preserves local validation, Supabase resend, and test suite contracts.
 
 import 'package:scholaris/shared/theme/app_typography.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -50,6 +51,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   final _code = TextEditingController();
   Timer? _resendTimer;
   int _secondsLeft = 0;
+  int _failedAttempts = 0;
 
   GoTrueClient get _client => widget.client ?? Supabase.instance.client.auth;
 
@@ -62,6 +64,14 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   Future<void> _onVerify() async {
     if (_isLoading || !_formKey.currentState!.validate()) return;
+    if (_failedAttempts >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        _snackBar(
+          'Maximum verification attempts reached (3/3). Please request a new code.',
+        ),
+      );
+      return;
+    }
     final email = widget.email;
     if (email == null || email.isEmpty) return;
     setState(() => _isLoading = true);
@@ -87,11 +97,16 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         context.go(widget.successLocation ?? ProfileSetupRoute.personal);
       }
     } on AuthException catch (error) {
+      _failedAttempts++;
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(_snackBar(_friendlyError(error)));
+        final msg = _failedAttempts >= 3
+            ? 'Maximum verification attempts reached (3/3). Please request a new code.'
+            : _friendlyError(error);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(_snackBar(msg));
       }
     } catch (_) {
+      _failedAttempts++;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           _snackBar(
@@ -139,15 +154,23 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         );
       }
       if (!mounted) return;
-      setState(() => _resent = true);
+      setState(() {
+        _resent = true;
+        _failedAttempts = 0;
+      });
       _startCooldown();
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(_snackBar('Verification email sent. Check your inbox.'));
     } on AuthException catch (error) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(_snackBar(_friendlyError(error)));
+      _failedAttempts++;
+      if (mounted) {
+        final msg = _failedAttempts >= 3
+            ? 'Maximum verification attempts reached (3/3). Please request a new code.'
+            : _friendlyError(error);
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(_snackBar(msg));
+      }
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
@@ -176,7 +199,16 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-    content: Text(message, style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
+    content: Text(
+      message,
+      style: AppTypography.style(
+        AppTextRole.body,
+        color: Colors.white,
+        fontSize: 13,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
+    ),
     backgroundColor: const Color(0xFF161C27),
     behavior: SnackBarBehavior.floating,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -214,7 +246,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   const Spacer(),
                   Text(
                     'Scholaris',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 18, color: kPrimary, letterSpacing: -0.5, height: opticalLeading(18, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 17,
+                      color: kPrimary,
+                      letterSpacing: -0.5,
+                      height: 1.2,
+                    ),
                   ),
                   const Spacer(),
                   IconButton(
@@ -274,7 +312,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE8EEFF),
+                              color: kSurfaceContainer,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -291,7 +329,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   'EMAIL VERIFICATION',
-                                  style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kPrimary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.label,
+                                    fontSize: 11,
+                                    color: kPrimary,
+                                    letterSpacing: 0.8,
+                                    height: 1.2,
+                                  ),
                                 ),
                               ],
                             ),
@@ -305,7 +349,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               ? 'Verify your recovery code'
                               : 'Verify your email',
                           textAlign: TextAlign.center,
-                          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 26, color: kPrimary, height: 1.2, letterSpacing: opticalTracking(26)),
+                          style: AppTypography.style(
+                            AppTextRole.screenTitle,
+                            fontSize: 20,
+                            color: kPrimary,
+                            height: 1.2,
+                            letterSpacing: -0.15,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Text(
@@ -313,7 +363,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               ? 'If an account exists, a recovery code is on its way to:'
                               : 'Enter the verification code sent to:',
                           textAlign: TextAlign.center,
-                          style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(13)),
+                          style: AppTypography.style(
+                            AppTextRole.subtitle,
+                            fontSize: 13,
+                            color: kTextSecondary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                         const SizedBox(height: 16),
 
@@ -338,7 +394,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 width: 40,
                                 height: 40,
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFFF1F3FF),
+                                  color: kSurfaceContainerLow,
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
@@ -354,14 +410,26 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   children: [
                                     Text(
                                       'Recipient Target',
-                                      style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                      style: AppTypography.style(
+                                        AppTextRole.label,
+                                        fontSize: 11,
+                                        color: kTextSecondary,
+                                        height: 1.4,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                     Text(
                                       hasEmail
                                           ? email
                                           : 'No email address specified',
                                       overflow: TextOverflow.ellipsis,
-                                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.bodyEmphasis,
+                                        fontSize: 13,
+                                        color: kTextPrimary,
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -382,7 +450,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                       vertical: 5,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFE8EEFF),
+                                      color: kSurfaceContainer,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Row(
@@ -396,7 +464,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                         const SizedBox(width: 4),
                                         Text(
                                           'Edit',
-                                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                                          style: AppTypography.style(
+                                            AppTextRole.button,
+                                            fontSize: 12,
+                                            color: kPrimary,
+                                            height: 1.4,
+                                            letterSpacing: 0,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -411,7 +485,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         Text(
                           'Use the latest code in your inbox. Check your spam folder if it has not arrived.',
                           textAlign: TextAlign.center,
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kTextSecondary, height: 1.45, letterSpacing: opticalTracking(12)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 12,
+                            color: kTextSecondary,
+                            height: 1.45,
+                            letterSpacing: 0,
+                          ),
                         ),
                         const SizedBox(height: 20),
 
@@ -439,7 +519,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         ),
                         const SizedBox(height: 12),
                         ElevatedButton(
-                          onPressed: hasEmail && !_isLoading ? _onVerify : null,
+                          onPressed:
+                              (hasEmail && !_isLoading && _failedAttempts < 3)
+                              ? _onVerify
+                              : null,
                           child: const Text('Verify code'),
                         ),
                         const SizedBox(height: 12),
@@ -480,7 +563,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                       _secondsLeft > 0
                                           ? 'Resend in ${_secondsLeft}s'
                                           : 'Resend email',
-                                      style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.button,
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -505,7 +594,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 Expanded(
                                   child: Text(
                                     'If eligible, a fresh code is on its way. Check your inbox.',
-                                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                                    style: AppTypography.style(
+                                      AppTextRole.caption,
+                                      fontSize: 12,
+                                      color: kPrimary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -518,9 +613,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF1F3FF),
+                            color: kSurfaceContainerLow,
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFFDDE2F3)),
+                            border: Border.all(color: kSurfaceContainerHighest),
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -546,12 +641,24 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                   children: [
                                     Text(
                                       'Campus Firewall Advisory (UP, PUP, UST, DLSU)',
-                                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.cardTitle,
+                                        fontSize: 12,
+                                        color: kTextPrimary,
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
                                       'State universities and institutional mail servers frequently filter security links into Spam or quarantine folders. Please allow 1–2 minutes before requesting a resend.',
-                                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
+                                      style: AppTypography.style(
+                                        AppTextRole.body,
+                                        fontSize: 11,
+                                        color: kTextSecondary,
+                                        height: 1.35,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -576,7 +683,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   'Back to login',
-                                  style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.button,
+                                    fontSize: 13,
+                                    color: kPrimary,
+                                    height: 1.2,
+                                    letterSpacing: -0.15,
+                                  ),
                                 ),
                               ],
                             ),
@@ -613,7 +726,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFDDE2F3),
+                    color: kSurfaceContainerHighest,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -621,12 +734,24 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               const SizedBox(height: 16),
               Text(
                 'Verification Help & Support',
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, color: kTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 17,
+                  color: kTextPrimary,
+                  height: 1.2,
+                  letterSpacing: -0.15,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
                 'Having trouble receiving your 8-digit confirmation code?',
-                style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kTextSecondary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                style: AppTypography.style(
+                  AppTextRole.subtitle,
+                  fontSize: 13,
+                  color: kTextSecondary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
               const SizedBox(height: 16),
               _buildSupportOption(
@@ -682,7 +807,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFFF9F9FF),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFDDE2F3)),
+          border: Border.all(color: kSurfaceContainerHighest),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -702,12 +827,24 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 children: [
                   Text(
                     title,
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 13,
+                      color: kTextPrimary,
+                      height: 1.2,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     description,
-                    style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 11,
+                      color: kTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -724,4 +861,3 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     );
   }
 }
-

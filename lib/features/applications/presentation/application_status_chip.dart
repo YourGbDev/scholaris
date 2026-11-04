@@ -115,7 +115,13 @@ class ApplicationStatusChip extends StatelessWidget {
             Flexible(
               child: Text(
                 ui.label,
-                style: AppTypography.style(AppTextRole.badge, fontSize: 11, letterSpacing: 0.1, color: ui.foreground),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  fontSize: 11,
+                  letterSpacing: 0.1,
+                  color: ui.foreground,
+                  height: 1.4,
+                ),
               ),
             ),
           ],

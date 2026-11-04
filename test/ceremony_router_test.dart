@@ -192,7 +192,7 @@ void main() {
       expect(redirect, '/home');
     });
 
-    test('signed-in student on setup route is redirected to /home', () {
+    test('completed student can reopen personal details to edit', () {
       final redirect = authRedirectDecision(
         location: '/profile-setup/personal',
         isLoggedIn: true,
@@ -203,7 +203,7 @@ void main() {
         profileComplete: true,
         role: 'student',
       );
-      expect(redirect, '/home');
+      expect(redirect, isNull);
     });
 
     test('signed-in student on /onboarding is redirected to /home', () {

@@ -14,7 +14,6 @@
 //   4. Support & About — student help desk, live chat, and app build details.
 //   5. Account Actions & Trust Footer — calm logout, deactivation, and security facts.
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +27,9 @@ import 'package:scholaris/features/account/presentation/change_email_dialog.dart
 import 'package:scholaris/features/account/repositories/account_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
+
 import '../../home/presentation/widgets/student_app_tour.dart';
+
 import 'package:scholaris/shared/widgets/logout_confirmation_dialog.dart';
 import 'package:scholaris/shared/widgets/responsive_container.dart';
 import 'package:scholaris/shared/widgets/success_overlay.dart';
@@ -80,7 +81,8 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         _alertDeadline = prefs.getBool('pref_alert_deadline_$userId') ?? true;
         _alertMatches = prefs.getBool('pref_alert_matches_$userId') ?? true;
         _alertStatus = prefs.getBool('pref_alert_status_$userId') ?? true;
-        _alertWeeklyDigest = prefs.getBool('pref_alert_weekly_$userId') ?? false;
+        _alertWeeklyDigest =
+            prefs.getBool('pref_alert_weekly_$userId') ?? false;
         _alertEmail = prefs.getBool('pref_alert_email_$userId') ?? true;
       });
     } catch (_) {}
@@ -114,10 +116,15 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
     try {
       final captcha = await acquireCaptcha(context);
       if (!mounted || !captcha.allowed) return;
-      await ref.read(accountRepositoryProvider).resendVerificationEmail(captchaToken: captcha.token);
+      await ref
+          .read(accountRepositoryProvider)
+          .resendVerificationEmail(captchaToken: captcha.token);
       if (!mounted) return;
-      setState(() => _resendSuccess = 'Verification email sent. '
-          'Check your inbox.');
+      setState(
+        () => _resendSuccess =
+            'Verification email sent. '
+            'Check your inbox.',
+      );
     } on AccountNotAuthenticatedException {
       if (!mounted) return;
       setState(
@@ -150,8 +157,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
     try {
       final captcha = await acquireCaptcha(context);
       if (!mounted) return;
-      if (!captcha.allowed) { setState(() => _isSubmitting = false); return; }
-      final othersRevoked = await ref.read(accountRepositoryProvider).changePassword(
+      if (!captcha.allowed) {
+        setState(() => _isSubmitting = false);
+        return;
+      }
+      final othersRevoked = await ref
+          .read(accountRepositoryProvider)
+          .changePassword(
             currentPassword: _currentPasswordController.text,
             newPassword: _newPasswordController.text,
             captchaToken: captcha.token,
@@ -233,10 +245,15 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
   }
 
   String? _validateNewPassword(String? value) {
-    if (value != null && value.isNotEmpty && value == _currentPasswordController.text) {
+    if (value != null &&
+        value.isNotEmpty &&
+        value == _currentPasswordController.text) {
       return 'New password must be different from your current password.';
     }
-    return PasswordValidator.validatePassword(value, emptyMessage: 'Enter a new password.');
+    return PasswordValidator.validatePassword(
+      value,
+      emptyMessage: 'Enter a new password.',
+    );
   }
 
   String? _validateConfirmPassword(String? value) {
@@ -255,7 +272,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
     final emailConfirmed = ref.watch(emailConfirmedProvider);
 
     return Scaffold(
-      backgroundColor: kSurfaceWarm,
+      backgroundColor: kStudentCanvas,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
@@ -263,16 +280,28 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         leading: const BackButton(color: kTextPrimary),
         title: Text(
           'Account Settings',
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: 18, color: kTextPrimary, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: 17,
+            color: kTextPrimary,
+            height: 1.25,
+            letterSpacing: -0.15,
+          ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.help_outline_rounded, color: kTextSecondary, size: 22),
+            icon: const Icon(
+              Icons.help_outline_rounded,
+              color: kTextSecondary,
+              size: 22,
+            ),
             tooltip: 'Help and Support',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Scholaris Support: support@scholaris.ph • Mon-Fri 8AM-5PM PHT'),
+                  content: Text(
+                    'Scholaris Support: support@scholaris.ph • Mon-Fri 8AM-5PM PHT',
+                  ),
                   duration: Duration(seconds: 3),
                 ),
               );
@@ -314,29 +343,54 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          alignment: WrapAlignment.spaceBetween,
           children: [
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   'Account',
-                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                    color: kTextSecondary,
+                    height: 1.25,
+                  ),
                 ),
                 Text(
                   ' & Security',
-                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                    color: kTextSecondary,
+                    height: 1.25,
+                  ),
                 ),
               ],
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.verified_user_rounded, size: 14, color: kPrimary),
+                const Icon(
+                  Icons.verified_user_rounded,
+                  size: 14,
+                  color: kPrimary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Secured',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 11,
+                    color: kPrimary,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -351,15 +405,15 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             children: [
               // Email Row
               _buildEmailRow(email, emailConfirmed),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               // Change Password Card
               _buildChangePasswordSection(),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               // Phone Number Row
               _buildPhoneRow(),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               // SUC Integration Row
               _buildSucIntegrationRow(),
@@ -382,8 +436,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               Flexible(
                 child: Text(
                   'Email Address',
-                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 12,
+                    color: kTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -395,7 +454,15 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 ),
                 child: Text(
                   emailConfirmed ? 'Verified' : 'Not verified',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: emailConfirmed ? kOnPrimaryFixedVariant : kOnTertiaryFixedVariant, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 11,
+                    color: emailConfirmed
+                        ? kOnPrimaryFixedVariant
+                        : kOnTertiaryFixedVariant,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -403,7 +470,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           const SizedBox(height: 4),
           Text(
             email ?? 'Unknown',
-            style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 15, color: kTextPrimary, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.bodyEmphasis,
+              fontSize: 15,
+              color: kTextPrimary,
+              height: 1.25,
+              letterSpacing: 0,
+            ),
             overflow: TextOverflow.ellipsis,
           ),
           if (email != null && email.isNotEmpty)
@@ -425,7 +498,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         : _onResend,
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: kPrimary),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       minimumSize: Size.zero,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -435,7 +511,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         _isResending ? 'Sending…' : 'Resend verification email',
-                        style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          fontSize: 12,
+                          color: kPrimary,
+                          height: 1.25,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ),
@@ -446,14 +528,26 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               const SizedBox(height: 6),
               Text(
                 _resendSuccess!,
-                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 12,
+                  color: kPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
             if (_resendError != null) ...[
               const SizedBox(height: 6),
               Text(
                 _resendError!,
-                style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kError, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 12,
+                  color: kError,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ],
@@ -468,25 +562,39 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            alignment: WrapAlignment.spaceBetween,
             children: [
-              Flexible(
-                child: Text(
-                  'Change password',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-                  overflow: TextOverflow.ellipsis,
+              Text(
+                'Change password',
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 13,
+                  color: kTextPrimary,
+                  height: 1.25,
+                  letterSpacing: 0,
                 ),
               ),
-              const SizedBox(width: 8),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.lock_outline_rounded, size: 14, color: kPrimary),
+                  const Icon(
+                    Icons.lock_outline_rounded,
+                    size: 14,
+                    color: kPrimary,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     'Password protection',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 11,
+                      color: kPrimary,
+                      height: 1.25,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -495,12 +603,24 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           const SizedBox(height: 2),
           Text(
             'Confirm your current password to set a new one.',
-            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              fontSize: 12,
+              color: kTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             'Use at least 8 characters, including uppercase, lowercase, a number, and a special character.',
-            style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.caption,
+              fontSize: 12,
+              color: kTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 14),
 
@@ -513,7 +633,8 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   controller: _currentPasswordController,
                   label: 'Current Password',
                   obscure: _obscureCurrent,
-                  onToggle: () => setState(() => _obscureCurrent = !_obscureCurrent),
+                  onToggle: () =>
+                      setState(() => _obscureCurrent = !_obscureCurrent),
                   validator: _validateCurrentPassword,
                 ),
                 const SizedBox(height: 12),
@@ -531,7 +652,8 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   controller: _confirmPasswordController,
                   label: 'Confirm New Password',
                   obscure: _obscureConfirm,
-                  onToggle: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                  onToggle: () =>
+                      setState(() => _obscureConfirm = !_obscureConfirm),
                   validator: _validateConfirmPassword,
                 ),
 
@@ -546,12 +668,22 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline_rounded, size: 16, color: kError),
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          size: 16,
+                          color: kError,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _passwordError!,
-                            style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kError, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              fontSize: 12,
+                              color: kError,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ],
@@ -564,17 +696,29 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF1F3FF),
+                      color: kStudentSurfaceSubtle,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: kPrimary.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: kPrimary.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.check_circle_rounded, size: 16, color: kPrimary),
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          size: 16,
+                          color: kPrimary,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'Password updated successfully.',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 12,
+                            color: kPrimary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -603,7 +747,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         )
                       : Text(
                           'Update Password',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 13,
+                            color: Colors.white,
+                            height: 1.25,
+                            letterSpacing: 0,
+                          ),
                         ),
                 ),
               ],
@@ -625,11 +775,27 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       controller: controller,
       obscureText: obscure,
       validator: validator,
-      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+      style: AppTypography.style(
+        AppTextRole.input,
+        fontSize: 13,
+        color: kTextPrimary,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: AppTypography.style(AppTextRole.label, color: kTextSecondary, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-        prefixIcon: const Icon(Icons.lock_outline_rounded, size: 18, color: kTextSecondary),
+        labelStyle: AppTypography.style(
+          AppTextRole.label,
+          color: kTextSecondary,
+          fontSize: 13,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
+        prefixIcon: const Icon(
+          Icons.lock_outline_rounded,
+          size: 18,
+          color: kTextSecondary,
+        ),
         suffixIcon: IconButton(
           icon: Icon(
             obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
@@ -639,15 +805,18 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           onPressed: onToggle,
         ),
         filled: true,
-        fillColor: const Color(0xFFF9F9FF),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        fillColor: kStudentSurfaceSubtle,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 10,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+          borderSide: const BorderSide(color: kStudentDivider),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+          borderSide: const BorderSide(color: kStudentDivider),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -669,22 +838,48 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               children: [
                 Text(
                   'Phone Number',
-                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 12,
+                    color: kTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Row(
                   children: [
                     Text(
                       '+63 917 ••• •421',
-                      style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.bodyEmphasis,
+                        fontSize: 13,
+                        color: kTextPrimary,
+                        height: 1.25,
+                        letterSpacing: 0,
+                      ),
                     ),
                     const SizedBox(width: 6),
-                    Text('•', style: AppTypography.style(AppTextRole.caption, color: kTextSecondary)),
+                    Text(
+                      '•',
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        color: kTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    ),
                     const SizedBox(width: 6),
                     Flexible(
                       child: Text(
                         'SMS alerts active',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 12,
+                          color: kTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -693,7 +888,11 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: Color(0xFF707971), size: 20),
+          const Icon(
+            Icons.chevron_right_rounded,
+            color: Color(0xFF707971),
+            size: 20,
+          ),
         ],
       ),
     );
@@ -711,7 +910,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               children: [
                 Text(
                   'Academic Institution SSO',
-                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 12,
+                    color: kTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Row(
@@ -728,7 +933,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                     Flexible(
                       child: Text(
                         'Not connected • Coming soon',
-                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.bodyEmphasis,
+                          fontSize: 13,
+                          color: kTextPrimary,
+                          height: 1.25,
+                          letterSpacing: 0,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -737,14 +948,24 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 const SizedBox(height: 2),
                 Text(
                   'University record sync is not available yet.',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 11,
+                    color: kTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
           ),
           IconButton(
             tooltip: 'University record sync information',
-            icon: const Icon(Icons.sync_rounded, color: Color(0xFF707971), size: 20),
+            icon: const Icon(
+              Icons.sync_rounded,
+              color: Color(0xFF707971),
+              size: 20,
+            ),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -767,7 +988,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       children: [
         Text(
           'NOTIFICATION PREFERENCES',
-          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.sectionTitle,
+            fontSize: 12,
+            letterSpacing: 0.5,
+            color: kTextSecondary,
+            height: 1.25,
+          ),
         ),
         const SizedBox(height: 8),
 
@@ -787,7 +1014,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   _savePreference('alert_deadline', v);
                 },
               ),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _notificationSwitch(
                 title: 'New Scholarship Matches',
@@ -801,7 +1028,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   _savePreference('alert_matches', v);
                 },
               ),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _notificationSwitch(
                 title: 'Application Status Updates',
@@ -812,7 +1039,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   _savePreference('alert_status', v);
                 },
               ),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _notificationSwitch(
                 title: 'Weekly Grant Digest',
@@ -823,7 +1050,7 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                   _savePreference('alert_weekly', v);
                 },
               ),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _notificationSwitch(
                 title: 'Email Notifications',
@@ -864,21 +1091,36 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                     Flexible(
                       child: Text(
                         title,
-                        style: AppTypography.style(AppTextRole.label, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          fontSize: 13,
+                          color: kTextPrimary,
+                          height: 1.25,
+                          letterSpacing: 0,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     if (badge != null) ...[
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 1,
+                        ),
                         decoration: BoxDecoration(
                           color: badgeColor ?? kPrimaryLight,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           badge,
-                          style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: badgeTextColor ?? kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.badge,
+                            fontSize: 10,
+                            color: badgeTextColor ?? kPrimary,
+                            height: 1.25,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ],
@@ -887,7 +1129,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
+                  style: AppTypography.style(
+                    AppTextRole.subtitle,
+                    fontSize: 11,
+                    color: kTextSecondary,
+                    height: 1.35,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -915,7 +1163,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             Flexible(
               child: Text(
                 'PRIVACY & DATA SHIELD',
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                  color: kTextSecondary,
+                  height: 1.25,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -927,7 +1181,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 const SizedBox(width: 4),
                 Text(
                   'RA 10173',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 11,
+                    color: kSecondary,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -943,8 +1203,10 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: const BoxDecoration(
-                  color: Color(0xFFF1F3FF),
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(kRadiusCard - .5)),
+                  color: kStudentSurfaceSubtle,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(kRadiusCard - .5),
+                  ),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -956,7 +1218,11 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         color: kPrimaryLight,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.shield_rounded, color: kPrimary, size: 18),
+                      child: const Icon(
+                        Icons.shield_rounded,
+                        color: kPrimary,
+                        size: 18,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -965,12 +1231,24 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         children: [
                           Text(
                             'Data Usage & Income Shielding',
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 13,
+                              color: kTextPrimary,
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             'Your exact income is never sold or disclosed to third parties. Only verified eligibility tiers are shared with accredited providers under Philippine Data Privacy Act protections.',
-                            style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              fontSize: 11,
+                              color: kTextSecondary,
+                              height: 1.35,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -983,18 +1261,21 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
               _actionListTile(
                 icon: Icons.description_outlined,
                 title: 'Privacy Policy & Student Rights',
-                subtitle: 'Review terms, statutory rights, and data processing basis',
+                subtitle:
+                    'Review terms, statutory rights, and data processing basis',
                 trailingIcon: Icons.open_in_new_rounded,
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Scholaris complies with NPC Circular 16-01 on data subject rights.'),
+                      content: Text(
+                        'Scholaris complies with NPC Circular 16-01 on data subject rights.',
+                      ),
                       duration: Duration(seconds: 2),
                     ),
                   );
                 },
               ),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _actionListTile(
                 icon: Icons.download_rounded,
@@ -1004,13 +1285,15 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Preparing encrypted archive. A download link will be emailed to your inbox within 15 minutes.'),
+                      content: Text(
+                        'Preparing encrypted archive. A download link will be emailed to your inbox within 15 minutes.',
+                      ),
                       duration: Duration(seconds: 3),
                     ),
                   );
                 },
               ),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               _actionListTile(
                 icon: Icons.admin_panel_settings_outlined,
@@ -1020,7 +1303,9 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Manage permissions for UP CRS, CHED UniFAST, and DOST portal.'),
+                      content: Text(
+                        'Manage permissions for UP CRS, CHED UniFAST, and DOST portal.',
+                      ),
                       duration: Duration(seconds: 2),
                     ),
                   );
@@ -1054,11 +1339,23 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 children: [
                   Text(
                     title,
-                    style: AppTypography.style(AppTextRole.navigation, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.navigation,
+                      fontSize: 13,
+                      color: kTextPrimary,
+                      height: 1.25,
+                      letterSpacing: 0,
+                    ),
                   ),
                   Text(
                     subtitle,
-                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.subtitle,
+                      fontSize: 11,
+                      color: kTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1079,7 +1376,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
       children: [
         Text(
           'SUPPORT & ABOUT',
-          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, letterSpacing: 0.5, color: kTextSecondary, height: opticalLeading(12, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.sectionTitle,
+            fontSize: 12,
+            letterSpacing: 0.5,
+            color: kTextSecondary,
+            height: 1.25,
+          ),
         ),
         const SizedBox(height: 8),
 
@@ -1106,19 +1409,25 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Connecting to Scholaris Advisor live chat...'),
+                      content: Text(
+                        'Connecting to Scholaris Advisor live chat...',
+                      ),
                       duration: Duration(seconds: 2),
                     ),
                   );
                 },
               ),
-              const Divider(height: 1, color: Color(0xFFF1F3FF)),
+              const Divider(height: 1, color: kStudentSurfaceSubtle),
 
               Padding(
                 padding: const EdgeInsets.all(14),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline_rounded, size: 20, color: kTextSecondary),
+                    const Icon(
+                      Icons.info_outline_rounded,
+                      size: 20,
+                      color: kTextSecondary,
+                    ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -1126,24 +1435,45 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
                         children: [
                           Text(
                             'Scholaris App Version',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 13,
+                              color: kTextPrimary,
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
                           ),
                           Text(
                             'AY 2024–2025 Edition • Build 489',
-                            style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                            style: AppTypography.style(
+                              AppTextRole.caption,
+                              fontSize: 11,
+                              color: kTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE8EEFF),
+                        color: kStudentSurfaceSubtle,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         'v2.4.0',
-                        style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.badge,
+                          fontSize: 11,
+                          color: kSecondary,
+                          height: 1.25,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ],
@@ -1176,10 +1506,16 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
           icon: const Icon(Icons.logout_rounded, size: 18, color: kSecondary),
           label: Text(
             'Log Out',
-            style: AppTypography.style(AppTextRole.button, fontSize: 14, color: kSecondary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.button,
+              fontSize: 13,
+              color: kSecondary,
+              height: 1.25,
+              letterSpacing: 0,
+            ),
           ),
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(color: Color(0xFFDDE2F3), width: 1.5),
+            side: const BorderSide(color: kStudentDivider, width: 1.5),
             backgroundColor: Colors.white,
             minimumSize: const Size.fromHeight(48),
             shape: RoundedRectangleBorder(
@@ -1195,14 +1531,23 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('To delete or deactivate your account, please submit a request via support@scholaris.ph.'),
+                  content: Text(
+                    'To delete or deactivate your account, please submit a request via support@scholaris.ph.',
+                  ),
                   duration: Duration(seconds: 3),
                 ),
               );
             },
             child: Text(
               'Delete or Deactivate Account',
-              style: AppTypography.style(AppTextRole.button, fontSize: 12, color: const Color(0xFF707971), decoration: TextDecoration.underline, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.button,
+                fontSize: 12,
+                color: const Color(0xFF707971),
+                decoration: TextDecoration.underline,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ),
@@ -1212,11 +1557,21 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lock_outline_rounded, size: 14, color: Color(0xFF707971)),
+            const Icon(
+              Icons.lock_outline_rounded,
+              size: 14,
+              color: Color(0xFF707971),
+            ),
             const SizedBox(width: 4),
             Text(
               'ENCRYPTED IN TRANSIT (TLS)',
-              style: AppTypography.style(AppTextRole.badge, fontSize: 10, letterSpacing: 0.5, color: const Color(0xFF707971), height: opticalLeading(10, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                fontSize: 10,
+                letterSpacing: 0.5,
+                color: const Color(0xFF707971),
+                height: 1.25,
+              ),
             ),
           ],
         ),
@@ -1224,7 +1579,13 @@ class _AccountSettingsScreenState extends ConsumerState<AccountSettingsScreen> {
         Center(
           child: Text(
             'Access-Controlled Storage',
-            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFF707971), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.badge,
+              fontSize: 11,
+              color: const Color(0xFF707971),
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],

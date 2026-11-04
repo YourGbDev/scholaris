@@ -395,7 +395,7 @@ void main() {
       await _typeSearch(tester, 'DOST');
 
       expect(find.text('DOST-SEI Scholarship'), findsOneWidget);
-      expect(find.textContaining('Fit'), findsWidgets);
+      expect(find.text('Profile match'), findsWidgets);
       expect(find.text('View Details'), findsWidgets);
     });
   });

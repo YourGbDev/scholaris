@@ -18,73 +18,98 @@ class LiquidGlassPill extends StatelessWidget {
   final double coreBlur;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(999),
-      boxShadow: const [
-        BoxShadow(
-          color: Color(0x0A000000), // tight contact anchor shadow
-          blurRadius: 3,
-          offset: Offset(0, 1.5),
-        ),
-        BoxShadow(
-          color: Color(0x0D000000), // ambient depth
-          blurRadius: 18,
-          offset: Offset(0, 6),
-        ),
-      ],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(999),
-      child: StudentGlassRefraction(
-        enabled: true,
-        radius: 999,
-        child: DecoratedBox(
-          position: DecorationPosition.foreground,
+  Widget build(BuildContext context) => MediaQuery.highContrastOf(context)
+      ? DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: const Color(0xFF1C1C1E), width: 1.5),
+          ),
+          child: child,
+        )
+      : DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: const Color(0xA6FFFFFF), width: .8),
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Positioned.fill(
-                top: 10,
-                bottom: 10,
-                left: 10,
-                right: 10,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(999),
-                  child: BackdropFilter(
-                    filter: ui.ImageFilter.blur(
-                      sigmaX: coreBlur,
-                      sigmaY: coreBlur,
-                    ),
-                    child: const SizedBox.expand(),
-                  ),
-                ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x0A000000), // tight contact anchor shadow
+                blurRadius: 3,
+                offset: Offset(0, 1.5),
               ),
-              Positioned.fill(
-                child: ClipPath(
-                  clipper: const _GlassRimClipper(),
-                  child: BackdropFilter(
-                    filter: ui.ImageFilter.blur(sigmaX: 1.5, sigmaY: 11),
-                    child: const SizedBox.expand(),
-                  ),
-                ),
+              BoxShadow(
+                color: Color(0x0D000000), // ambient depth
+                blurRadius: 18,
+                offset: Offset(0, 6),
               ),
-              Positioned.fill(
-                child: ColoredBox(
-                  color: Colors.white.withValues(alpha: tintOpacity),
-                ),
-              ),
-              child,
             ],
           ),
-        ),
-      ),
-    ),
-  );
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: StudentGlassRefraction(
+              enabled: true,
+              radius: 999,
+              child: DecoratedBox(
+                position: DecorationPosition.foreground,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: const Color(0xFFD4DAD7),
+                    width: .75,
+                  ),
+                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Positioned.fill(
+                      top: 10,
+                      bottom: 10,
+                      left: 10,
+                      right: 10,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: BackdropFilter(
+                          filter: ui.ImageFilter.blur(
+                            sigmaX: coreBlur,
+                            sigmaY: coreBlur,
+                          ),
+                          child: const SizedBox.expand(),
+                        ),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: ClipPath(
+                        clipper: const _GlassRimClipper(),
+                        child: BackdropFilter(
+                          filter: ui.ImageFilter.blur(sigmaX: 1.5, sigmaY: 11),
+                          child: const SizedBox.expand(),
+                        ),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: ColoredBox(
+                        color: Colors.white.withValues(alpha: tintOpacity),
+                      ),
+                    ),
+                    const Positioned.fill(
+                      child: IgnorePointer(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Color(0x40FFFFFF), Color(0x08000000)],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    child,
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
 }
 
 class _GlassRimClipper extends CustomClipper<Path> {

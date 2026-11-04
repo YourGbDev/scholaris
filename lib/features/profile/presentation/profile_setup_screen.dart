@@ -61,32 +61,39 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   final TextEditingController _schoolSearchController = TextEditingController();
   bool _isSchoolSelectorExpanded = false;
 
+  bool get _isEditing =>
+      ref.read(currentProfileProvider).valueOrNull?.setupComplete == true;
+
+  void _returnToProfile() {
+    final userId = ref.read(currentUserIdProvider);
+    if (userId != null) ref.invalidate(profileSetupProvider(userId));
+    ref.read(homeTabIndexProvider.notifier).selectTab(3);
+    context.go('/home');
+  }
+
   int get _stepIndex => switch (widget.step) {
-        'personal' => 1,
-        'academic' => 2,
-        _ => 3,
-      };
+    'personal' => 1,
+    'academic' => 2,
+    _ => 3,
+  };
 
   String get _stepTitle => switch (widget.step) {
-        'personal' => 'Personal Information',
-        'academic' => 'Academic Information',
-        _ => 'Financial Information',
-      };
+    'personal' => 'Personal Information',
+    'academic' => 'Academic Information',
+    _ => 'Financial Information',
+  };
 
   String get _stepSubtitle => switch (widget.step) {
-        'personal' =>
-          'We use these verified academic details to match you with university grants, CHED UniFAST subsidies, and private endowments tailored to you.',
-        'academic' =>
-          'We use this to match scholarships for your university and major program.',
-        _ =>
-          'Many of the biggest grants in the Philippines are need-based subsidies (such as CHED TES, UniFAST, and foundation grants) built specifically to uplift deserving students.',
-      };
+    'personal' => 'We use these verified academic details to match you with university grants, CHED UniFAST subsidies, and private endowments tailored to you.',
+    'academic' => 'We use this to match scholarships for your university and major program.',
+    _ => 'Many of the biggest grants in the Philippines are need-based subsidies (such as CHED TES, UniFAST, and foundation grants) built specifically to uplift deserving students.',
+  };
 
   String get _stepTrackerCategory => switch (widget.step) {
-        'personal' => 'Academics & Basics',
-        'academic' => 'Residency & Location',
-        _ => 'Financial Matching',
-      };
+    'personal' => 'Academics & Basics',
+    'academic' => 'Residency & Location',
+    _ => 'Financial Matching',
+  };
 
   @override
   void initState() {
@@ -100,8 +107,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     _courseController = TextEditingController(text: state.course);
     _schoolController = TextEditingController(text: state.school);
     _gpaController = TextEditingController(text: state.gpa);
-    _incomeController =
-        TextEditingController(text: state.monthlyFamilyIncome);
+    _incomeController = TextEditingController(text: state.monthlyFamilyIncome);
     _provinceController = TextEditingController(text: state.province);
     _cityController = TextEditingController(text: state.cityMunicipality);
     _selectedGpaScale = state.gpaScale;
@@ -113,15 +119,22 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   Future<void> _loadSchoolId(String userId) async {
     try {
-      final sId = await ref.read(profileRepositoryProvider).fetchSchoolId(userId);
+      final sId = await ref
+          .read(profileRepositoryProvider)
+          .fetchSchoolId(userId);
       if (sId != null && mounted) {
         setState(() => _selectedSchoolId = sId);
       }
     } catch (e) {
-      if (e is AssertionError || (e is StateError && e.message.contains('initialized'))) {
-        debugPrint('[ProfileSetup] Supabase uninitialized in test environment: $e');
+      if (e is AssertionError ||
+          (e is StateError && e.message.contains('initialized'))) {
+        debugPrint(
+          '[ProfileSetup] Supabase uninitialized in test environment: $e',
+        );
       } else {
-        debugPrint('[ProfileSetup] Offline or network error fetching school_id: $e');
+        debugPrint(
+          '[ProfileSetup] Offline or network error fetching school_id: $e',
+        );
       }
     }
   }
@@ -171,12 +184,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     ref.listen(profileSetupProvider(userId), _syncHydration);
 
     return Scaffold(
-      backgroundColor: kSurfaceWarm,
+      backgroundColor: kStudentCanvas,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
         centerTitle: true,
-        leading: widget.step != 'personal'
+        leading: _isEditing
+            ? IconButton(
+                tooltip: 'Back to profile',
+                icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                onPressed: _returnToProfile,
+              )
+            : widget.step != 'personal'
             ? IconButton(
                 icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
                 onPressed: () {
@@ -195,20 +214,32 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               const ScholarisLogo(compact: true),
               const SizedBox(width: 8),
               Text(
-                'Profile Setup',
-                style: AppTypography.style(AppTextRole.screenTitle, color: kPrimary, fontSize: 16, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                _isEditing ? 'Edit Profile' : 'Profile Setup',
+                style: AppTypography.style(
+                  AppTextRole.screenTitle,
+                  color: kPrimary,
+                  fontSize: 15,
+                  height: 1.2,
+                  letterSpacing: -0.15,
+                ),
               ),
             ],
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.help_outline_rounded, color: kTextSecondary, size: 22),
+            icon: const Icon(
+              Icons.help_outline_rounded,
+              color: kTextSecondary,
+              size: 22,
+            ),
             tooltip: 'Help and Support',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Need help? Contact support@scholaris.ph or your university scholarship office.'),
+                  content: Text(
+                    'Need help? Contact support@scholaris.ph or your university scholarship office.',
+                  ),
                   duration: Duration(seconds: 3),
                 ),
               );
@@ -238,18 +269,32 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Step Tracker & Visual Meter
-                    _buildStepMeter(),
-                    const SizedBox(height: 18),
+                    if (!_isEditing) ...[
+                      _buildStepMeter(),
+                      const SizedBox(height: 18),
+                    ],
 
                     // Step Header Titles
                     Text(
                       _stepTitle,
-                      style: AppTypography.style(AppTextRole.sectionTitle, color: kTextPrimary, fontSize: 22, letterSpacing: opticalTracking(22), height: opticalLeading(22, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.sectionTitle,
+                        color: kTextPrimary,
+                        fontSize: 20,
+                        height: 1.25,
+                        letterSpacing: -0.3,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       _stepSubtitle,
-                      style: AppTypography.style(AppTextRole.subtitle, color: kTextSecondary, fontSize: 13, height: 1.45, letterSpacing: opticalTracking(13)),
+                      style: AppTypography.style(
+                        AppTextRole.subtitle,
+                        color: kTextSecondary,
+                        fontSize: 13,
+                        height: 1.45,
+                        letterSpacing: 0,
+                      ),
                     ),
                     const SizedBox(height: 16),
 
@@ -298,12 +343,24 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 children: [
                   Text(
                     'Step $_stepIndex of 3',
-                    style: AppTypography.style(AppTextRole.label, color: kPrimary, fontSize: 12, letterSpacing: 0.5, height: opticalLeading(12, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      color: kPrimary,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
+                      height: 1.25,
+                    ),
                   ),
                   Flexible(
                     child: Text(
                       ' • $_stepTrackerCategory',
-                      style: AppTypography.style(AppTextRole.label, color: kPrimary, fontSize: 12, letterSpacing: 0.3, height: opticalLeading(12, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        color: kPrimary,
+                        fontSize: 12,
+                        letterSpacing: 0.3,
+                        height: 1.25,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -337,7 +394,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   child: Container(
                     height: 5,
                     decoration: BoxDecoration(
-                      color: _stepIndex >= 2 ? kPrimary : const Color(0xFFDDE2F3),
+                      color: _stepIndex >= 2 ? kPrimary : kStudentDivider,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -347,7 +404,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   child: Container(
                     height: 5,
                     decoration: BoxDecoration(
-                      color: _stepIndex >= 3 ? kPrimary : const Color(0xFFDDE2F3),
+                      color: _stepIndex >= 3 ? kPrimary : kStudentDivider,
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -399,7 +456,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ),
         child: Text(
           '33% Complete',
-          style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.badge,
+            fontSize: 11,
+            color: kPrimary,
+            height: 1.25,
+            letterSpacing: 0,
+          ),
         ),
       );
     }
@@ -407,12 +470,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
         decoration: BoxDecoration(
-          color: const Color(0xFFDDE2F3),
+          color: kStudentDivider,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
           '66%',
-          style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.badge,
+            fontSize: 11,
+            color: kTextPrimary,
+            height: 1.25,
+            letterSpacing: 0,
+          ),
         ),
       );
     }
@@ -429,7 +498,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           const SizedBox(width: 4),
           Text(
             'Final Step',
-            style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOnTertiaryFixed, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.badge,
+              fontSize: 11,
+              color: kOnTertiaryFixed,
+              height: 1.25,
+              letterSpacing: 0,
+            ),
           ),
         ],
       ),
@@ -443,9 +518,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F3FF),
+          color: kStudentSurfaceSubtle,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFDDE2F3)),
+          border: Border.all(color: kStudentDivider),
         ),
         child: Row(
           children: [
@@ -469,11 +544,23 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 children: [
                   Text(
                     '740+ Active Philippine Grants',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 13,
+                      color: kTextPrimary,
+                      height: 1.25,
+                      letterSpacing: 0,
+                    ),
                   ),
                   Text(
                     'DOST-SEI, UniFAST, LGU subsidies, and private foundations open.',
-                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.subtitle,
+                      fontSize: 11,
+                      color: kTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -487,9 +574,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF1F3FF),
+          color: kStudentSurfaceSubtle,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFDDE2F3)),
+          border: Border.all(color: kStudentDivider),
         ),
         child: Row(
           children: [
@@ -513,11 +600,23 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 children: [
                   Text(
                     'Targeting Philippine Academic Grants',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 13,
+                      color: kTextPrimary,
+                      height: 1.25,
+                      letterSpacing: 0,
+                    ),
                   ),
                   Text(
                     'DOST Priority S&T, CHED UniFAST, and university partner endowments.',
-                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.subtitle,
+                      fontSize: 11,
+                      color: kTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -533,9 +632,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0xFFF1F3FF),
+            color: kStudentSurfaceSubtle,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFDDE2F3)),
+            border: Border.all(color: kStudentDivider),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -560,12 +659,24 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   children: [
                     Text(
                       '100% Confidential & Protected',
-                      style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.cardTitle,
+                        fontSize: 13,
+                        color: kPrimary,
+                        height: 1.25,
+                        letterSpacing: 0,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'This info is stored under bank-grade encryption. It is used exclusively by our matching engine to calculate subsidy eligibility and will never be shared with schools or third parties without your permission.',
-                      style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(11)),
+                      style: AppTypography.style(
+                        AppTextRole.body,
+                        fontSize: 11,
+                        color: kTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -586,124 +697,131 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   ) {
     return switch (widget.step) {
       'personal' => [
-          _buildAvatarSetupCard(context),
-          const SizedBox(height: 20),
-          _textField(
-            label: 'Full Name',
-            controller: _fullNameController,
-            onChanged: notifier.setFullName,
-            required: true,
-            hintText: 'e.g. Juan P. Dela Cruz',
-            prefixIcon: Icons.badge_outlined,
-            helperText: 'Matches official school enrollment records, PSA birth certificate, and national ID.',
-            validator: (_) => _fieldError((e) => e.fullName),
-          ),
-          const SizedBox(height: 16),
-          _textField(
-            label: 'Nationality',
-            controller: _nationalityController,
-            onChanged: notifier.setNationality,
-            required: true,
-            hintText: 'e.g. Filipino',
-            prefixIcon: Icons.flag_outlined,
-            helperText: 'Required for Philippine republic grants, LGU subsidies, and state university funds.',
-            validator: (_) => _fieldError((e) => e.nationality),
-          ),
-          const SizedBox(height: 16),
-          _birthDateField(context, notifier, state),
-          const SizedBox(height: 16),
-          _buildGenderSelector(notifier, state),
-          const SizedBox(height: 20),
-          _buildTrustMicroPanel(),
-        ],
+        _buildAvatarSetupCard(context),
+        const SizedBox(height: 20),
+        _textField(
+          label: 'Full Name',
+          controller: _fullNameController,
+          onChanged: notifier.setFullName,
+          required: true,
+          hintText: 'e.g. Juan P. Dela Cruz',
+          prefixIcon: Icons.badge_outlined,
+          helperText: 'Matches official school enrollment records, PSA birth certificate, and national ID.',
+          validator: (_) => _fieldError((e) => e.fullName),
+        ),
+        const SizedBox(height: 16),
+        _textField(
+          label: 'Nationality',
+          controller: _nationalityController,
+          onChanged: notifier.setNationality,
+          required: true,
+          hintText: 'e.g. Filipino',
+          prefixIcon: Icons.flag_outlined,
+          helperText: 'Required for Philippine republic grants, LGU subsidies, and state university funds.',
+          validator: (_) => _fieldError((e) => e.nationality),
+        ),
+        const SizedBox(height: 16),
+        _birthDateField(context, notifier, state),
+        const SizedBox(height: 16),
+        _buildGenderSelector(notifier, state),
+        const SizedBox(height: 20),
+        _buildTrustMicroPanel(),
+      ],
       'academic' => [
-          _buildYearLevelSelector(notifier, state),
-          const SizedBox(height: 16),
-          _textField(
-            label: 'Course',
-            controller: _courseController,
-            onChanged: notifier.setCourse,
-            required: true,
-            hintText: 'e.g. BS Computer Science, BA Communication',
-            prefixIcon: Icons.school_outlined,
-            helperText: 'DOST Priority S&T courses, Agri-Fisheries, and Tech-Voc endowments match automatically to this field.',
-            validator: (_) => _fieldError((e) => e.course),
-          ),
-          const SizedBox(height: 16),
-          _buildSchoolSelector(notifier, state),
-          const SizedBox(height: 16),
-          _buildGpaCard(notifier, state),
-        ],
+        _buildYearLevelSelector(notifier, state),
+        const SizedBox(height: 16),
+        _textField(
+          label: 'Course',
+          controller: _courseController,
+          onChanged: notifier.setCourse,
+          required: true,
+          hintText: 'e.g. BS Computer Science, BA Communication',
+          prefixIcon: Icons.school_outlined,
+          helperText: 'DOST Priority S&T courses, Agri-Fisheries, and Tech-Voc endowments match automatically to this field.',
+          validator: (_) => _fieldError((e) => e.course),
+        ),
+        const SizedBox(height: 16),
+        _buildSchoolSelector(notifier, state),
+        const SizedBox(height: 16),
+        _buildGpaCard(notifier, state),
+      ],
       _ => [
-          // Subsidies Unlocked Visualizer Tile
-          _buildSubsidiesUnlockedTile(state),
-          const SizedBox(height: 18),
+        // Subsidies Unlocked Visualizer Tile
+        _buildSubsidiesUnlockedTile(state),
+        const SizedBox(height: 18),
 
-          // Monthly Family Income
-          _buildIncomeField(notifier, state),
-          const SizedBox(height: 10),
+        // Monthly Family Income
+        _buildIncomeField(notifier, state),
+        const SizedBox(height: 10),
 
-          // Low-pressure opt-out card
-          _buildOptOutTile(notifier, state),
-          const SizedBox(height: 20),
+        // Low-pressure opt-out card
+        _buildOptOutTile(notifier, state),
+        const SizedBox(height: 20),
 
-          // Regional Context Accent Card
-          _buildLocationContextCard(),
-          const SizedBox(height: 14),
+        // Regional Context Accent Card
+        _buildLocationContextCard(),
+        const SizedBox(height: 14),
 
-          _dropdown<String>(
-            label: 'Region',
-            required: true,
-            value: state.region,
-            hint: 'Select your Philippine region',
-            prefixIcon: Icons.map_outlined,
-            helperText: 'Connects you with regional CHED and DOST chapter priority allotments.',
-            items: kPhilippineRegions
-                .map(
-                  (region) => DropdownMenuItem(
-                    value: region,
-                    child: Text(region, style: AppTypography.style(AppTextRole.input)),
+        _dropdown<String>(
+          label: 'Region',
+          required: true,
+          value: state.region,
+          hint: 'Select your Philippine region',
+          prefixIcon: Icons.map_outlined,
+          helperText: 'Connects you with regional CHED and DOST chapter priority allotments.',
+          items: kPhilippineRegions
+              .map(
+                (region) => DropdownMenuItem(
+                  value: region,
+                  child: Text(
+                    region,
+                    style: AppTypography.style(
+                      AppTextRole.input,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
-                )
-                .toList(),
-            validator: (_) => _fieldError((e) => e.region),
-            onChanged: (value) {
-              if (value != null) notifier.setRegion(value);
-            },
-          ),
-          const SizedBox(height: 14),
-          _textField(
-            label: 'Province',
-            controller: _provinceController,
-            onChanged: notifier.setProvince,
-            optional: true,
-            hintText: 'e.g. Metro Manila, Cebu, Laguna',
-            prefixIcon: Icons.location_on_outlined,
-            helperText: 'Matches provincial council educational assistance & governor grants.',
-          ),
-          const SizedBox(height: 14),
-          _textField(
-            label: 'City / Municipality',
-            controller: _cityController,
-            onChanged: notifier.setCityMunicipality,
-            optional: true,
-            hintText: 'e.g. Quezon City, Manila, Cebu City',
-            prefixIcon: Icons.location_city_outlined,
-            helperText: 'Unlocks dedicated City Hall LGU grants (e.g., QC Youth Development Scholarship).',
-          ),
-          const SizedBox(height: 14),
+                ),
+              )
+              .toList(),
+          validator: (_) => _fieldError((e) => e.region),
+          onChanged: (value) {
+            if (value != null) notifier.setRegion(value);
+          },
+        ),
+        const SizedBox(height: 14),
+        _textField(
+          label: 'Province',
+          controller: _provinceController,
+          onChanged: notifier.setProvince,
+          optional: true,
+          hintText: 'e.g. Metro Manila, Cebu, Laguna',
+          prefixIcon: Icons.location_on_outlined,
+          helperText: 'Matches provincial council educational assistance & governor grants.',
+        ),
+        const SizedBox(height: 14),
+        _textField(
+          label: 'City / Municipality',
+          controller: _cityController,
+          onChanged: notifier.setCityMunicipality,
+          optional: true,
+          hintText: 'e.g. Quezon City, Manila, Cebu City',
+          prefixIcon: Icons.location_city_outlined,
+          helperText: 'Unlocks dedicated City Hall LGU grants (e.g., QC Youth Development Scholarship).',
+        ),
+        const SizedBox(height: 14),
 
-          // LGU Funding Insight Tip Card
-          _buildLguFundingInsightCard(),
-          const SizedBox(height: 20),
+        // LGU Funding Insight Tip Card
+        _buildLguFundingInsightCard(),
+        const SizedBox(height: 20),
 
-          // Government & Foundation Qualifiers Section
-          _buildGovernmentQualifiersSection(notifier, state),
-          const SizedBox(height: 16),
+        // Government & Foundation Qualifiers Section
+        _buildGovernmentQualifiersSection(notifier, state),
+        const SizedBox(height: 16),
 
-          // Security & Data Privacy Act Micro-Footer
-          _buildDataPrivacyFooter(),
-        ],
+        // Security & Data Privacy Act Micro-Footer
+        _buildDataPrivacyFooter(),
+      ],
     };
   }
 
@@ -719,13 +837,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kStudentDivider),
         boxShadow: const [
-          BoxShadow(
-            color: kCardShadow,
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: kCardShadow, blurRadius: 8, offset: Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -740,12 +854,24 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   children: [
                     Text(
                       'Choose Your Avatar',
-                      style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: kNavyTrust, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.sectionTitle,
+                        fontSize: 13,
+                        color: kNavyTrust,
+                        height: 1.25,
+                        letterSpacing: 0,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'Pick a doodle for now • Formal photo required for deliberation',
-                      style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                      style: AppTypography.style(
+                        AppTextRole.subtitle,
+                        fontSize: 11,
+                        color: kTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -754,7 +880,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               TextButton(
                 key: const ValueKey('avatar-setup-later'),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
@@ -763,7 +892,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Default doodle avatar assigned. You can change this anytime in your profile.'),
+                        content: Text(
+                          'Default doodle avatar assigned. You can change this anytime in your profile.',
+                        ),
                         duration: Duration(seconds: 2),
                       ),
                     );
@@ -771,7 +902,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 },
                 child: Text(
                   'Set up later',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 12,
+                    color: kPrimary,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -794,7 +931,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     separatorBuilder: (_, _) => const SizedBox(width: 8),
                     itemBuilder: (context, index) {
                       final preset = AvatarItem.presets[index];
-                      final isSelected = !avatarState.isRealPhoto && avatarState.avatarId == preset.id;
+                      final isSelected =
+                          !avatarState.isRealPhoto &&
+                          avatarState.avatarId == preset.id;
                       return PressableScale(
                         child: GestureDetector(
                           key: ValueKey('avatar-setup-option-${preset.id}'),
@@ -805,7 +944,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: isSelected ? kPrimary : Colors.transparent,
+                                color: isSelected
+                                    ? kPrimary
+                                    : Colors.transparent,
                                 width: 2.5,
                               ),
                             ),
@@ -859,13 +1000,22 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         ),
         child: Text(
           birthDate == null ? 'Select date' : formatDate(birthDate),
-          style: AppTypography.style(AppTextRole.input, fontSize: 14, color: birthDate == null ? Colors.black38 : kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+          style: AppTypography.style(
+            AppTextRole.input,
+            fontSize: 13,
+            color: birthDate == null ? Colors.black38 : kTextPrimary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildGenderSelector(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildGenderSelector(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     final selectedGender = state.gender?.trim().toLowerCase();
 
     return Column(
@@ -877,7 +1027,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             const SizedBox(width: 6),
             Text(
               'Gender',
-              style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.label,
+                fontSize: 13,
+                color: kTextPrimary,
+                height: 1.25,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -890,23 +1046,38 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   onTap: () => notifier.setGender('male'),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: selectedGender == 'male' ? kPrimaryLight : Colors.white,
+                      color: selectedGender == 'male'
+                          ? kPrimaryLight
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: selectedGender == 'male' ? kPrimary : const Color(0xFFDDE2F3),
+                        color: selectedGender == 'male'
+                            ? kPrimary
+                            : kStudentDivider,
                         width: selectedGender == 'male' ? 2 : 1,
                       ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('👨', style: TextStyle(fontSize: 16)),
+                        const Text('👨', style: TextStyle(fontSize: 15)),
                         const SizedBox(width: 8),
                         Text(
                           'Male',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 13, color: selectedGender == 'male' ? kPrimary : kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 13,
+                            color: selectedGender == 'male'
+                                ? kPrimary
+                                : kTextPrimary,
+                            height: 1.25,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -921,23 +1092,38 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   onTap: () => notifier.setGender('female'),
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: selectedGender == 'female' ? kPrimaryLight : Colors.white,
+                      color: selectedGender == 'female'
+                          ? kPrimaryLight
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: selectedGender == 'female' ? kPrimary : const Color(0xFFDDE2F3),
+                        color: selectedGender == 'female'
+                            ? kPrimary
+                            : kStudentDivider,
                         width: selectedGender == 'female' ? 2 : 1,
                       ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('👩', style: TextStyle(fontSize: 16)),
+                        const Text('👩', style: TextStyle(fontSize: 15)),
                         const SizedBox(width: 8),
                         Text(
                           'Female',
-                          style: AppTypography.style(AppTextRole.label, fontSize: 13, color: selectedGender == 'female' ? kPrimary : kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.label,
+                            fontSize: 13,
+                            color: selectedGender == 'female'
+                                ? kPrimary
+                                : kTextPrimary,
+                            height: 1.25,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -950,7 +1136,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         const SizedBox(height: 6),
         Text(
           'Personalizes your campus mascot across your dashboard and notifications.',
-          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+          style: AppTypography.style(
+            AppTextRole.caption,
+            fontSize: 11,
+            color: kTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     );
@@ -960,9 +1152,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -972,7 +1164,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Flexible(
             child: Text(
               'Protected by 256-bit encryption • Only matched with accredited partners',
-              style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.badge,
+                fontSize: 11,
+                color: kTextSecondary,
+                height: 1.25,
+                letterSpacing: 0,
+              ),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
             ),
@@ -984,7 +1182,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
   // --- Step 2 Widgets -------------------------------------------------------
 
-  Widget _buildYearLevelSelector(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildYearLevelSelector(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -993,11 +1194,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           children: [
             Text(
               'Year Level *',
-              style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
-            ),
-            Text(
-              'AY 2024-2025',
-              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.label,
+                fontSize: 13,
+                color: kTextPrimary,
+                height: 1.25,
+                letterSpacing: 0,
+              ),
             ),
           ],
         ),
@@ -1010,10 +1213,30 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           crossAxisSpacing: 8,
           childAspectRatio: 3.2,
           children: [
-            _yearPill(level: 1, title: '1st Year (Freshman)', isSelected: state.yearLevel == 1, onTap: () => notifier.setYearLevel(1)),
-            _yearPill(level: 2, title: '2nd Year (Sophomore)', isSelected: state.yearLevel == 2, onTap: () => notifier.setYearLevel(2)),
-            _yearPill(level: 3, title: '3rd Year (Junior)', isSelected: state.yearLevel == 3, onTap: () => notifier.setYearLevel(3)),
-            _yearPill(level: 4, title: '4th Year+ / Graduating', isSelected: state.yearLevel >= 4, onTap: () => notifier.setYearLevel(4)),
+            _yearPill(
+              level: 1,
+              title: '1st Year (Freshman)',
+              isSelected: state.yearLevel == 1,
+              onTap: () => notifier.setYearLevel(1),
+            ),
+            _yearPill(
+              level: 2,
+              title: '2nd Year (Sophomore)',
+              isSelected: state.yearLevel == 2,
+              onTap: () => notifier.setYearLevel(2),
+            ),
+            _yearPill(
+              level: 3,
+              title: '3rd Year (Junior)',
+              isSelected: state.yearLevel == 3,
+              onTap: () => notifier.setYearLevel(3),
+            ),
+            _yearPill(
+              level: 4,
+              title: '4th Year+ / Graduating',
+              isSelected: state.yearLevel >= 4,
+              onTap: () => notifier.setYearLevel(4),
+            ),
           ],
         ),
         const SizedBox(height: 4),
@@ -1025,7 +1248,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             Expanded(
               child: Text(
                 'Separates freshman entrance merit scholarships from thesis grants and final-year completion stipends.',
-                style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 11,
+                  color: kTextSecondary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ),
           ],
@@ -1045,7 +1274,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: isSelected ? kPrimary : const Color(0xFFDDE2F3),
+          color: isSelected ? kPrimary : kStudentDivider,
           width: 1,
         ),
       ),
@@ -1063,14 +1292,20 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 height: 7,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isSelected ? kPrimaryFixedDim : const Color(0xFFDDE2F3),
+                  color: isSelected ? kPrimaryFixedDim : kStudentDivider,
                 ),
               ),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
                   title,
-                  style: AppTypography.style(AppTextRole.label, fontSize: 12, color: isSelected ? Colors.white : kTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 12,
+                    color: isSelected ? Colors.white : kTextPrimary,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1085,9 +1320,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1098,7 +1333,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               Expanded(
                 child: Text(
                   'Grade Point Average (GWA)',
-                  style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.sectionTitle,
+                    fontSize: 13,
+                    color: kTextPrimary,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
@@ -1111,7 +1352,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 ),
                 child: Text(
                   'Merit Factor',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 10,
+                    color: kPrimary,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ],
@@ -1122,7 +1369,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Container(
             padding: const EdgeInsets.all(3),
             decoration: BoxDecoration(
-              color: const Color(0xFFE8EEFF),
+              color: kStudentSurfaceSubtle,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -1154,7 +1401,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           // Dynamic Scale Hint
           Text(
             'Active scale: $_selectedGpaScale. You can update this every semester.',
-            style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+            style: AppTypography.style(
+              AppTextRole.caption,
+              fontSize: 11,
+              color: kTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 10),
 
@@ -1164,22 +1417,37 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFFDDE2F3)),
+              border: Border.all(color: kStudentDivider),
             ),
             child: Row(
               children: [
-                const Icon(Icons.workspace_premium_rounded, color: kPrimary, size: 18),
+                const Icon(
+                  Icons.workspace_premium_rounded,
+                  color: kPrimary,
+                  size: 18,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: RichText(
                     text: TextSpan(
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
-                      children:  [
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 11,
+                        color: kTextPrimary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                      children: [
                         TextSpan(
                           text: 'DOST-SEI & Megaworld Foundation ',
-                          style: AppTypography.style(AppTextRole.bodyEmphasis, color: kPrimary),
+                          style: AppTypography.style(
+                            AppTextRole.bodyEmphasis,
+                            color: kPrimary,
+                          ),
                         ),
-                        TextSpan(text: 'cutoff met for your academic standing.'),
+                        TextSpan(
+                          text: 'cutoff met for your academic standing.',
+                        ),
                       ],
                     ),
                   ),
@@ -1221,7 +1489,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             child: Text(
               scale,
               textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: isSelected ? kPrimary : kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.navigation,
+                fontSize: 11,
+                color: isSelected ? kPrimary : kTextSecondary,
+                height: 1.25,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ),
@@ -1236,9 +1510,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8EEFF),
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Row(
         children: [
@@ -1265,11 +1539,25 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     children: [
                       Text(
                         'Subsidies Unlocked',
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10, color: kTextSecondary, letterSpacing: 0.5, height: opticalLeading(10, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.cardTitle,
+                          fontSize: 10,
+                          color: kTextSecondary,
+                          letterSpacing: 0.5,
+                          height: 1.25,
+                        ),
                       ),
                       Text(
-                        isUndisclosed ? 'Merit Only Filter Active' : '₱60,000+ Potential / yr',
-                        style: AppTypography.style(isUndisclosed ? AppTextRole.bodyEmphasis : AppTextRole.metric, fontSize: 14, color: kPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                        isUndisclosed
+                            ? 'Merit Only Filter Active'
+                            : '₱60,000+ Potential / yr',
+                        style: AppTypography.style(
+                          AppTextRole.bodyEmphasis,
+                          fontSize: 13,
+                          color: kPrimary,
+                          height: 1.25,
+                          letterSpacing: 0,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -1299,7 +1587,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 const SizedBox(width: 4),
                 Text(
                   'Active Filter',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 10,
+                    color: kPrimary,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -1309,7 +1603,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _buildIncomeField(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildIncomeField(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1322,20 +1619,58 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
           ],
-          style: AppTypography.style(AppTextRole.input, fontSize: 16, color: kTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.input,
+            fontSize: 15,
+            color: kTextPrimary,
+            height: 1.25,
+            letterSpacing: 0,
+          ),
           decoration: InputDecoration(
             labelText: 'Monthly Family Income *',
-            labelStyle: AppTypography.style(AppTextRole.label, color: kTextSecondary, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+            labelStyle: AppTypography.style(
+              AppTextRole.label,
+              color: kTextSecondary,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             hintText: '25,000',
-            hintStyle: AppTypography.style(AppTextRole.placeholder, color: Colors.black38, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+            hintStyle: AppTypography.style(
+              AppTextRole.placeholder,
+              color: Colors.black38,
+              fontSize: 13,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             helperText: 'Combined gross monthly income of parents, guardians, or breadwinners living in your home.',
-            helperStyle: AppTypography.style(AppTextRole.caption, color: kTextSecondary, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+            helperStyle: AppTypography.style(
+              AppTextRole.caption,
+              color: kTextSecondary,
+              fontSize: 11,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
             prefixText: '₱ ',
-            prefixStyle: AppTypography.style(AppTextRole.label, color: kPrimary, fontSize: 16, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
-            prefixIcon: const Icon(Icons.payments_outlined, size: 20, color: kTextSecondary),
+            prefixStyle: AppTypography.style(
+              AppTextRole.label,
+              color: kPrimary,
+              fontSize: 15,
+              height: 1.25,
+              letterSpacing: 0,
+            ),
+            prefixIcon: const Icon(
+              Icons.payments_outlined,
+              size: 20,
+              color: kTextSecondary,
+            ),
             suffixIcon: _incomeController.text.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Icons.close_rounded, size: 18, color: kTextSecondary),
+                    icon: const Icon(
+                      Icons.close_rounded,
+                      size: 18,
+                      color: kTextSecondary,
+                    ),
                     onPressed: () {
                       _incomeController.clear();
                       notifier.setMonthlyFamilyIncome('');
@@ -1343,15 +1678,20 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   )
                 : null,
             filled: true,
-            fillColor: state.incomeUndisclosed ? const Color(0xFFF1F3FF) : Colors.white,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            fillColor: state.incomeUndisclosed
+                ? kStudentSurfaceSubtle
+                : Colors.white,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+              borderSide: const BorderSide(color: kStudentDivider),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+              borderSide: const BorderSide(color: kStudentDivider),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -1364,7 +1704,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         // Quick Select Bracket Pills
         Text(
           'Quick Select Bracket',
-          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.sectionTitle,
+            fontSize: 11,
+            color: kTextSecondary,
+            height: 1.25,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 6),
         Wrap(
@@ -1381,7 +1727,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _bracketPill(String label, String amount, ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _bracketPill(
+    String label,
+    String amount,
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     final isSelected = _incomeController.text == amount;
     return PressableScale(
       child: GestureDetector(
@@ -1396,25 +1747,32 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           decoration: BoxDecoration(
             color: isSelected ? kPrimary : Colors.white,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? kPrimary : const Color(0xFFDDE2F3),
-            ),
+            border: Border.all(color: isSelected ? kPrimary : kStudentDivider),
           ),
           child: Text(
             label,
-            style: AppTypography.style(AppTextRole.label, fontSize: 11, color: isSelected ? Colors.white : kTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.label,
+              fontSize: 11,
+              color: isSelected ? Colors.white : kTextPrimary,
+              height: 1.25,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildOptOutTile(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildOptOutTile(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     return Material(
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: Color(0xFFDDE2F3)),
+        side: const BorderSide(color: kStudentDivider),
       ),
       child: CheckboxListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -1422,11 +1780,23 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         activeColor: kPrimary,
         title: Text(
           'Prefer not to say',
-          style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 13,
+            color: kTextPrimary,
+            height: 1.25,
+            letterSpacing: 0,
+          ),
         ),
         subtitle: Text(
           'You will still see 100% of academic, merit, STEM, creative, and leadership grants. Need-based filters will simply pause until you wish to update this.',
-          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, height: 1.35, letterSpacing: opticalTracking(11)),
+          style: AppTypography.style(
+            AppTextRole.caption,
+            fontSize: 11,
+            color: kTextSecondary,
+            height: 1.35,
+            letterSpacing: 0,
+          ),
         ),
         value: state.incomeUndisclosed,
         onChanged: (value) {
@@ -1442,9 +1812,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F3FF),
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Row(
         children: [
@@ -1453,7 +1823,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Flexible(
             child: Text(
               'Targeting Philippine Local Subsidies',
-              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kNavyTrust, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.cardTitle,
+                fontSize: 12,
+                color: kNavyTrust,
+                height: 1.25,
+                letterSpacing: 0,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -1466,9 +1842,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFFE8EEFF),
+        color: kStudentSurfaceSubtle,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFDDE2F3)),
+        border: Border.all(color: kStudentDivider),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1493,19 +1869,38 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               children: [
                 Text(
                   'LGU Funding Insight',
-                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12, color: kSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 12,
+                    color: kSecondary,
+                    height: 1.25,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 RichText(
                   text: TextSpan(
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextPrimary, height: 1.35, letterSpacing: opticalTracking(11)),
-                    children:  [
-                      TextSpan(text: 'LGUs like Quezon City, Pasig, and Manila offer up to '),
+                    style: AppTypography.style(
+                      AppTextRole.caption,
+                      fontSize: 11,
+                      color: kTextPrimary,
+                      height: 1.35,
+                      letterSpacing: 0,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: 'LGUs like Quezon City, Pasig, and Manila offer up to ',
+                      ),
                       TextSpan(
                         text: '₱10,000–₱25,000/sem',
-                        style: AppTypography.style(AppTextRole.bodyEmphasis, color: kPrimary),
+                        style: AppTypography.style(
+                          AppTextRole.bodyEmphasis,
+                          color: kPrimary,
+                        ),
                       ),
-                      TextSpan(text: ' specifically for registered local students. Keep your Barangay Indigency or Residency Certificate handy!'),
+                      TextSpan(
+                        text: ' specifically for registered local students. Keep your Barangay Indigency or Residency Certificate handy!',
+                      ),
                     ],
                   ),
                 ),
@@ -1517,18 +1912,33 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     );
   }
 
-  Widget _buildGovernmentQualifiersSection(ProfileSetupNotifier notifier, ProfileSetupState state) {
+  Widget _buildGovernmentQualifiersSection(
+    ProfileSetupNotifier notifier,
+    ProfileSetupState state,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Government & Foundation Qualifiers',
-          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.sectionTitle,
+            fontSize: 13,
+            color: kTextPrimary,
+            height: 1.25,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 2),
         Text(
           'Select any that apply to your household. These unlock preferential slots in CHED UniFAST TDP, DOST SEI, and private foundation quotas.',
-          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+          style: AppTypography.style(
+            AppTextRole.caption,
+            fontSize: 11,
+            color: kTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 10),
 
@@ -1586,7 +1996,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: value ? kPrimary : const Color(0xFFDDE2F3),
+          color: value ? kPrimary : kStudentDivider,
           width: value ? 1.5 : 1,
         ),
       ),
@@ -1597,18 +2007,30 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           width: 32,
           height: 32,
           decoration: BoxDecoration(
-            color: value ? kPrimaryLight : const Color(0xFFF1F3FF),
+            color: value ? kPrimaryLight : kStudentSurfaceSubtle,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: value ? kPrimary : kSecondary, size: 18),
         ),
         title: Text(
           title,
-          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.cardTitle,
+            fontSize: 13,
+            color: kTextPrimary,
+            height: 1.25,
+            letterSpacing: 0,
+          ),
         ),
         subtitle: Text(
           subtitle,
-          style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+          style: AppTypography.style(
+            AppTextRole.subtitle,
+            fontSize: 11,
+            color: kTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         value: value,
         onChanged: (v) => onChanged(v ?? false),
@@ -1627,7 +2049,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
             Flexible(
               child: Text(
                 'Next: We will calculate your matched scholarship pool in real-time!',
-                style: AppTypography.style(AppTextRole.button, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 11,
+                  color: kPrimary,
+                  height: 1.25,
+                  letterSpacing: 0,
+                ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1638,12 +2066,22 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lock_outline_rounded, size: 13, color: kTextSecondary),
+            const Icon(
+              Icons.lock_outline_rounded,
+              size: 13,
+              color: kTextSecondary,
+            ),
             const SizedBox(width: 4),
             Flexible(
               child: Text(
                 'Encrypted • Republic Act No. 10173 (Data Privacy Act) Compliant',
-                style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 11,
+                  color: kTextSecondary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -1685,7 +2123,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       validator: validator,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
-      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+      style: AppTypography.style(
+        AppTextRole.input,
+        fontSize: 13,
+        color: kTextPrimary,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       decoration: _fieldDecoration(
         label: label,
         required: required,
@@ -1709,18 +2153,35 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     String? helperText,
     IconData? prefixIcon,
   }) {
-    final effectiveValue = items.any((item) => item.value == value) ? value : null;
+    final effectiveValue = items.any((item) => item.value == value)
+        ? value
+        : null;
     return DropdownButtonFormField<T>(
       key: ValueKey(effectiveValue),
       isExpanded: true,
       initialValue: effectiveValue,
       hint: hint == null
           ? null
-          : Text(hint, style: AppTypography.style(AppTextRole.placeholder, color: Colors.black38, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
+          : Text(
+              hint,
+              style: AppTypography.style(
+                AppTextRole.placeholder,
+                color: Colors.black38,
+                fontSize: 13,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+            ),
       onChanged: onChanged,
       items: items,
       validator: validator,
-      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+      style: AppTypography.style(
+        AppTextRole.input,
+        fontSize: 13,
+        color: kTextPrimary,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       decoration: _fieldDecoration(
         label: label,
         required: required,
@@ -1742,28 +2203,54 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final labelText = required
         ? '$label *'
         : optional
-            ? '$label (optional)'
-            : label;
+        ? '$label (optional)'
+        : label;
     return InputDecoration(
       labelText: labelText,
-      labelStyle: AppTypography.style(AppTextRole.label, color: kTextSecondary, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+      labelStyle: AppTypography.style(
+        AppTextRole.label,
+        color: kTextSecondary,
+        fontSize: 13,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       hintText: hintText,
-      hintStyle: AppTypography.style(AppTextRole.placeholder, color: Colors.black38, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+      hintStyle: AppTypography.style(
+        AppTextRole.placeholder,
+        color: Colors.black38,
+        fontSize: 13,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       helperText: helperText,
-      helperStyle: AppTypography.style(AppTextRole.caption, color: kTextSecondary, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+      helperStyle: AppTypography.style(
+        AppTextRole.caption,
+        color: kTextSecondary,
+        fontSize: 11,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       prefixText: prefixText,
-      prefixStyle: AppTypography.style(AppTextRole.label, color: kTextPrimary, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
-      prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
+      prefixStyle: AppTypography.style(
+        AppTextRole.label,
+        color: kTextPrimary,
+        fontSize: 13,
+        height: 1.25,
+        letterSpacing: 0,
+      ),
+      prefixIcon: prefixIcon != null
+          ? Icon(prefixIcon, size: 20, color: kTextSecondary)
+          : null,
       filled: true,
       fillColor: Colors.white,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+        borderSide: const BorderSide(color: kStudentDivider),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFFDDE2F3)),
+        borderSide: const BorderSide(color: kStudentDivider),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -1795,7 +2282,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           Expanded(
             child: Text(
               message,
-              style: AppTypography.style(AppTextRole.body, color: kError, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.body,
+                color: kError,
+                fontSize: 13,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -1806,6 +2299,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   // --- Buttons --------------------------------------------------------------
 
   Widget _buildButtons(BuildContext context, ProfileSetupState state) {
+    final isEditing = _isEditing;
     final isLastStep = widget.step == 'financial';
     final backRoute = widget.step == 'academic'
         ? ProfileSetupRoute.personal
@@ -1813,14 +2307,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
 
     return Row(
       children: [
-        if (widget.step != 'personal') ...[
+        if (isEditing || widget.step != 'personal') ...[
           Expanded(
             child: PressableScale(
               child: OutlinedButton(
-                onPressed: () => context.go(backRoute),
+                onPressed: isEditing
+                    ? _returnToProfile
+                    : () => context.go(backRoute),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: kSecondary,
-                  side: const BorderSide(color: Color(0xFFDDE2F3), width: 1.5),
+                  side: const BorderSide(color: kStudentDivider, width: 1.5),
                   backgroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
@@ -1834,7 +2330,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     const SizedBox(width: 6),
                     Text(
                       'Back',
-                      style: AppTypography.style(AppTextRole.button, fontSize: 14, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 13,
+                        height: 1.25,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -1874,14 +2375,26 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       children: [
                         Flexible(
                           child: Text(
-                            isLastStep ? 'Complete Profile' : 'Continue',
-                            style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                            isEditing
+                                ? 'Save Changes'
+                                : isLastStep
+                                ? 'Complete Profile'
+                                : 'Continue',
+                            style: AppTypography.style(
+                              AppTextRole.button,
+                              fontSize: 15,
+                              color: Colors.white,
+                              height: 1.25,
+                              letterSpacing: 0,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 6),
                         Icon(
-                          isLastStep ? Icons.check_circle_rounded : Icons.arrow_forward_rounded,
+                          isLastStep
+                              ? Icons.check_circle_rounded
+                              : Icons.arrow_forward_rounded,
                           size: 18,
                         ),
                       ],
@@ -1906,7 +2419,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       children: [
         Row(
           children: [
-            const Icon(Icons.account_balance_outlined, size: 16, color: kPrimary),
+            const Icon(
+              Icons.account_balance_outlined,
+              size: 16,
+              color: kPrimary,
+            ),
             const SizedBox(width: 6),
             Expanded(
               child: Row(
@@ -1917,13 +2434,25 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       'Enrolled College or University',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        fontSize: 13,
+                        color: kOnSurface,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '(Optional)',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black45, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.caption,
+                      fontSize: 12,
+                      color: Colors.black45,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1933,7 +2462,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               label: const Text('Add Unlisted'),
               style: TextButton.styleFrom(
                 foregroundColor: kPrimary,
-                textStyle: AppTypography.style(AppTextRole.button, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                textStyle: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 11,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 visualDensity: VisualDensity.compact,
               ),
               onPressed: () => _showAddSchoolDialog(context),
@@ -1943,7 +2477,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
         const SizedBox(height: 4),
         Text(
           'Matches campus-specific endowments, CHED UniFAST subsidies, and alumni grants.',
-          style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+          style: AppTypography.style(
+            AppTextRole.caption,
+            fontSize: 11,
+            color: Colors.black54,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 8),
 
@@ -1981,21 +2521,40 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     children: [
                       Text(
                         _schoolController.text,
-                        style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kOnSurface, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.bodyEmphasis,
+                          fontSize: 13,
+                          color: kOnSurface,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Student-declared • Verified via COR/Student ID',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: Colors.black54, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 10,
+                          color: Colors.black54,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 TextButton(
-                  onPressed: () => setState(() => _isSchoolSelectorExpanded = true),
+                  onPressed: () =>
+                      setState(() => _isSchoolSelectorExpanded = true),
                   child: Text(
                     'Change',
-                    style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                    style: AppTypography.style(
+                      AppTextRole.button,
+                      fontSize: 12,
+                      color: kPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ],
@@ -2016,12 +2575,27 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                 TextField(
                   controller: _schoolSearchController,
                   onChanged: (_) => setState(() {}),
-                  style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.input,
+                    fontSize: 13,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   decoration: InputDecoration(
                     isDense: true,
                     hintText: 'Search Philippine universities & colleges...',
-                    hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: Colors.black38, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
-                    prefixIcon: const Icon(Icons.search, size: 18, color: Colors.black45),
+                    hintStyle: AppTypography.style(
+                      AppTextRole.placeholder,
+                      fontSize: 12,
+                      color: Colors.black38,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      size: 18,
+                      color: Colors.black45,
+                    ),
                     suffixIcon: _schoolSearchController.text.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear, size: 16),
@@ -2031,14 +2605,28 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             },
                           )
                         : (hasSelectedSchool
-                            ? TextButton(
-                                onPressed: () => setState(() => _isSchoolSelectorExpanded = false),
-                                child: Text('Done', style: AppTypography.style(AppTextRole.button, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true))),
-                              )
-                            : null),
+                              ? TextButton(
+                                  onPressed: () => setState(
+                                    () => _isSchoolSelectorExpanded = false,
+                                  ),
+                                  child: Text(
+                                    'Done',
+                                    style: AppTypography.style(
+                                      AppTextRole.button,
+                                      fontSize: 11,
+                                      color: kPrimary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
+                                  ),
+                                )
+                              : null),
                     filled: true,
                     fillColor: const Color(0xFFF9FAFB),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: const BorderSide(color: Colors.black12),
@@ -2069,7 +2657,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     padding: const EdgeInsets.all(8),
                     child: Text(
                       'Failed to load institutions: $err',
-                      style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.red, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                      style: AppTypography.style(
+                        AppTextRole.caption,
+                        fontSize: 12,
+                        color: Colors.red,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                   data: (allSchools) {
@@ -2077,11 +2671,16 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                       if (query.isEmpty) return true;
                       if (s.name.toLowerCase().contains(query)) return true;
                       if (s.normalizedName.contains(query)) return true;
-                      return s.aliases.any((a) => a.toLowerCase().contains(query));
+                      return s.aliases.any(
+                        (a) => a.toLowerCase().contains(query),
+                      );
                     }).toList();
 
-                    final hasExactMatch = query.isNotEmpty &&
-                        allSchools.any((s) => s.name.trim().toLowerCase() == query);
+                    final hasExactMatch =
+                        query.isNotEmpty &&
+                        allSchools.any(
+                          (s) => s.name.trim().toLowerCase() == query,
+                        );
 
                     return Column(
                       children: [
@@ -2089,11 +2688,19 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           constraints: const BoxConstraints(maxHeight: 180),
                           child: filtered.isEmpty
                               ? Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
+                                  ),
                                   child: Center(
                                     child: Text(
                                       'No matching institutions found.',
-                                      style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: Colors.black45, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                                      style: AppTypography.style(
+                                        AppTextRole.caption,
+                                        fontSize: 12,
+                                        color: Colors.black45,
+                                        height: 1.4,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ),
                                 )
@@ -2104,8 +2711,11 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                                       const Divider(height: 1, indent: 40),
                                   itemBuilder: (context, index) {
                                     final school = filtered[index];
-                                    final isSelected = _selectedSchoolId == school.id ||
-                                        _schoolController.text.trim().toLowerCase() ==
+                                    final isSelected =
+                                        _selectedSchoolId == school.id ||
+                                        _schoolController.text
+                                                .trim()
+                                                .toLowerCase() ==
                                             school.name.trim().toLowerCase();
 
                                     return ListTile(
@@ -2113,20 +2723,40 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                                       leading: Icon(
                                         Icons.account_balance_outlined,
                                         size: 18,
-                                        color: isSelected ? kPrimary : Colors.black45,
+                                        color: isSelected
+                                            ? kPrimary
+                                            : Colors.black45,
                                       ),
                                       title: Text(
                                         school.name,
-                                        style: AppTypography.style(AppTextRole.input, fontSize: 12, color: isSelected ? kPrimary : Colors.black87, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                                        style: AppTypography.style(
+                                          AppTextRole.input,
+                                          fontSize: 12,
+                                          color: isSelected
+                                              ? kPrimary
+                                              : Colors.black87,
+                                          height: 1.4,
+                                          letterSpacing: 0,
+                                        ),
                                       ),
                                       subtitle: !school.isCurated
                                           ? Text(
                                               'Custom institution',
-                                              style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: Colors.black45, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: true)),
+                                              style: AppTypography.style(
+                                                AppTextRole.caption,
+                                                fontSize: 10,
+                                                color: Colors.black45,
+                                                height: 1.4,
+                                                letterSpacing: 0,
+                                              ),
                                             )
                                           : null,
                                       trailing: isSelected
-                                          ? const Icon(Icons.check, size: 16, color: kPrimary)
+                                          ? const Icon(
+                                              Icons.check,
+                                              size: 16,
+                                              color: kPrimary,
+                                            )
                                           : null,
                                       onTap: () => _onSchoolSelected(school),
                                     );
@@ -2137,14 +2767,30 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                           const Divider(height: 1),
                           ListTile(
                             dense: true,
-                            leading: const Icon(Icons.add_circle_outline, color: kPrimary, size: 20),
+                            leading: const Icon(
+                              Icons.add_circle_outline,
+                              color: kPrimary,
+                              size: 20,
+                            ),
                             title: Text(
                               'Add "${_schoolSearchController.text.trim()}"',
-                              style: AppTypography.style(AppTextRole.button, color: kPrimary, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                              style: AppTypography.style(
+                                AppTextRole.button,
+                                color: kPrimary,
+                                fontSize: 12,
+                                height: 1.2,
+                                letterSpacing: -0.15,
+                              ),
                             ),
                             subtitle: Text(
                               'Register a new higher education institution',
-                              style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.black54, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                fontSize: 11,
+                                color: Colors.black54,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                             onTap: () => _showAddSchoolDialog(
                               context,
@@ -2175,18 +2821,23 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     if (userId != null) {
       ref.read(profileSetupProvider(userId).notifier).setSchool(school.name);
       try {
-        await ref.read(profileRepositoryProvider).updateSchoolId(
-          userId,
-          schoolId: school.id,
-          schoolName: school.name,
-        );
+        await ref
+            .read(profileRepositoryProvider)
+            .updateSchoolId(
+              userId,
+              schoolId: school.id,
+              schoolName: school.name,
+            );
       } catch (e) {
         debugPrint('[ProfileSetup] Failed to update school_id: $e');
       }
     }
   }
 
-  Future<void> _showAddSchoolDialog(BuildContext context, {String? initialName}) async {
+  Future<void> _showAddSchoolDialog(
+    BuildContext context, {
+    String? initialName,
+  }) async {
     final nameController = TextEditingController(text: initialName ?? '');
     final formKey = GlobalKey<FormState>();
     bool isSubmitting = false;
@@ -2195,10 +2846,18 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       context: context,
       builder: (dialogCtx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: Text(
             'Add Higher Education Institution',
-            style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+            style: AppTypography.style(
+              AppTextRole.sectionTitle,
+              fontSize: 15,
+              color: kPrimary,
+              height: 1.2,
+              letterSpacing: -0.15,
+            ),
           ),
           content: Form(
             key: formKey,
@@ -2208,18 +2867,36 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               children: [
                 Text(
                   'Enter the official name of the university or college in the Philippines.',
-                  style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: Colors.black54, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.subtitle,
+                    fontSize: 12,
+                    color: Colors.black54,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: nameController,
                   autofocus: true,
-                  style: AppTypography.style(AppTextRole.input, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                  style: AppTypography.style(
+                    AppTextRole.input,
+                    fontSize: 13,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   decoration: InputDecoration(
                     labelText: 'Institution Name *',
-                    labelStyle: AppTypography.style(AppTextRole.label, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                    labelStyle: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 12,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                     hintText: 'e.g. Pamantasan ng Lungsod ng Maynila',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   validator: (v) {
                     if (v == null || v.trim().isEmpty) {
@@ -2236,14 +2913,27 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: isSubmitting ? null : () => Navigator.of(dialogCtx).pop(),
-              child: Text('Cancel', style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.black54, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
+              onPressed: isSubmitting
+                  ? null
+                  : () => Navigator.of(dialogCtx).pop(),
+              child: Text(
+                'Cancel',
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 13,
+                  color: Colors.black54,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
+              ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: kPrimary,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               onPressed: isSubmitting
                   ? null
@@ -2264,7 +2954,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                         );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Added and linked "$name".')),
+                            SnackBar(
+                              content: Text('Added and linked "$name".'),
+                            ),
                           );
                         }
                       } catch (err) {
@@ -2283,9 +2975,20 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   ? const SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
-                  : Text('Add Institution', style: AppTypography.style(AppTextRole.button, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true))),
+                  : Text(
+                      'Add Institution',
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 13,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -2294,6 +2997,7 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
   }
 
   Future<void> _handleNextOrSubmit(bool isLastStep) async {
+    final isEditing = _isEditing;
     final userId = ref.read(currentUserIdProvider);
     if (userId == null) return;
     final notifier = ref.read(profileSetupProvider(userId).notifier);
@@ -2302,18 +3006,19 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) return;
 
-    if (isLastStep) {
+    if (isLastStep || isEditing) {
       final success = await notifier.submit();
       if (!mounted) return;
       if (success) {
         if (_selectedSchoolId != null) {
           try {
-            await ref.read(profileRepositoryProvider).updateSchoolId(
-              userId,
-              schoolId: _selectedSchoolId,
-            );
+            await ref
+                .read(profileRepositoryProvider)
+                .updateSchoolId(userId, schoolId: _selectedSchoolId);
           } catch (e) {
-            debugPrint('[ProfileSetup] Failed to persist school_id checkpoint: $e');
+            debugPrint(
+              '[ProfileSetup] Failed to persist school_id checkpoint: $e',
+            );
           }
         }
         if (!mounted) return;
@@ -2325,8 +3030,12 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
           await ref.read(profileCompleteProvider.future);
         } catch (_) {}
         if (!mounted) return;
-        ref.read(homeTabIndexProvider.notifier).selectTab(0);
-        context.go('/home');
+        if (isEditing) {
+          _returnToProfile();
+        } else {
+          ref.read(homeTabIndexProvider.notifier).selectTab(0);
+          context.go('/home');
+        }
       }
     } else {
       final saved = await notifier.saveCheckpoint(widget.step);
@@ -2334,12 +3043,13 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       ref.invalidate(currentProfileProvider);
       if (_selectedSchoolId != null) {
         try {
-          await ref.read(profileRepositoryProvider).updateSchoolId(
-            userId,
-            schoolId: _selectedSchoolId,
-          );
+          await ref
+              .read(profileRepositoryProvider)
+              .updateSchoolId(userId, schoolId: _selectedSchoolId);
         } catch (e) {
-          debugPrint('[ProfileSetup] Failed to persist school_id checkpoint: $e');
+          debugPrint(
+            '[ProfileSetup] Failed to persist school_id checkpoint: $e',
+          );
         }
       }
       if (!mounted) return;

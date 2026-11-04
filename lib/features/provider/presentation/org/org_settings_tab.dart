@@ -1,4 +1,5 @@
 import 'package:scholaris/shared/theme/app_typography.dart';
+import 'package:scholaris/shared/theme/app_theme.dart';
 // lib/features/provider/presentation/org/org_settings_tab.dart
 //
 // Organization Settings & Profile Screen matching Stitch mockup
@@ -121,7 +122,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         backgroundColor: kOrgTextPrimary,
         content: Text(
           'Draft discarded. Reverted to saved database state.',
-          style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 13,
+            color: Colors.white,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ),
     );
@@ -173,7 +180,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(width: 10),
               Text(
                 'Organization name saved.',
-                style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.body,
+                  fontSize: 13,
+                  color: Colors.white,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
@@ -187,7 +200,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           backgroundColor: kOrgError,
           content: Text(
             'Could not save the organization name. Your changes are still here; try again.',
-            style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+            style: AppTypography.style(
+              AppTextRole.body,
+              fontSize: 13,
+              color: Colors.white,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ),
       );
@@ -318,17 +337,38 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           children: [
             Text(
               orgName.toUpperCase(),
-              style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgPrimary, letterSpacing: 0.6, height: opticalLeading(11, isBody: (11) <= 16)),
+              style: AppTypography.style(
+                AppTextRole.navigation,
+                fontSize: 11,
+                color: kOrgPrimary,
+                letterSpacing: 0.6,
+                height: 1.4,
+              ),
             ),
-            Text('/', style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgBorderDark, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16))),
+            Text(
+              '/',
+              style: AppTypography.style(
+                AppTextRole.caption,
+                fontSize: 11,
+                color: kOrgBorderDark,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
+            ),
             Text(
               'Account & Organization',
-              style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+              style: AppTypography.style(
+                AppTextRole.navigation,
+                fontSize: 11,
+                color: kOrgTextSecondary,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
-                color: const Color(0xFFB3F1C6),
+                color: kWorkspaceSubtle,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -345,7 +385,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   const SizedBox(width: 4),
                   Text(
                     'ACTIVE GRANTOR',
-                    style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF00351C), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      fontSize: 10,
+                      color: const Color(0xFF00351C),
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -355,14 +401,26 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         const SizedBox(height: 8),
         Text(
           'Organization settings',
-          style: AppTypography.style(AppTextRole.screenTitle, fontSize: isDesktop ? 32 : 26, color: kOrgTextPrimary, letterSpacing: opticalTracking(isDesktop ? 32 : 26), height: opticalLeading(isDesktop ? 32 : 26, isBody: (isDesktop ? 32 : 26) <= 16)),
+          style: AppTypography.style(
+            AppTextRole.screenTitle,
+            fontSize: isDesktop ? 24 : 20,
+            color: kOrgTextPrimary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 4),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680),
           child: Text(
             'Save your organization name. Other profile fields, contact phone and notification preferences are not available yet.',
-            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(13)),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              fontSize: 13,
+              color: kOrgTextSecondary,
+              height: 1.35,
+              letterSpacing: 0,
+            ),
           ),
         ),
       ],
@@ -376,7 +434,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
         PressableScale(
           scale: 0.97,
           child: Material(
-            color: const Color(0xFFEEEDF3),
+            color: const Color(0xFFE8E8E8),
             borderRadius: BorderRadius.circular(12),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
@@ -388,7 +446,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 ),
                 child: Text(
                   'Discard Draft',
-                  style: AppTypography.style(AppTextRole.button, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.button,
+                    fontSize: 13,
+                    color: kOrgTextPrimary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ),
             ),
@@ -429,7 +493,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     const SizedBox(width: 8),
                     Text(
                       _isSaving ? 'Saving...' : 'Save organization name',
-                      style: AppTypography.style(AppTextRole.button, fontSize: 13, color: Colors.white, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.button,
+                        fontSize: 13,
+                        color: Colors.white,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ],
                 ),
@@ -472,7 +542,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEDF3),
+        color: const Color(0xFFE8E8E8),
         borderRadius: BorderRadius.circular(12),
       ),
       child: LayoutBuilder(
@@ -514,7 +584,15 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           ),
                           child: Text(
                             segments[i],
-                            style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: isSelected ? kOrgTextPrimary : kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.navigation,
+                              fontSize: 12,
+                              color: isSelected
+                                  ? kOrgTextPrimary
+                                  : kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ),
                       ),
@@ -552,7 +630,15 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       ),
                       child: Text(
                         segments[i],
-                        style: AppTypography.style(AppTextRole.navigation, fontSize: 12, color: isSelected ? kOrgTextPrimary : kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.navigation,
+                          fontSize: 12,
+                          color: isSelected
+                              ? kOrgTextPrimary
+                              : kOrgTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                   ),
@@ -609,18 +695,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       key: key,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final isNarrow = constraints.maxWidth < 500;
@@ -633,7 +708,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: kOrgPrimary.withValues(alpha: 0.2),
+                  color: kWorkspaceSubtle,
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -644,12 +719,24 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               children: [
                 Text(
                   initials,
-                  style: AppTypography.style(AppTextRole.label, fontSize: isNarrow ? 22 : 24, color: Colors.white, letterSpacing: -1, height: opticalLeading(isNarrow ? 22 : 24, isBody: (isNarrow ? 22 : 24) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: isNarrow ? 22 : 24,
+                    color: Colors.white,
+                    letterSpacing: -.4,
+                    height: 1.4,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'NCR, PH',
-                  style: AppTypography.style(AppTextRole.badge, fontSize: 8.5, color: const Color(0xFFB3F1C6), letterSpacing: 0.8, height: opticalLeading(8.5, isBody: (8.5) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.badge,
+                    fontSize: 8.5,
+                    color: kWorkspaceSubtle,
+                    letterSpacing: 0.8,
+                    height: 1.4,
+                  ),
                 ),
               ],
             ),
@@ -665,7 +752,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 children: [
                   Text(
                     'Organization Seal & Insignia',
-                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.cardTitle,
+                      fontSize: 13,
+                      color: kOrgTextPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -679,7 +772,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     ),
                     child: Text(
                       'DEMO EVALUATION SEAL',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 9.5, color: const Color(0xFF8F6400), letterSpacing: opticalTracking(9.5), height: opticalLeading(9.5, isBody: (9.5) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        fontSize: 9.5,
+                        color: const Color(0xFF8F6400),
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ],
@@ -687,13 +786,19 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 4),
               Text(
                 'PNG, SVG or WEBP vector format. Recommended 800x800px. Appears on formal Grant Offer Letters and Certifications.',
-                style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(11.5)),
+                style: AppTypography.style(
+                  AppTextRole.caption,
+                  fontSize: 11.5,
+                  color: kOrgTextSecondary,
+                  height: 1.35,
+                  letterSpacing: 0,
+                ),
               ),
               const SizedBox(height: 10),
               Wrap(
                 children: [
                   Material(
-                    color: const Color(0xFFE3E2E7),
+                    color: const Color(0xFFE2E4E3),
                     borderRadius: BorderRadius.circular(8),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
@@ -705,7 +810,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         ),
                         child: Text(
                           'Upload unavailable',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 11.5,
+                            color: kOrgTextPrimary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ),
@@ -724,7 +835,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         ),
                         child: Text(
                           'Remove unavailable',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgError, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 11.5,
+                            color: kOrgError,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ),
@@ -737,7 +854,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           final brandingUnit = Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F6FB),
+              color: const Color(0xFFF6F6F6),
               borderRadius: BorderRadius.circular(14),
             ),
             child: isNarrow
@@ -767,13 +884,25 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               TextFormField(
                 controller: _secRegController,
                 enabled: false,
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   hintText: 'Not yet registered / Incomplete',
-                  hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                  hintStyle: AppTypography.style(
+                    AppTextRole.placeholder,
+                    fontSize: 12,
+                    color: kOrgTextMuted,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -795,13 +924,25 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               TextFormField(
                 controller: _tinController,
                 enabled: false,
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   hintText: 'Not yet provided',
-                  hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                  hintStyle: AppTypography.style(
+                    AppTextRole.placeholder,
+                    fontSize: 12,
+                    color: kOrgTextMuted,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -842,7 +983,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8E8E8),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -857,11 +998,23 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         children: [
                           Text(
                             'Institutional Profile',
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: (16) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 16,
+                              color: kOrgTextPrimary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           Text(
                             'Public identity visible to scholarship applicants & partner universities',
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 12,
+                              color: kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -873,12 +1026,18 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEEEDF3),
+                      color: const Color(0xFFE8E8E8),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       'Recorded profile',
-                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.badge,
+                        fontSize: 11,
+                        color: kOrgTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ],
@@ -892,11 +1051,17 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(height: 6),
               TextFormField(
                 controller: _legalEntityNameController,
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -925,24 +1090,42 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF7F6FB),
+                  color: const Color(0xFFF6F6F6),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
                     Text(
                       'https://',
-                      style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kOrgTextSecondary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.label,
+                        fontSize: 13,
+                        color: kOrgTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                     Expanded(
                       child: TextField(
                         controller: _websiteController,
                         enabled: false,
-                        style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.input,
+                          fontSize: 13,
+                          color: kOrgTextPrimary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                         decoration: InputDecoration(
                           isDense: true,
                           hintText: 'example.org (Not yet provided)',
-                          hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                          hintStyle: AppTypography.style(
+                            AppTextRole.placeholder,
+                            fontSize: 12,
+                            color: kOrgTextMuted,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 8,
@@ -967,13 +1150,25 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 controller: _addressController,
                 enabled: false,
                 maxLines: 2,
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   hintText: 'Not yet provided (Corporate address unlisted)',
-                  hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                  hintStyle: AppTypography.style(
+                    AppTextRole.placeholder,
+                    fontSize: 12,
+                    color: kOrgTextMuted,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   suffixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 18),
                     child: Icon(
@@ -1000,7 +1195,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                   _buildInputLabel('MISSION STATEMENT & GRANTING MANDATE'),
                   Text(
                     '${_missionController.text.length} / 500 characters',
-                    style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextMuted, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.caption,
+                      fontSize: 11,
+                      color: kOrgTextMuted,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1010,13 +1211,25 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 enabled: false,
                 maxLines: 4,
                 onChanged: (_) => setState(() {}),
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, height: 1.4, color: kOrgTextPrimary, letterSpacing: opticalTracking(13)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  height: 1.4,
+                  color: kOrgTextPrimary,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   hintText: 'Enter your organization\'s mission statement and granting mandate for Filipino scholars (up to 500 characters)...',
-                  hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                  hintStyle: AppTypography.style(
+                    AppTextRole.placeholder,
+                    fontSize: 12,
+                    color: kOrgTextMuted,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -1044,18 +1257,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       key: key,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final isNarrow = constraints.maxWidth < 500;
@@ -1068,13 +1270,25 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               TextFormField(
                 controller: _repNameController,
                 enabled: false,
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   hintText: 'Lead Administrator (Not yet specified)',
-                  hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                  hintStyle: AppTypography.style(
+                    AppTextRole.placeholder,
+                    fontSize: 12,
+                    color: kOrgTextMuted,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -1096,13 +1310,25 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               TextFormField(
                 controller: _repTitleController,
                 enabled: false,
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   hintText: 'Lead Grant Administrator',
-                  hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                  hintStyle: AppTypography.style(
+                    AppTextRole.placeholder,
+                    fontSize: 12,
+                    color: kOrgTextMuted,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
@@ -1149,7 +1375,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       const SizedBox(width: 4),
                       Text(
                         'Verified',
-                        style: AppTypography.style(AppTextRole.badge, fontSize: 10.5, color: kOrgPrimary, letterSpacing: opticalTracking(10.5), height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.badge,
+                          fontSize: 10.5,
+                          color: kOrgPrimary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -1159,11 +1391,17 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               TextFormField(
                 controller: _emailController,
                 readOnly: true,
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   suffixIcon: const Icon(
                     Icons.alternate_email_rounded,
                     size: 16,
@@ -1190,13 +1428,25 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               TextFormField(
                 controller: _phoneController,
                 enabled: false,
-                style: AppTypography.style(AppTextRole.input, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.input,
+                  fontSize: 13,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: const Color(0xFFF7F6FB),
+                  fillColor: const Color(0xFFF6F6F6),
                   hintText: 'Not yet provided',
-                  hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12, color: kOrgTextMuted, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                  hintStyle: AppTypography.style(
+                    AppTextRole.placeholder,
+                    fontSize: 12,
+                    color: kOrgTextMuted,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                   suffixIcon: const Icon(
                     Icons.call_outlined,
                     size: 16,
@@ -1235,7 +1485,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           final pkiSignatureCard = Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFF7F6FB),
+              color: const Color(0xFFF6F6F6),
               borderRadius: BorderRadius.circular(14),
             ),
             child: isNarrow
@@ -1248,7 +1498,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE3E2E7),
+                              color: const Color(0xFFE2E4E3),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: const Icon(
@@ -1261,7 +1511,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           Expanded(
                             child: Text(
                               'Registered Digital PKI Signature',
-                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                              style: AppTypography.style(
+                                AppTextRole.cardTitle,
+                                fontSize: 13,
+                                color: kOrgTextPrimary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ),
                         ],
@@ -1269,11 +1525,17 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       const SizedBox(height: 8),
                       Text(
                         'Digital Signature: Not enrolled with PNPKI • Pending Administrative Registration',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11.5,
+                          color: kOrgTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Material(
-                        color: const Color(0xFFE3E2E7),
+                        color: const Color(0xFFE2E4E3),
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
@@ -1285,7 +1547,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                             ),
                             child: Text(
                               'Registration unavailable',
-                              style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                              style: AppTypography.style(
+                                AppTextRole.button,
+                                fontSize: 11.5,
+                                color: kOrgTextPrimary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ),
                         ),
@@ -1298,7 +1566,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         width: 38,
                         height: 38,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE3E2E7),
+                          color: const Color(0xFFE2E4E3),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -1314,18 +1582,30 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                           children: [
                             Text(
                               'Registered Digital PKI Signature',
-                              style: AppTypography.style(AppTextRole.cardTitle, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+                              style: AppTypography.style(
+                                AppTextRole.cardTitle,
+                                fontSize: 13,
+                                color: kOrgTextPrimary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                             Text(
                               'Digital Signature: Not enrolled with PNPKI • Pending Administrative Registration',
-                              style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                              style: AppTypography.style(
+                                AppTextRole.caption,
+                                fontSize: 11.5,
+                                color: kOrgTextSecondary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ],
                         ),
                       ),
                       const SizedBox(width: 12),
                       Material(
-                        color: const Color(0xFFE3E2E7),
+                        color: const Color(0xFFE2E4E3),
                         borderRadius: BorderRadius.circular(8),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(8),
@@ -1337,7 +1617,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                             ),
                             child: Text(
                               'Registration unavailable',
-                              style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+                              style: AppTypography.style(
+                                AppTextRole.button,
+                                fontSize: 11.5,
+                                color: kOrgTextPrimary,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                           ),
                         ),
@@ -1360,7 +1646,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8E8E8),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
@@ -1375,11 +1661,23 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         children: [
                           Text(
                             'Authorized Representative',
-                            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: (16) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.cardTitle,
+                              fontSize: 16,
+                              color: kOrgTextPrimary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           Text(
                             'Signatory credentials for statutory grant clearance and legal disbursements',
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 12,
+                              color: kOrgTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -1391,7 +1689,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFB3F1C6),
+                      color: kWorkspaceSubtle,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -1405,7 +1703,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         const SizedBox(width: 4),
                         Text(
                           'Primary Signatory',
-                          style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: const Color(0xFF00351C), letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: (10) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.badge,
+                            fontSize: 10,
+                            color: const Color(0xFF00351C),
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -1432,18 +1736,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       key: key,
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1458,7 +1751,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEEEDF3),
+                      color: const Color(0xFFE8E8E8),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
@@ -1473,11 +1766,23 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     children: [
                       Text(
                         'Grant Notification & Intake Preferences',
-                        style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: (16) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.sectionTitle,
+                          fontSize: 16,
+                          color: kOrgTextPrimary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       Text(
                         'Notification preferences are not available yet.',
-                        style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.body,
+                          fontSize: 12,
+                          color: kOrgTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -1485,12 +1790,18 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               ),
               Text(
                 'NOT AVAILABLE',
-                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOrgTextSecondary, letterSpacing: 0.5),
+                style: AppTypography.style(
+                  AppTextRole.badge,
+                  fontSize: 10,
+                  color: kOrgTextSecondary,
+                  letterSpacing: 0.5,
+                  height: 1.4,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8E8E8)),
 
           // Toggle 1
           _buildToggleRow(
@@ -1499,7 +1810,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             value: _alertGwa150,
             onChanged: (val) => setState(() => _alertGwa150 = val),
           ),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8E8E8)),
 
           // Toggle 2
           _buildToggleRow(
@@ -1508,7 +1819,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             value: _weeklyDigest,
             onChanged: (val) => setState(() => _weeklyDigest = val),
           ),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8E8E8)),
 
           // Toggle 3
           _buildToggleRow(
@@ -1517,7 +1828,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             value: _duplicateLrnAlert,
             onChanged: (val) => setState(() => _duplicateLrnAlert = val),
           ),
-          const Divider(height: 1, color: Color(0xFFEEEDF3)),
+          const Divider(height: 1, color: Color(0xFFE8E8E8)),
 
           // Toggle 4
           _buildToggleRow(
@@ -1548,12 +1859,24 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               children: [
                 Text(
                   title,
-                  style: AppTypography.style(AppTextRole.label, fontSize: 13.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(13.5), height: opticalLeading(13.5, isBody: (13.5) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 13.5,
+                    color: kOrgTextPrimary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: AppTypography.style(AppTextRole.body, fontSize: 11.5, color: kOrgTextSecondary, height: 1.35, letterSpacing: opticalTracking(11.5)),
+                  style: AppTypography.style(
+                    AppTextRole.body,
+                    fontSize: 11.5,
+                    color: kOrgTextSecondary,
+                    height: 1.35,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -1563,7 +1886,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             value: value,
             activeTrackColor: kOrgPrimary,
             activeThumbColor: Colors.white,
-            inactiveTrackColor: const Color(0xFFE3E2E7),
+            inactiveTrackColor: const Color(0xFFE2E4E3),
             inactiveThumbColor: Colors.white,
             onChanged: null,
           ),
@@ -1616,11 +1939,23 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                 children: [
                   Text(
                     'Account Actions & Lifecycle',
-                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: (16) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.sectionTitle,
+                      fontSize: 16,
+                      color: kOrgTextPrimary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                   Text(
                     'Permanent registry archiving and active credential termination',
-                    style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                    style: AppTypography.style(
+                      AppTextRole.subtitle,
+                      fontSize: 12,
+                      color: kOrgTextSecondary,
+                      height: 1.4,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ],
               ),
@@ -1629,7 +1964,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 14),
           Text(
             'Archiving your grantor account pauses all active intake scholarship cycles, revokes open public application URLs, and freezes pending payment authorizations. Existing awarded scholar dossiers remain archived under regulatory retention standards.',
-            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, height: 1.4, letterSpacing: opticalTracking(12)),
+            style: AppTypography.style(
+              AppTextRole.body,
+              fontSize: 12,
+              color: kOrgTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 18),
           Wrap(
@@ -1638,7 +1979,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             children: [
               // Sign Out of All Active Consoles
               Material(
-                color: const Color(0xFFEEEDF3),
+                color: const Color(0xFFE8E8E8),
                 borderRadius: BorderRadius.circular(10),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
@@ -1665,7 +2006,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         const SizedBox(width: 6),
                         Text(
                           'Sign Out of All Active Consoles',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 12,
+                            color: kOrgTextPrimary,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -1695,7 +2042,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                         const SizedBox(width: 6),
                         Text(
                           'Account archiving unavailable',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 12,
+                            color: Colors.white,
+                            height: 1.4,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ],
                     ),
@@ -1743,27 +2096,40 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   // ---------------------------------------------------------------------------
   Widget _buildAccreditationStatusCard() => Container(
     padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: kOrgSurfaceWhite,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: kOrgBorder),
-    ),
+    decoration: kSoftCardDecoration,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'ORGANIZATION VERIFICATION',
-          style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 11,
+            color: kOrgPrimary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 10),
         Text(
           'Verification not recorded',
-          style: AppTypography.style(AppTextRole.cardTitle, fontSize: 15, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: (15) <= 16)),
+          style: AppTypography.style(
+            AppTextRole.cardTitle,
+            fontSize: 15,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           'Registration and accreditation documents cannot be uploaded in this workspace yet.',
-          style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+          style: AppTypography.style(
+            AppTextRole.body,
+            fontSize: 12,
+            color: kOrgTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     ),
@@ -1772,18 +2138,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   Widget _buildHeadquartersCard() {
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: kOrgSurfaceWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: kOrgBorder),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x06000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: kSoftCardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1792,7 +2147,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             children: [
               Text(
                 'REGISTERED HEADQUARTERS',
-                style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: 0.6, height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.label,
+                  fontSize: 10.5,
+                  color: kOrgTextSecondary,
+                  letterSpacing: 0.6,
+                  height: 1.4,
+                ),
               ),
               const Icon(
                 Icons.apartment_rounded,
@@ -1808,7 +2169,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
             height: 110,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: const Color(0xFFE8EEF5),
+              color: kWorkspaceSubtle,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFFD0DDEB)),
             ),
@@ -1843,7 +2204,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                       const SizedBox(width: 4),
                       Text(
                         'Location Not Specified',
-                        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 11, color: kOrgTextPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                        style: AppTypography.style(
+                          AppTextRole.cardTitle,
+                          fontSize: 11,
+                          color: kOrgTextPrimary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -1854,12 +2221,24 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
           const SizedBox(height: 12),
           Text(
             'Philippine Regional Hub',
-            style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: (13) <= 16)),
+            style: AppTypography.style(
+              AppTextRole.caption,
+              fontSize: 13,
+              color: kOrgTextPrimary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
             'Address unlisted • Update in Institutional Profile',
-            style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: (11.5) <= 16)),
+            style: AppTypography.style(
+              AppTextRole.caption,
+              fontSize: 11.5,
+              color: kOrgTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
         ],
       ),
@@ -1871,24 +2250,40 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   // ---------------------------------------------------------------------------
   Widget _buildFundEnvelopeCard({required int displayBudget}) => Container(
     padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(
-      color: kOrgSurfaceWhite,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: kOrgBorder),
-    ),
+    decoration: kSoftCardDecoration,
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'PROGRAM AWARD AMOUNTS',
-          style: AppTypography.style(AppTextRole.label, fontSize: 11, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+          style: AppTypography.style(
+            AppTextRole.label,
+            fontSize: 11,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 10),
-        Text('₱$displayBudget', style: AppTypography.style(AppTextRole.metric, fontSize: 26, color: kOrgPrimary, letterSpacing: opticalTracking(26), height: opticalLeading(26, isBody: (26) <= 16))),
+        Text(
+          '₱$displayBudget',
+          style: AppTypography.style(
+            AppTextRole.metric,
+            fontSize: 26,
+            color: kOrgPrimary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
+        ),
         const SizedBox(height: 8),
         Text(
           'Sum of listed program award amounts. This is not a fund balance or payment history.',
-          style: AppTypography.style(AppTextRole.caption, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+          style: AppTypography.style(
+            AppTextRole.caption,
+            fontSize: 12,
+            color: kOrgTextSecondary,
+            height: 1.4,
+            letterSpacing: 0,
+          ),
         ),
       ],
     ),
@@ -1901,7 +2296,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEEDF3),
+        color: const Color(0xFFE8E8E8),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -1933,11 +2328,23 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               children: [
                 Text(
                   'Institutional Desk',
-                  style: AppTypography.style(AppTextRole.cardTitle, fontSize: 12.5, color: kOrgTextPrimary, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: (12.5) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.cardTitle,
+                    fontSize: 12.5,
+                    color: kOrgTextPrimary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
                 Text(
                   'support@scholaris.ph',
-                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                  style: AppTypography.style(
+                    AppTextRole.caption,
+                    fontSize: 11,
+                    color: kOrgTextSecondary,
+                    height: 1.4,
+                    letterSpacing: 0,
+                  ),
                 ),
               ],
             ),
@@ -1990,14 +2397,26 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
               const SizedBox(width: 6),
               Text(
                 'Provider View Mode',
-                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 12, color: kOrgTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: (12) <= 16)),
+                style: AppTypography.style(
+                  AppTextRole.sectionTitle,
+                  fontSize: 12,
+                  color: kOrgTextPrimary,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 4),
           Text(
             'Switch console interface mode for testing workflows.',
-            style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              fontSize: 11,
+              color: kOrgTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 12),
           Row(
@@ -2014,7 +2433,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     decoration: BoxDecoration(
                       color: activeType == 'organization'
                           ? kOrgPrimary
-                          : const Color(0xFFF7F6FB),
+                          : const Color(0xFFF6F6F6),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: activeType == 'organization'
@@ -2025,7 +2444,15 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     child: Text(
                       'Institutional Org',
                       textAlign: TextAlign.center,
-                      style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: activeType == 'organization' ? Colors.white : kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.navigation,
+                        fontSize: 11,
+                        color: activeType == 'organization'
+                            ? Colors.white
+                            : kOrgTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ),
@@ -2043,7 +2470,7 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     decoration: BoxDecoration(
                       color: activeType == 'individual'
                           ? kOrgPrimary
-                          : const Color(0xFFF7F6FB),
+                          : const Color(0xFFF6F6F6),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
                         color: activeType == 'individual'
@@ -2054,7 +2481,15 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
                     child: Text(
                       'Benefactor Mode',
                       textAlign: TextAlign.center,
-                      style: AppTypography.style(AppTextRole.navigation, fontSize: 11, color: activeType == 'individual' ? Colors.white : kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: (11) <= 16)),
+                      style: AppTypography.style(
+                        AppTextRole.navigation,
+                        fontSize: 11,
+                        color: activeType == 'individual'
+                            ? Colors.white
+                            : kOrgTextSecondary,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                     ),
                   ),
                 ),
@@ -2069,7 +2504,13 @@ class _OrgSettingsTabState extends ConsumerState<OrgSettingsTab> {
   Widget _buildInputLabel(String text) {
     return Text(
       text,
-      style: AppTypography.style(AppTextRole.label, fontSize: 10.5, color: kOrgTextSecondary, letterSpacing: 0.6, height: opticalLeading(10.5, isBody: (10.5) <= 16)),
+      style: AppTypography.style(
+        AppTextRole.label,
+        fontSize: 10.5,
+        color: kOrgTextSecondary,
+        letterSpacing: 0.6,
+        height: 1.4,
+      ),
     );
   }
 }
@@ -2081,7 +2522,7 @@ class _MapGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFD8E2FF).withValues(alpha: 0.4)
+      ..color = kWorkspaceSubtle
       ..strokeWidth = 1.0;
 
     const step = 20.0;

@@ -1,0 +1,96 @@
+00:00 +0: loading C:/scholaris/test/current_ui_typography_regression_test.dart
+00:00 +0: C:/scholaris/test/current_ui_typography_regression_test.dart: typography keeps the current welcome rather than legacy onboarding
+00:00 +1: C:/scholaris/test/current_ui_typography_regression_test.dart: receipt distinguishes scholarship title, grant amount and metadata
+00:01 +2: C:/scholaris/test/current_ui_typography_regression_test.dart: provider review preserves inherited tracking for title and action
+00:01 +3: C:/scholaris/test/applications_tracking_widget_test.dart: (setUpAll)
+00:01 +3: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +4: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +5: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +6: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +7: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +8: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +9: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +10: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +11: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +12: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +13: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:02 +14: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:03 +15: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:03 +16: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:03 +17: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:03 +18: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:03 +19: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:03 +20: C:/scholaris/test/applications_tracking_widget_test.dart: late scholarship results appear without a second loading fade
+00:03 +21: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +22: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +23: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +24: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +25: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +26: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +27: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +28: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +29: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +30: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +31: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +32: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +33: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +34: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +35: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +36: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +37: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +38: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +39: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +40: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +41: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +42: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +43: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +44: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +45: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +46: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:03 +47: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +48: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +49: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +50: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +51: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +52: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +53: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +54: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +55: C:/scholaris/test/student_application_guide_test.dart: one actual detail waits for bottom then Back to top before Apply
+00:04 +56: C:/scholaris/test/applications_tracking_widget_test.dart: urgent tracker banner reveals before the application below it
+00:04 +57: C:/scholaris/test/applications_tracking_widget_test.dart: urgent tracker banner reveals before the application below it
+00:04 +58: C:/scholaris/test/applications_tracking_widget_test.dart: urgent tracker banner reveals before the application below it
+00:04 +59: C:/scholaris/test/applications_tracking_widget_test.dart: urgent tracker banner reveals before the application below it
+00:04 +60: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Inter offline
+00:05 +61: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Inter offline
+00:05 +62: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Inter offline
+00:05 +63: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Inter offline
+00:05 +64: C:/scholaris/test/shared/theme/reference_typography_test.dart: admin and provider reference pills use bundled Inter offline
+00:05 +65: C:/scholaris/test/applications_tracking_widget_test.dart: cached empty tracker waits for the tab reveal
+00:05 +66: C:/scholaris/test/applications_tracking_widget_test.dart: Applications tab navigation Applications is a first-class Home tab
+00:05 +67: C:/scholaris/test/applications_tracking_widget_test.dart: Applications tab navigation Applications is a first-class Home tab
+00:05 +68: C:/scholaris/test/applications_tracking_widget_test.dart: Applications tab navigation Applications is a first-class Home tab
+00:05 +69: C:/scholaris/test/applications_tracking_widget_test.dart: Applications tab navigation Applications is a first-class Home tab
+00:05 +70: C:/scholaris/test/applications_tracking_widget_test.dart: Applications tab navigation Applications is a first-class Home tab
+00:05 +71: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:05 +72: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:05 +73: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:05 +74: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:05 +75: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:06 +76: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:06 +77: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:06 +78: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:06 +79: C:/scholaris/test/applications_tracking_widget_test.dart: Filter bar and counts an unmatched status shows a filtered empty state
+00:06 +80: C:/scholaris/test/applications_tracking_widget_test.dart: Filter bar and counts an unmatched status shows a filtered empty state
+00:06 +81: C:/scholaris/test/applications_tracking_widget_test.dart: Compact summary summary shows total, pending and approved counts
+00:06 +82: C:/scholaris/test/applications_tracking_widget_test.dart: Compact summary summary stays consistent while a filter is active
+00:06 +83: C:/scholaris/test/applications_tracking_widget_test.dart: Deadline labels reuses the shared deadlineLabel formatting
+00:06 +84: C:/scholaris/test/applications_tracking_widget_test.dart: Responsive rendering populated tracker fits a narrow phone with larger text
+00:06 +85: C:/scholaris/test/applications_tracking_widget_test.dart: Responsive rendering empty tracker fits a narrow phone with larger text
+00:06 +86: C:/scholaris/test/applications_tracking_widget_test.dart: Responsive rendering filter bar and summary render cleanly on a 360px screen
+00:06 +87: C:/scholaris/test/applications_tracking_widget_test.dart: Responsive rendering draft card renders honest presentation at 360x800 with 1.5x text scaling
+00:06 +88: C:/scholaris/test/applications_tracking_widget_test.dart: Responsive rendering draft card renders honest presentation at 440x956 iPhone 16 Pro Max viewport
+00:06 +89: C:/scholaris/test/applications_tracking_widget_test.dart: Responsive rendering draft card renders at 1280x800 desktop and handles missing deadline gracefully
+00:06 +90: C:/scholaris/test/applications_tracking_widget_test.dart: User isolation a user only ever sees their own applications and counts
+00:06 +91: C:/scholaris/test/applications_tracking_widget_test.dart: User isolation a filter choice does not leak across user sessions
+00:07 +92: C:/scholaris/test/applications_tracking_widget_test.dart: (tearDownAll)
+00:07 +92: All tests passed!

@@ -57,6 +57,8 @@ void main() {
 
   for (final entry in <String, Widget>{
     'onboarding': const OnboardingScreen(),
+    for (var page = 1; page <= 4; page++)
+      'onboarding-feature-$page': OnboardingScreen(initialPage: page),
     'authentication': const LoginScreen(),
     'authentication-errors': const LoginScreen(),
     'provider-organization': provider_preview.buildApp(
@@ -105,6 +107,12 @@ void main() {
           tester.state<FormState>(find.byType(Form).first).validate();
           await tester.pumpAndSettle();
         }
+        await tester.runAsync(() async {
+          for (final element in find.byType(Image).evaluate()) {
+            await precacheImage((element.widget as Image).image, element);
+          }
+        });
+        await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         if (phase.isNotEmpty) {
           final render =

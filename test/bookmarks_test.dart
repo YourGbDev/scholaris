@@ -57,6 +57,35 @@ void main() {
   });
 
   group('BookmarksNotifier', () {
+    test('concurrent saves retain both scholarships in local state', () async {
+      final source = FakeBookmarkDataSource();
+      final container = ProviderContainer(
+        overrides: [
+          currentUserIdProvider.overrideWithValue('user-a'),
+          bookmarkRepositoryProvider.overrideWith(
+            (ref) => BookmarkRepository(
+              dataSource: source,
+              currentUserId: () => 'user-a',
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      await container.read(bookmarksProvider.future);
+      final notifier = container.read(bookmarksProvider.notifier);
+      await Future.wait([
+        notifier.toggle('sch-dost'),
+        notifier.toggle('sch-ched'),
+      ]);
+      expect(container.read(bookmarksProvider).valueOrNull, {
+        'sch-dost',
+        'sch-ched',
+      });
+      expect(
+        await source.fetchScholarshipIds('user-a'),
+        unorderedEquals(['sch-dost', 'sch-ched']),
+      );
+    });
     test('toggle adds and removes, keeping state in sync', () async {
       final source = FakeBookmarkDataSource();
       final container = ProviderContainer(

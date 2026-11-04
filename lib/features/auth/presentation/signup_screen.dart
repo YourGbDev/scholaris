@@ -22,10 +22,7 @@ import 'package:scholaris/shared/widgets/success_overlay.dart';
 final _emailPattern = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
 class SignupScreen extends StatefulWidget {
-  const SignupScreen({
-    super.key,
-    this.client,
-  });
+  const SignupScreen({super.key, this.client});
 
   final GoTrueClient? client;
 
@@ -162,7 +159,10 @@ class _SignupScreenState extends State<SignupScreen> {
       PasswordValidator.validatePassword(value);
 
   String? _validateConfirmPassword(String? value) =>
-      PasswordValidator.validateConfirmPassword(value, _passwordController.text);
+      PasswordValidator.validateConfirmPassword(
+        value,
+        _passwordController.text,
+      );
 
   Widget _requirementRow(String label, bool met) {
     return Padding(
@@ -170,7 +170,9 @@ class _SignupScreenState extends State<SignupScreen> {
       child: Row(
         children: [
           Icon(
-            met ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+            met
+                ? Icons.check_circle_rounded
+                : Icons.radio_button_unchecked_rounded,
             size: 13,
             color: met ? kPrimary : const Color(0xFF9E9E9E),
           ),
@@ -178,7 +180,13 @@ class _SignupScreenState extends State<SignupScreen> {
           Expanded(
             child: Text(
               label,
-              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: met ? kPrimary : const Color(0xFF757575), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.label,
+                fontSize: 11,
+                color: met ? kPrimary : const Color(0xFF757575),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -188,19 +196,28 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   SnackBar _snackBar(String message) => SnackBar(
-        content: Text(
-          message,
-          style: AppTypography.style(AppTextRole.body, color: Colors.white, fontSize: 13, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-        ),
-        backgroundColor: const Color(0xFF161C27),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      );
+    content: Text(
+      message,
+      style: AppTypography.style(
+        AppTextRole.body,
+        color: Colors.white,
+        fontSize: 13,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
+    ),
+    backgroundColor: const Color(0xFF161C27),
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  );
 
   @override
   Widget build(BuildContext context) {
-    final passwordStrength = _calculatePasswordStrength(_passwordController.text);
-    final passwordsMatch = _passwordController.text.isNotEmpty &&
+    final passwordStrength = _calculatePasswordStrength(
+      _passwordController.text,
+    );
+    final passwordsMatch =
+        _passwordController.text.isNotEmpty &&
         _passwordController.text == _confirmPasswordController.text;
 
     return Scaffold(
@@ -214,7 +231,10 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_rounded, color: kTextPrimary),
+                    icon: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: kTextPrimary,
+                    ),
                     onPressed: () {
                       if (Navigator.of(context).canPop()) {
                         Navigator.of(context).pop();
@@ -236,7 +256,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: kSurfaceCard,
                         borderRadius: BorderRadius.circular(16),
@@ -245,11 +268,21 @@ class _SignupScreenState extends State<SignupScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.help_outline_rounded, size: 16, color: kTextSecondary),
+                          const Icon(
+                            Icons.help_outline_rounded,
+                            size: 16,
+                            color: kTextSecondary,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             'Help',
-                            style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                            style: AppTypography.style(
+                              AppTextRole.button,
+                              fontSize: 12,
+                              color: kTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                         ],
                       ),
@@ -276,7 +309,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: kPrimaryLight,
                                 borderRadius: BorderRadius.circular(20),
@@ -295,7 +331,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                   const SizedBox(width: 6),
                                   Text(
                                     'ISKOLAR NG BAYAN',
-                                    style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kPrimary, letterSpacing: 0.8, height: opticalLeading(11, isBody: false)),
+                                    style: AppTypography.style(
+                                      AppTextRole.label,
+                                      fontSize: 11,
+                                      color: kPrimary,
+                                      letterSpacing: 0.8,
+                                      height: 1.2,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -306,12 +348,24 @@ class _SignupScreenState extends State<SignupScreen> {
                           // Heading
                           Text(
                             'Create your account',
-                            style: AppTypography.style(AppTextRole.screenTitle, fontSize: 24, color: kTextPrimary, height: 1.2, letterSpacing: opticalTracking(24)),
+                            style: AppTypography.style(
+                              AppTextRole.screenTitle,
+                              fontSize: 20,
+                              color: kTextPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Access thousands of verified scholarships across the Philippines tailored to your background.',
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 12, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(12)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 12,
+                              color: kTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           const SizedBox(height: 14),
 
@@ -337,14 +391,22 @@ class _SignupScreenState extends State<SignupScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Flexible(
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 3,
+                                        ),
                                         decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(12),
+                                          color: Colors.white.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -359,7 +421,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                               child: Text(
                                                 'Free Forever For Students',
                                                 overflow: TextOverflow.ellipsis,
-                                                style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: Colors.white, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                                                style: AppTypography.style(
+                                                  AppTextRole.badge,
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                  height: 1.2,
+                                                  letterSpacing: -0.15,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -369,19 +437,37 @@ class _SignupScreenState extends State<SignupScreen> {
                                     const SizedBox(width: 6),
                                     Text(
                                       '100% Free',
-                                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: const Color(0xFFB3F1C6), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.badge,
+                                        fontSize: 11,
+                                        color: const Color(0xFFB3F1C6),
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   '₱480M+ Active Grants',
-                                  style: AppTypography.style(AppTextRole.metric, fontSize: 20, color: Colors.white, letterSpacing: opticalTracking(20), height: opticalLeading(20, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.metric,
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                    height: 1.2,
+                                    letterSpacing: -0.15,
+                                  ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   'Vetted opportunities spanning Luzon, Visayas & Mindanao',
-                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: Colors.white.withValues(alpha: 0.85), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                  style: AppTypography.style(
+                                    AppTextRole.caption,
+                                    fontSize: 11,
+                                    color: Colors.white.withValues(alpha: 0.85),
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ],
                             ),
@@ -394,13 +480,25 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Full Name',
-                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 13,
+                                  color: kTextPrimary,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                               Flexible(
                                 child: Text(
                                   'As on PSA birth certificate',
                                   overflow: TextOverflow.ellipsis,
-                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                  style: AppTypography.style(
+                                    AppTextRole.caption,
+                                    fontSize: 11,
+                                    color: kTextSecondary,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ),
                             ],
@@ -418,7 +516,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           // 2. University, College, or High School (TextField - preserves FormField indices)
                           Text(
                             'University, College, or High School',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 13,
+                              color: kTextPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           _auxTextField(
@@ -435,13 +539,25 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Email',
-                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 13,
+                                  color: kTextPrimary,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                               Flexible(
                                 child: Text(
                                   'School or personal',
                                   overflow: TextOverflow.ellipsis,
-                                  style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                  style: AppTypography.style(
+                                    AppTextRole.caption,
+                                    fontSize: 11,
+                                    color: kTextSecondary,
+                                    height: 1.4,
+                                    letterSpacing: 0,
+                                  ),
                                 ),
                               ),
                             ],
@@ -449,7 +565,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           const SizedBox(height: 6),
                           _formTextField(
                             controller: _emailController,
-                            hintText: 'e.g. maya.santos@up.edu.ph or personal email',
+                            hintText:
+                                'e.g. maya.santos@up.edu.ph or personal email',
                             prefixIcon: Icons.alternate_email_rounded,
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
@@ -460,26 +577,43 @@ class _SignupScreenState extends State<SignupScreen> {
                           // 4. Mobile number (optional) (TextField)
                           Text(
                             'Mobile number (optional)',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 13,
+                              color: kTextPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           Row(
                             children: [
                               Container(
                                 height: 46,
-                                padding: const EdgeInsets.symmetric(horizontal: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFE8EEFF),
+                                  color: kSurfaceContainer,
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: kBorderLight),
                                 ),
                                 child: Row(
                                   children: [
-                                    const Text('🇵🇭', style: TextStyle(fontSize: 14)),
+                                    const Text(
+                                      '🇵🇭',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       '+63',
-                                      style: AppTypography.style(AppTextRole.label, fontSize: 12, color: kTextPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.label,
+                                        fontSize: 12,
+                                        color: kTextPrimary,
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -500,7 +634,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           // 5. Password (TextFormField index 2)
                           Text(
                             'Password',
-                            style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.label,
+                              fontSize: 13,
+                              color: kTextPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                           ),
                           const SizedBox(height: 6),
                           _formTextField(
@@ -513,11 +653,15 @@ class _SignupScreenState extends State<SignupScreen> {
                             validator: _validatePassword,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                _obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: kTextSecondary,
                                 size: 20,
                               ),
-                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                              onPressed: () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -531,8 +675,8 @@ class _SignupScreenState extends State<SignupScreen> {
                                   decoration: BoxDecoration(
                                     color: passwordStrength >= 1
                                         ? (passwordStrength == 1
-                                            ? Colors.orange
-                                            : kPrimary)
+                                              ? Colors.orange
+                                              : kPrimary)
                                         : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
@@ -543,7 +687,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 child: Container(
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: passwordStrength >= 2 ? kPrimary : Colors.black12,
+                                    color: passwordStrength >= 2
+                                        ? kPrimary
+                                        : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -553,7 +699,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                 child: Container(
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: passwordStrength >= 3 ? kPrimary : Colors.black12,
+                                    color: passwordStrength >= 3
+                                        ? kPrimary
+                                        : Colors.black12,
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -566,29 +714,75 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Password Complexity',
-                                style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 11, color: kTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                style: AppTypography.style(
+                                  AppTextRole.sectionTitle,
+                                  fontSize: 11,
+                                  color: kTextSecondary,
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                               Text(
-                                PasswordValidator.strengthLabel(passwordStrength),
-                                style: AppTypography.style(AppTextRole.label, fontSize: 11, color: passwordStrength >= 3 ? kPrimary : (passwordStrength == 2 ? Colors.orange : const Color(0xFFBA1A1A)), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                PasswordValidator.strengthLabel(
+                                  passwordStrength,
+                                ),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 11,
+                                  color: passwordStrength >= 3
+                                      ? kPrimary
+                                      : (passwordStrength == 2
+                                            ? Colors.orange
+                                            : const Color(0xFFBA1A1A)),
+                                  height: 1.4,
+                                  letterSpacing: 0,
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 6),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF6F8FA),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFE2E8E5)),
+                              border: Border.all(
+                                color: const Color(0xFFE2E8E5),
+                              ),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _requirementRow('At least 8 characters', PasswordValidator.hasMinLength(_passwordController.text)),
-                                _requirementRow('Uppercase & lowercase letters', PasswordValidator.hasUppercase(_passwordController.text) && PasswordValidator.hasLowercase(_passwordController.text)),
-                                _requirementRow('At least one number (0-9)', PasswordValidator.hasDigit(_passwordController.text)),
-                                _requirementRow('Special character (!@#\$%^&*)', PasswordValidator.hasSpecialChar(_passwordController.text)),
+                                _requirementRow(
+                                  'At least 8 characters',
+                                  PasswordValidator.hasMinLength(
+                                    _passwordController.text,
+                                  ),
+                                ),
+                                _requirementRow(
+                                  'Uppercase & lowercase letters',
+                                  PasswordValidator.hasUppercase(
+                                        _passwordController.text,
+                                      ) &&
+                                      PasswordValidator.hasLowercase(
+                                        _passwordController.text,
+                                      ),
+                                ),
+                                _requirementRow(
+                                  'At least one number (0-9)',
+                                  PasswordValidator.hasDigit(
+                                    _passwordController.text,
+                                  ),
+                                ),
+                                _requirementRow(
+                                  'Special character (!@#\$%^&*)',
+                                  PasswordValidator.hasSpecialChar(
+                                    _passwordController.text,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -600,16 +794,32 @@ class _SignupScreenState extends State<SignupScreen> {
                             children: [
                               Text(
                                 'Confirm Password',
-                                style: AppTypography.style(AppTextRole.label, fontSize: 13, color: kTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                                style: AppTypography.style(
+                                  AppTextRole.label,
+                                  fontSize: 13,
+                                  color: kTextPrimary,
+                                  height: 1.2,
+                                  letterSpacing: -0.15,
+                                ),
                               ),
                               if (passwordsMatch)
                                 Row(
                                   children: [
-                                    const Icon(Icons.check_circle_rounded, size: 14, color: kPrimary),
+                                    const Icon(
+                                      Icons.check_circle_rounded,
+                                      size: 14,
+                                      color: kPrimary,
+                                    ),
                                     const SizedBox(width: 4),
                                     Text(
                                       'Passwords match',
-                                      style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: kPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: true)),
+                                      style: AppTypography.style(
+                                        AppTextRole.badge,
+                                        fontSize: 11,
+                                        color: kPrimary,
+                                        height: 1.4,
+                                        letterSpacing: 0,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -627,18 +837,24 @@ class _SignupScreenState extends State<SignupScreen> {
                             validator: _validateConfirmPassword,
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                                _obscureConfirm
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: kTextSecondary,
                                 size: 20,
                               ),
-                              onPressed: () => setState(() => _obscureConfirm = !_obscureConfirm),
+                              onPressed: () => setState(
+                                () => _obscureConfirm = !_obscureConfirm,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 12),
 
                           // RA 10173 Consent Checkbox
                           GestureDetector(
-                            onTap: () => setState(() => _agreedToPrivacy = !_agreedToPrivacy),
+                            onTap: () => setState(
+                              () => _agreedToPrivacy = !_agreedToPrivacy,
+                            ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -652,7 +868,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     onChanged: (val) {
-                                      setState(() => _agreedToPrivacy = val ?? false);
+                                      setState(
+                                        () => _agreedToPrivacy = val ?? false,
+                                      );
                                     },
                                   ),
                                 ),
@@ -660,7 +878,13 @@ class _SignupScreenState extends State<SignupScreen> {
                                 Expanded(
                                   child: Text(
                                     'I agree to the Terms of Service and Data Privacy Policy in accordance with the Philippine Data Privacy Act of 2012 (RA 10173).',
-                                    style: AppTypography.style(AppTextRole.body, fontSize: 11, color: kTextSecondary, height: 1.4, letterSpacing: opticalTracking(11)),
+                                    style: AppTypography.style(
+                                      AppTextRole.body,
+                                      fontSize: 11,
+                                      color: kTextSecondary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -721,15 +945,32 @@ class _SignupScreenState extends State<SignupScreen> {
                                   children: [
                                     Text(
                                       'Sign up',
-                                      style: AppTypography.style(AppTextRole.button, fontSize: 15, color: Colors.white, letterSpacing: opticalTracking(15), height: opticalLeading(15, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.button,
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                     Text(
                                       ' — Create Free Account',
                                       overflow: TextOverflow.ellipsis,
-                                      style: AppTypography.style(AppTextRole.button, fontSize: 14, color: Colors.white.withValues(alpha: 0.9), letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                      style: AppTypography.style(
+                                        AppTextRole.button,
+                                        fontSize: 13,
+                                        color: Colors.white.withValues(
+                                          alpha: 0.9,
+                                        ),
+                                        height: 1.2,
+                                        letterSpacing: -0.15,
+                                      ),
                                     ),
                                     const SizedBox(width: 6),
-                                    const Icon(Icons.arrow_forward_rounded, size: 18),
+                                    const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 18,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -743,7 +984,13 @@ class _SignupScreenState extends State<SignupScreen> {
                         children: [
                           Text(
                             'Already have an account? ',
-                            style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kTextSecondary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                            style: AppTypography.style(
+                              AppTextRole.body,
+                              fontSize: 12,
+                              color: kTextSecondary,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                           ),
                           TextButton(
                             onPressed: () => context.go('/login'),
@@ -757,7 +1004,13 @@ class _SignupScreenState extends State<SignupScreen> {
                               children: [
                                 Text(
                                   'Log in',
-                                  style: AppTypography.style(AppTextRole.button, fontSize: 12, color: kPrimary, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.button,
+                                    fontSize: 12,
+                                    color: kPrimary,
+                                    height: 1.2,
+                                    letterSpacing: -0.15,
+                                  ),
                                 ),
                                 const Icon(
                                   Icons.chevron_right_rounded,
@@ -799,16 +1052,33 @@ class _SignupScreenState extends State<SignupScreen> {
       keyboardType: keyboardType,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
-      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+      style: AppTypography.style(
+        AppTextRole.input,
+        fontSize: 13,
+        color: kTextPrimary,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       validator: validator,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: Colors.black38, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
+        hintStyle: AppTypography.style(
+          AppTextRole.placeholder,
+          fontSize: 13,
+          color: Colors.black38,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, size: 20, color: kTextSecondary)
+            : null,
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: kBorderLight),
@@ -844,14 +1114,31 @@ class _SignupScreenState extends State<SignupScreen> {
       controller: controller,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
-      style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: true)),
+      style: AppTypography.style(
+        AppTextRole.input,
+        fontSize: 13,
+        color: kTextPrimary,
+        height: 1.4,
+        letterSpacing: 0,
+      ),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: Colors.black38, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 20, color: kTextSecondary) : null,
+        hintStyle: AppTypography.style(
+          AppTextRole.placeholder,
+          fontSize: 13,
+          color: Colors.black38,
+          height: 1.4,
+          letterSpacing: 0,
+        ),
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, size: 20, color: kTextSecondary)
+            : null,
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: kBorderLight),

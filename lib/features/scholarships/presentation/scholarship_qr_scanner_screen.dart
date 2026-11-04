@@ -17,9 +17,7 @@ class ScholarshipQrScannerScreen extends StatefulWidget {
 
   static Future<void> show(BuildContext context) {
     return Navigator.of(context).push(
-      ScholarisPageRoute(
-        builder: (_) => const ScholarshipQrScannerScreen(),
-      ),
+      ScholarisPageRoute(builder: (_) => const ScholarshipQrScannerScreen()),
     );
   }
 
@@ -147,7 +145,10 @@ class _ScholarshipQrScannerScreenState
                   children: [
                     PressableScale(
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+                        icon: const Icon(
+                          Icons.arrow_back_rounded,
+                          color: Colors.white,
+                        ),
                         tooltip: 'Back',
                         onPressed: () {
                           HapticFeedback.lightImpact();
@@ -159,7 +160,13 @@ class _ScholarshipQrScannerScreenState
                     Expanded(
                       child: Text(
                         'Scan Scholarship QR',
-                        style: AppTypography.style(AppTextRole.screenTitle, fontSize: 16.5, color: Colors.white, letterSpacing: opticalTracking(16.5), height: opticalLeading(16.5, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.screenTitle,
+                          fontSize: 16.5,
+                          color: Colors.white,
+                          height: 1.25,
+                          letterSpacing: -0.15,
+                        ),
                       ),
                     ),
                     PressableScale(
@@ -169,7 +176,9 @@ class _ScholarshipQrScannerScreenState
                           builder: (context, state, _) {
                             final isOn = state.torchState == TorchState.on;
                             return Icon(
-                              isOn ? Icons.flash_on_rounded : Icons.flash_off_rounded,
+                              isOn
+                                  ? Icons.flash_on_rounded
+                                  : Icons.flash_off_rounded,
                               color: isOn ? Colors.amber : Colors.white,
                             );
                           },
@@ -183,7 +192,10 @@ class _ScholarshipQrScannerScreenState
                     ),
                     PressableScale(
                       child: IconButton(
-                        icon: const Icon(Icons.flip_camera_ios_rounded, color: Colors.white),
+                        icon: const Icon(
+                          Icons.flip_camera_ios_rounded,
+                          color: Colors.white,
+                        ),
                         tooltip: 'Switch Camera',
                         onPressed: () {
                           HapticFeedback.lightImpact();
@@ -215,7 +227,8 @@ class _ScholarshipQrScannerScreenState
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFBA1A1A).withValues(alpha: 0.92),
+                          color: const Color(0xFFBA1A1A)
+                              .withValues(alpha: 0.92),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.white24),
                         ),
@@ -225,13 +238,22 @@ class _ScholarshipQrScannerScreenState
                           children: [
                             Row(
                               children: [
-                                const Icon(Icons.error_outline_rounded,
-                                    color: Colors.white, size: 20),
+                                const Icon(
+                                  Icons.error_outline_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     'Invalid QR Payload',
-                                    style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 14, color: Colors.white, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                    style: AppTypography.style(
+                                      AppTextRole.sectionTitle,
+                                      fontSize: 13,
+                                      color: Colors.white,
+                                      height: 1.25,
+                                      letterSpacing: 0,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -239,7 +261,13 @@ class _ScholarshipQrScannerScreenState
                             const SizedBox(height: 6),
                             Text(
                               _errorMessage!,
-                              style: AppTypography.style(AppTextRole.body, fontSize: 12, color: Colors.white, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: true)),
+                              style: AppTypography.style(
+                                AppTextRole.body,
+                                fontSize: 12,
+                                color: Colors.white,
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                             ),
                             const SizedBox(height: 10),
                             PressableScale(
@@ -250,10 +278,15 @@ class _ScholarshipQrScannerScreenState
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 8,
+                                  ),
                                 ),
                                 onPressed: _resetScan,
-                                icon: const Icon(Icons.refresh_rounded, size: 16),
+                                icon: const Icon(
+                                  Icons.refresh_rounded,
+                                  size: 16,
+                                ),
                                 label: const Text('Scan Again'),
                               ),
                             ),
@@ -265,13 +298,25 @@ class _ScholarshipQrScannerScreenState
                       Text(
                         'Align the scholarship QR code within the frame',
                         textAlign: TextAlign.center,
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 13, color: Colors.white.withValues(alpha: 0.85), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.85),
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         'Format: scholaris://scholarships/{id}',
                         textAlign: TextAlign.center,
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: const Color(0xFFB3F1C6), letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11,
+                          color: const Color(0xFFB3F1C6),
+                          height: 1.25,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(height: 14),
                     ],
@@ -286,7 +331,9 @@ class _ScholarshipQrScannerScreenState
                             borderRadius: BorderRadius.circular(20),
                           ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                         ),
                         onPressed: () {
                           HapticFeedback.lightImpact();
@@ -295,7 +342,12 @@ class _ScholarshipQrScannerScreenState
                         icon: const Icon(Icons.keyboard_alt_outlined, size: 16),
                         label: Text(
                           'Enter Code or URL Manually',
-                          style: AppTypography.style(AppTextRole.button, fontSize: 12, letterSpacing: opticalTracking(12), height: opticalLeading(12, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.button,
+                            fontSize: 12,
+                            height: 1.25,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ),
@@ -317,13 +369,16 @@ class _ScholarshipQrScannerScreenState
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: _errorMessage != null ? Colors.redAccent : const Color(0xFFB3F1C6),
+            color: _errorMessage != null
+                ? Colors.redAccent
+                : const Color(0xFFB3F1C6),
             width: 2.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: (_errorMessage != null ? Colors.red : const Color(0xFF0F4D2E))
-                  .withValues(alpha: 0.35),
+              color:
+                  (_errorMessage != null ? Colors.red : const Color(0xFF0F4D2E))
+                      .withValues(alpha: 0.35),
               blurRadius: 20,
               spreadRadius: 2,
             ),
@@ -401,18 +456,33 @@ class _ScholarshipQrScannerScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.videocam_off_outlined,
-                size: 48, color: Colors.white54),
+            const Icon(
+              Icons.videocam_off_outlined,
+              size: 48,
+              color: Colors.white54,
+            ),
             const SizedBox(height: 12),
             Text(
               'Camera Unavailable',
-              style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 17, color: Colors.white, letterSpacing: opticalTracking(17), height: opticalLeading(17, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.sectionTitle,
+                fontSize: 17,
+                color: Colors.white,
+                height: 1.25,
+                letterSpacing: -0.15,
+              ),
             ),
             const SizedBox(height: 6),
             Text(
               'Camera hardware or permission is not active. You can still enter or paste a scholarship code directly.',
               textAlign: TextAlign.center,
-              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: Colors.white70, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.body,
+                fontSize: 13,
+                color: Colors.white70,
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 16),
             PressableScale(
@@ -420,8 +490,10 @@ class _ScholarshipQrScannerScreenState
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF0F4D2E),
                   foregroundColor: Colors.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -447,7 +519,12 @@ class _ScholarshipQrScannerScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Enter Scholarship Code',
-          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 18, letterSpacing: opticalTracking(18), height: opticalLeading(18, isBody: false)),
+          style: AppTypography.style(
+            AppTextRole.sectionTitle,
+            fontSize: 17,
+            height: 1.25,
+            letterSpacing: -0.15,
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -455,21 +532,36 @@ class _ScholarshipQrScannerScreenState
           children: [
             Text(
               'Paste a QR payload or enter the scholarship ID directly:',
-              style: AppTypography.style(AppTextRole.body, fontSize: 13, color: const Color(0xFF404942), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: true)),
+              style: AppTypography.style(
+                AppTextRole.body,
+                fontSize: 13,
+                color: const Color(0xFF404942),
+                height: 1.4,
+                letterSpacing: 0,
+              ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: _manualInputController,
               decoration: InputDecoration(
                 hintText: 'scholaris://scholarships/{id}',
-                hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 12.5, color: Colors.black38, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: true)),
+                hintStyle: AppTypography.style(
+                  AppTextRole.placeholder,
+                  fontSize: 12.5,
+                  color: Colors.black38,
+                  height: 1.4,
+                  letterSpacing: 0,
+                ),
                 filled: true,
                 fillColor: const Color(0xFFF4F3F8),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
               ),
             ),
           ],

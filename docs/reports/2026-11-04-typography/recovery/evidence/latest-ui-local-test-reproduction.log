@@ -1,0 +1,160 @@
+00:00 +0: loading C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart
+00:00 +0: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation getMascotAssetPath returns female mascot for female gender case-insensitively
+00:00 +1: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation getMascotAssetPath returns male mascot for male or null gender
+00:00 +2: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation MascotPoseView renders an empty box when profile is loading / null (no male flash)
+00:00 +3: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 1. Student ScholarshipCard renders ₱120,000 for SM Foundation
+00:00 +4: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 1. Student ScholarshipCard renders ₱120,000 for SM Foundation
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "₱120,000": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart:37:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart line 37
+The test description was:
+  1. Student ScholarshipCard renders ₱120,000 for SM Foundation
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -1: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash)
+00:01 +4 -1: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 1. Student ScholarshipCard renders ₱120,000 for SM Foundation [E]
+  Test failed. See exception logs above.
+  The test description was: 1. Student ScholarshipCard renders ₱120,000 for SM Foundation
+  
+00:01 +4 -1: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 2. Student ScholarshipCard renders ₱40,000 / semester for DOST-SEI
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "₱40,000": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart:67:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart line 67
+The test description was:
+  2. Student ScholarshipCard renders ₱40,000 / semester for DOST-SEI
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -2: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash)
+00:01 +4 -2: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 2. Student ScholarshipCard renders ₱40,000 / semester for DOST-SEI [E]
+  Test failed. See exception logs above.
+  The test description was: 2. Student ScholarshipCard renders ₱40,000 / semester for DOST-SEI
+  
+00:01 +4 -2: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 3. Student ScholarshipCard renders ₱60,000 for CHED Merit
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "₱60,000": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart:95:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart line 95
+The test description was:
+  3. Student ScholarshipCard renders ₱60,000 for CHED Merit
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -3: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash)
+00:01 +4 -3: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 3. Student ScholarshipCard renders ₱60,000 for CHED Merit [E]
+  Test failed. See exception logs above.
+  The test description was: 3. Student ScholarshipCard renders ₱60,000 for CHED Merit
+  
+00:01 +4 -3: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash)
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _KeyWidgetFinder:<Found 0 widgets with key [<'student-hero-loading'>]: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart:120:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart line 120
+The test description was:
+  StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +4 -4: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash) [E]
+  Test failed. See exception logs above.
+  The test description was: StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash)
+  
+00:01 +4 -4: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders female banner when profile is female
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _WidgetPredicateWidgetFinder:<Found 0 widgets with widget matching predicate: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart:151:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/Users/Windows%2011/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart line 151
+The test description was:
+  StudentDashboard hero banner renders female banner when profile is female
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +4 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders female banner when profile is female [E]
+  Test failed. See exception logs above.
+  The test description was: StudentDashboard hero banner renders female banner when profile is female
+  
+00:02 +4 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 2. Role Boundary & Navigation Guard Audits Non-admin student attempting to access /admin-home fails closed to /home
+00:02 +5 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 2. Role Boundary & Navigation Guard Audits Non-admin provider attempting to access /admin-home fails closed to /provider-home
+00:02 +6 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 2. Role Boundary & Navigation Guard Audits Student attempting to access /provider-home fails closed to /home
+00:02 +7 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 2. Role Boundary & Navigation Guard Audits Admin accessing /admin-home is authorized and allowed (redirect null)
+00:02 +8 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 2. Role Boundary & Navigation Guard Audits Provider accessing /provider-home is authorized and allowed (redirect null)
+00:02 +9 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 2. Role Boundary & Navigation Guard Audits Unauthenticated user attempting to access /home redirects to /login
+00:02 +10 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 2. Role Boundary & Navigation Guard Audits Unauthenticated user attempting to access /admin-home redirects to /login
+00:02 +11 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 3. Onboarding Recovery & Step Checkpoints Step 1 saved redirects to /profile-setup/personal
+00:02 +12 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 3. Onboarding Recovery & Step Checkpoints Step 2 saved redirects directly to /profile-setup/academic
+00:02 +13 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 3. Onboarding Recovery & Step Checkpoints Step 3 saved redirects directly to /profile-setup/financial
+00:02 +14 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 3. Onboarding Recovery & Step Checkpoints Incomplete student on /profile-setup/academic is not redirected away
+00:02 +15 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 4. Application Readiness & Duplicate Prevention Contract evaluateApplicationReadiness identifies active future deadline as eligible
+00:02 +16 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 4. Application Readiness & Duplicate Prevention Contract evaluateApplicationReadiness identifies expired deadline as closed
+00:02 +17 -5: C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 4. Application Readiness & Duplicate Prevention Contract evaluateApplicationReadiness identifies missing criteria accurately
+00:02 +18 -5: Some tests failed.
+
+Failing tests:
+  C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders female banner when profile is female
+  C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_audit_test.dart: 1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash)
+  C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 1. Student ScholarshipCard renders ₱120,000 for SM Foundation
+  C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 2. Student ScholarshipCard renders ₱40,000 / semester for DOST-SEI
+  C:/Users/Windows 11/.codex/worktrees/auth-tour-polish/scholaris/test/recovery_baseline_live_test.dart: Rendered Screen Tests with Real Migration 0015 Data 3. Student ScholarshipCard renders ₱60,000 for CHED Merit

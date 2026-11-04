@@ -128,15 +128,27 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Theme(
+    data: workspaceTheme(Theme.of(context)),
+    child: Builder(builder: _buildWorkspace),
+  );
+
+  Widget _buildWorkspace(BuildContext context) {
     final membership = ref.watch(organizationMembershipProvider);
     if (membership.isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        backgroundColor: kOrgCanvas,
+        body: Center(child: CircularProgressIndicator()),
+      );
     }
     final identity = ref.watch(providerSubRoleProvider);
     if (identity.role == ProviderSubRole.unavailable) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Organization access')),
+        backgroundColor: kOrgCanvas,
+        appBar: AppBar(
+          backgroundColor: kOrgCanvas,
+          title: const Text('Organization access'),
+        ),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -271,7 +283,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   Flexible(
                     child: Text(
                       'Provider Console',
-                      style: AppTypography.style(AppTextRole.screenTitle, fontSize: 16, color: kOrgTextPrimary, letterSpacing: opticalTracking(16), height: opticalLeading(16, isBody: false)),
+                      style: AppTypography.style(
+                        AppTextRole.screenTitle,
+                        fontSize: 16,
+                        color: kOrgTextPrimary,
+                        height: 1.2,
+                        letterSpacing: -0.15,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -358,13 +376,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   child: InkWell(
                     borderRadius: BorderRadius.circular(10),
                     onTap: () => _openCommandPalette(context),
-                    hoverColor: const Color(0xFFEBEAF0),
+                    hoverColor: const Color(0xFFE8E8E8),
                     child: Container(
                       constraints: const BoxConstraints(maxWidth: 280),
                       height: 36,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF4F3F8),
+                        color: const Color(0xFFF6F6F6),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: kOrgHairline),
                       ),
@@ -379,7 +397,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                           Expanded(
                             child: Text(
                               '⌘K Search applicants...',
-                              style: AppTypography.style(AppTextRole.placeholder, fontSize: 13, color: kOrgTextSecondary.withValues(alpha: 0.8), letterSpacing: opticalTracking(13), height: ((13) <= 16 ? 1.45 : opticalLeading(13, isBody: true))),
+                              style: AppTypography.style(
+                                AppTextRole.placeholder,
+                                fontSize: 13,
+                                color: kOrgTextSecondary.withValues(alpha: 0.8),
+                                height: 1.4,
+                                letterSpacing: 0,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -399,7 +423,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             decoration: BoxDecoration(
               color: identity.isFinance
                   ? const Color(0xFFE8F5E9)
-                  : const Color(0xFFF4F3F8),
+                  : const Color(0xFFF6F6F6),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: identity.isFinance
@@ -422,7 +446,15 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 const SizedBox(width: 6),
                 Text(
                   identity.topEyebrow,
-                  style: AppTypography.style(AppTextRole.label, fontSize: 11, color: identity.isFinance ? const Color(0xFF0F4D2E) : kOrgTextPrimary, letterSpacing: 0.3, height: opticalLeading(11, isBody: false)),
+                  style: AppTypography.style(
+                    AppTextRole.label,
+                    fontSize: 11,
+                    color: identity.isFinance
+                        ? const Color(0xFF0F4D2E)
+                        : kOrgTextPrimary,
+                    letterSpacing: 0.3,
+                    height: 1.3,
+                  ),
                 ),
               ],
             ),
@@ -441,7 +473,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               ),
               label: Text(
                 'New Grant',
-                style: AppTypography.style(AppTextRole.button, fontSize: 12.5, color: Colors.white, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 12.5,
+                  color: Colors.white,
+                  height: 1.3,
+                  letterSpacing: 0,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: kOrgPrimary,
@@ -469,7 +507,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
               ),
               label: Text(
                 'Disbursements',
-                style: AppTypography.style(AppTextRole.button, fontSize: 12.5, color: Colors.white, letterSpacing: opticalTracking(12.5), height: opticalLeading(12.5, isBody: false)),
+                style: AppTypography.style(
+                  AppTextRole.button,
+                  fontSize: 12.5,
+                  color: Colors.white,
+                  height: 1.3,
+                  letterSpacing: 0,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0F4D2E),
@@ -499,7 +543,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             backgroundColor: kOrgPrimary,
             child: Text(
               identity.initials,
-              style: AppTypography.style(AppTextRole.label, fontSize: 11, color: Colors.white, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+              style: AppTypography.style(
+                AppTextRole.label,
+                fontSize: 11,
+                color: Colors.white,
+                height: 1.3,
+                letterSpacing: 0,
+              ),
             ),
           ),
         ],
@@ -538,7 +588,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                 Expanded(
                   child: Text(
                     'Scholaris',
-                    style: AppTypography.style(AppTextRole.label, fontSize: 15.5, color: kOrgPrimary, letterSpacing: opticalTracking(15.5), height: opticalLeading(15.5, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.label,
+                      fontSize: 15.5,
+                      color: kOrgPrimary,
+                      height: 1.2,
+                      letterSpacing: -0.15,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -551,7 +607,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                   decoration: BoxDecoration(
                     color: identity.isFinance
                         ? const Color(0xFFE8F5E9)
-                        : const Color(0xFFE3E2E7),
+                        : const Color(0xFFE2E4E3),
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
                       color: identity.isFinance
@@ -565,7 +621,15 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                         : identity.isEvaluator
                         ? 'REVIEWER'
                         : 'FINANCE',
-                    style: AppTypography.style(AppTextRole.badge, fontSize: 8.5, color: identity.isFinance ? const Color(0xFF0F4D2E) : const Color(0xFF404942), letterSpacing: opticalTracking(8.5), height: opticalLeading(8.5, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      fontSize: 8.5,
+                      color: identity.isFinance
+                          ? const Color(0xFF0F4D2E)
+                          : const Color(0xFF404942),
+                      height: 1.3,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
                 if (isDrawer) ...[
@@ -697,7 +761,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                       backgroundColor: kOrgPrimary,
                       child: Text(
                         identity.initials,
-                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: Colors.white, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          fontSize: 11,
+                          color: Colors.white,
+                          height: 1.3,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -708,13 +778,25 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                         children: [
                           Text(
                             identity.name,
-                            style: AppTypography.style(AppTextRole.bodyEmphasis, fontSize: 13, color: kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.bodyEmphasis,
+                              fontSize: 13,
+                              color: kOrgTextPrimary,
+                              height: 1.2,
+                              letterSpacing: -0.15,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             identity.roleSubtitle,
-                            style: AppTypography.style(AppTextRole.subtitle, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                            style: AppTypography.style(
+                              AppTextRole.subtitle,
+                              fontSize: 11,
+                              color: kOrgTextSecondary,
+                              height: 1.3,
+                              letterSpacing: 0,
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -753,7 +835,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                               Flexible(
                                 child: Text(
                                   'Preferences',
-                                  style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.button,
+                                    fontSize: 11.5,
+                                    color: kOrgTextSecondary,
+                                    height: 1.3,
+                                    letterSpacing: 0,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -784,7 +872,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                               Flexible(
                                 child: Text(
                                   'Sign Out',
-                                  style: AppTypography.style(AppTextRole.button, fontSize: 11.5, color: kOrgError, letterSpacing: opticalTracking(11.5), height: opticalLeading(11.5, isBody: false)),
+                                  style: AppTypography.style(
+                                    AppTextRole.button,
+                                    fontSize: 11.5,
+                                    color: kOrgError,
+                                    height: 1.3,
+                                    letterSpacing: 0,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -809,7 +903,13 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
       child: Text(
         title,
-        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgTextMuted, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+        style: AppTypography.style(
+          AppTextRole.label,
+          fontSize: 11,
+          color: kOrgTextMuted,
+          height: 1.3,
+          letterSpacing: 0,
+        ),
       ),
     );
   }
@@ -837,7 +937,7 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
             focusColor: kOrgPrimary.withValues(alpha: 0.16),
             hoverColor: isSelected
                 ? Colors.transparent
-                : const Color(0xFFE9E7ED),
+                : const Color(0xFFE2E4E3),
             onTap: () {
               setState(() => _selectedTab = index);
               if (isDrawer) Navigator.of(context).pop();
@@ -894,7 +994,15 @@ class _OrgProviderShellState extends ConsumerState<OrgProviderShell> {
                           ? Duration.zero
                           : kDurationStandard,
                       curve: kEaseInOut,
-                      style: AppTypography.style(AppTextRole.navigation, fontSize: 13.5, color: isSelected ? kOrgActiveNavText : kOrgInactiveNavText, letterSpacing: opticalTracking(13.5), height: ((13.5) <= 16 ? 1.45 : opticalLeading(13.5, isBody: true))),
+                      style: AppTypography.style(
+                        AppTextRole.navigation,
+                        fontSize: 13.5,
+                        color: isSelected
+                            ? kOrgActiveNavText
+                            : kOrgInactiveNavText,
+                        height: 1.4,
+                        letterSpacing: 0,
+                      ),
                       child: Text(
                         label,
                         maxLines: 1,
@@ -1212,11 +1320,23 @@ class _OrgCommandPaletteDialogState
                               flatItems[safeHighlight].onSelect();
                             }
                           },
-                          style: AppTypography.style(AppTextRole.input, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+                          style: AppTypography.style(
+                            AppTextRole.input,
+                            fontSize: 14,
+                            height: 1.4,
+                            color: kOrgTextPrimary,
+                            letterSpacing: 0,
+                          ),
                           decoration: InputDecoration(
                             hintText:
                                 'Search grants, applicants, or jump to page...',
-                            hintStyle: AppTypography.style(AppTextRole.placeholder, fontSize: 14, color: kOrgTextMuted, letterSpacing: opticalTracking(14), height: ((14) <= 16 ? 1.45 : opticalLeading(14, isBody: true))),
+                            hintStyle: AppTypography.style(
+                              AppTextRole.placeholder,
+                              fontSize: 14,
+                              color: kOrgTextMuted,
+                              height: 1.4,
+                              letterSpacing: 0,
+                            ),
                             border: InputBorder.none,
                             isDense: true,
                             contentPadding: EdgeInsets.zero,
@@ -1244,13 +1364,19 @@ class _OrgCommandPaletteDialogState
                           vertical: 3,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF4F3F8),
+                          color: const Color(0xFFF6F6F6),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(color: kOrgHairline),
                         ),
                         child: Text(
                           'ESC',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgTextSecondary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 10,
+                            color: kOrgTextSecondary,
+                            height: 1.3,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                     ],
@@ -1319,12 +1445,24 @@ class _OrgCommandPaletteDialogState
                                   const SizedBox(height: 8),
                                   Text(
                                     'No results for "$_query"',
-                                    style: AppTypography.style(AppTextRole.cardTitle, fontSize: 14, color: kOrgTextPrimary, letterSpacing: opticalTracking(14), height: opticalLeading(14, isBody: false)),
+                                    style: AppTypography.style(
+                                      AppTextRole.cardTitle,
+                                      fontSize: 14,
+                                      color: kOrgTextPrimary,
+                                      height: 1.2,
+                                      letterSpacing: -0.15,
+                                    ),
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     'Try searching for applicant names, grant titles, or navigation tabs.',
-                                    style: AppTypography.style(AppTextRole.body, fontSize: 12, color: kOrgTextSecondary, letterSpacing: opticalTracking(12), height: ((12) <= 16 ? 1.45 : opticalLeading(12, isBody: true))),
+                                    style: AppTypography.style(
+                                      AppTextRole.body,
+                                      fontSize: 12,
+                                      color: kOrgTextSecondary,
+                                      height: 1.4,
+                                      letterSpacing: 0,
+                                    ),
                                     textAlign: TextAlign.center,
                                   ),
                                 ],
@@ -1344,7 +1482,7 @@ class _OrgCommandPaletteDialogState
                     vertical: 10,
                   ),
                   decoration: const BoxDecoration(
-                    color: Color(0xFFFAF9FD),
+                    color: Color(0xFFF8F8F8),
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(16),
                     ),
@@ -1358,18 +1496,30 @@ class _OrgCommandPaletteDialogState
                           vertical: 1.5,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8E8E8),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           '↑↓',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgTextPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 10,
+                            color: kOrgTextPrimary,
+                            height: 1.3,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         'navigate',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11,
+                          color: kOrgTextSecondary,
+                          height: 1.3,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Container(
@@ -1378,18 +1528,30 @@ class _OrgCommandPaletteDialogState
                           vertical: 1.5,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8E8E8),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           '↵',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgTextPrimary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 10,
+                            color: kOrgTextPrimary,
+                            height: 1.3,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         'select',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11,
+                          color: kOrgTextSecondary,
+                          height: 1.3,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Container(
@@ -1398,23 +1560,41 @@ class _OrgCommandPaletteDialogState
                           vertical: 1.5,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEEEDF3),
+                          color: const Color(0xFFE8E8E8),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           'ESC',
-                          style: AppTypography.style(AppTextRole.caption, fontSize: 10, color: kOrgTextSecondary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                          style: AppTypography.style(
+                            AppTextRole.caption,
+                            fontSize: 10,
+                            color: kOrgTextSecondary,
+                            height: 1.3,
+                            letterSpacing: 0,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         'dismiss',
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11,
+                          color: kOrgTextSecondary,
+                          height: 1.3,
+                          letterSpacing: 0,
+                        ),
                       ),
                       const Spacer(),
                       Text(
                         'Provider Command Center',
-                        style: AppTypography.style(AppTextRole.label, fontSize: 11, color: kOrgPrimary, letterSpacing: opticalTracking(11), height: opticalLeading(11, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.label,
+                          fontSize: 11,
+                          color: kOrgPrimary,
+                          height: 1.3,
+                          letterSpacing: 0,
+                        ),
                       ),
                     ],
                   ),
@@ -1432,7 +1612,13 @@ class _OrgCommandPaletteDialogState
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: Text(
         title,
-        style: AppTypography.style(AppTextRole.cardTitle, fontSize: 10.5, color: kOrgTextMuted, letterSpacing: 0.6, height: opticalLeading(10.5, isBody: false)),
+        style: AppTypography.style(
+          AppTextRole.cardTitle,
+          fontSize: 10.5,
+          color: kOrgTextMuted,
+          letterSpacing: 0.6,
+          height: 1.3,
+        ),
       ),
     );
   }
@@ -1471,7 +1657,7 @@ class _OrgCommandPaletteDialogState
                   decoration: BoxDecoration(
                     color: isSelected
                         ? kOrgPrimary.withValues(alpha: 0.15)
-                        : const Color(0xFFF4F3F8),
+                        : const Color(0xFFF6F6F6),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -1487,13 +1673,25 @@ class _OrgCommandPaletteDialogState
                     children: [
                       Text(
                         title,
-                        style: AppTypography.style(AppTextRole.navigation, fontSize: 13, color: isSelected ? kOrgPrimary : kOrgTextPrimary, letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.navigation,
+                          fontSize: 13,
+                          color: isSelected ? kOrgPrimary : kOrgTextPrimary,
+                          height: 1.2,
+                          letterSpacing: -0.15,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
                         subtitle,
-                        style: AppTypography.style(AppTextRole.caption, fontSize: 11.5, color: kOrgTextSecondary, letterSpacing: opticalTracking(11.5), height: ((11.5) <= 16 ? 1.45 : opticalLeading(11.5, isBody: true))),
+                        style: AppTypography.style(
+                          AppTextRole.caption,
+                          fontSize: 11.5,
+                          color: kOrgTextSecondary,
+                          height: 1.4,
+                          letterSpacing: 0,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -1510,12 +1708,18 @@ class _OrgCommandPaletteDialogState
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEEEDF3),
+                        color: const Color(0xFFE8E8E8),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         trailingBadge,
-                        style: AppTypography.style(AppTextRole.badge, fontSize: 10, color: kOrgTextSecondary, letterSpacing: opticalTracking(10), height: opticalLeading(10, isBody: false)),
+                        style: AppTypography.style(
+                          AppTextRole.badge,
+                          fontSize: 10,
+                          color: kOrgTextSecondary,
+                          height: 1.3,
+                          letterSpacing: 0,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

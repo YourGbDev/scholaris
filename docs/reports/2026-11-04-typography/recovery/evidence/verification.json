@@ -1,0 +1,28 @@
+{
+  "referenceUiCommit": "78c377810df0ce3fd37e4f50fc663566fc2e31b4",
+  "fullWorkspace": {
+    "passed": 1338,
+    "skipped": 9,
+    "failed": 5,
+    "failuresReproducedOnReference": true,
+    "failures": [
+      "1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders female banner when profile is female",
+      "1. Student Dashboard & Mascot Gender Isolation StudentDashboard hero banner renders placeholder while profile is loading (no male banner flash)",
+      "Rendered Screen Tests with Real Migration 0015 Data 1. Student ScholarshipCard renders ₱120,000 for SM Foundation",
+      "Rendered Screen Tests with Real Migration 0015 Data 2. Student ScholarshipCard renders ₱40,000 / semester for DOST-SEI",
+      "Rendered Screen Tests with Real Migration 0015 Data 3. Student ScholarshipCard renders ₱60,000 for CHED Merit"
+    ],
+    "scope": "Includes pre-existing git-ignored local audit/live tests; tracked tests have no failures. Run preceded final receipt role refinement."
+  },
+  "finalFocused": {
+    "passed": 92,
+    "failed": 0,
+    "scope": "Post-review receipt roles, current welcome, tracker, scholarship card, navigation, guide, shared typography and CAPTCHA."
+  },
+  "matchedCaptures": 28,
+  "nativeIos": "Pending genuine iPhone capture",
+  "nativeAndroid": "Pending genuine native capture",
+  "webRuntime": "Production build checked; new browser runtime capture pending",
+  "productionWebBuild": "Passed; lib/main.dart; four Inter weights plus OFL verified in artifact",
+  "analysis": "No issues"
+}

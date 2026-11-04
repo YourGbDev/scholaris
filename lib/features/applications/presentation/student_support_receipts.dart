@@ -1,4 +1,3 @@
-import 'package:scholaris/shared/theme/app_typography.dart';
 import '../../provider/presentation/widgets/support_payment_times.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +36,7 @@ class StudentSupportReceipts extends ConsumerWidget {
           children: [
             Text(
               'Support payments',
-              style: AppTypography.style(AppTextRole.cardTitle, base: Theme.of(context).textTheme.titleLarge),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 8),
             const Text(

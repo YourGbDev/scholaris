@@ -1,0 +1,43 @@
+{
+  "families": [
+    {
+      "family": "MaterialIcons",
+      "fonts": [
+        {
+          "asset": "fonts/MaterialIcons-Regular.otf"
+        }
+      ]
+    },
+    {
+      "family": "Inter",
+      "fonts": [
+        {
+          "weight": 400,
+          "asset": "assets/fonts/inter/Inter-Regular.ttf"
+        },
+        {
+          "weight": 500,
+          "asset": "assets/fonts/inter/Inter-Medium.ttf"
+        },
+        {
+          "weight": 600,
+          "asset": "assets/fonts/inter/Inter-SemiBold.ttf"
+        },
+        {
+          "weight": 700,
+          "asset": "assets/fonts/inter/Inter-Bold.ttf"
+        }
+      ]
+    },
+    {
+      "family": "packages/cupertino_icons/CupertinoIcons",
+      "fonts": [
+        {
+          "asset": "packages/cupertino_icons/assets/CupertinoIcons.ttf"
+        }
+      ]
+    }
+  ],
+  "interLicenseBundled": true,
+  "licenseSha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a"
+}

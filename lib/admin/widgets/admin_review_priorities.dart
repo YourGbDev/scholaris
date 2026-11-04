@@ -118,9 +118,7 @@ class AdminReviewPriorities extends ConsumerWidget {
       final openNew = newReports
           .where((r) => r.isOpen || r.isUnderReview)
           .toList();
-      final newUrgent = openNew
-          .where((r) => r.isUrgentCategory)
-          .length;
+      final newUrgent = openNew.where((r) => r.isUrgentCategory).length;
 
       final totalOpen = openLegacy.length + openNew.length;
       final totalUrgent = legacyUrgent + newUrgent;
@@ -133,10 +131,9 @@ class AdminReviewPriorities extends ConsumerWidget {
         title: totalUrgent > 0
             ? '$totalUrgent urgent report${totalUrgent == 1 ? '' : 's'} need${totalUrgent == 1 ? 's' : ''} review'
             : totalOpen == 0
-                ? 'No unresolved student reports'
-                : '$totalOpen student report${totalOpen == 1 ? '' : 's'} awaiting review',
-        detail:
-            'Review concerns carefully. Reports are not findings of wrongdoing.',
+            ? 'No unresolved student reports'
+            : '$totalOpen student report${totalOpen == 1 ? '' : 's'} awaiting review',
+        detail: 'Review concerns carefully. Reports are not findings of wrongdoing.',
         action: 'Review safety reports',
         onTap: onReports,
         urgent: totalUrgent > 0,
@@ -147,7 +144,13 @@ class AdminReviewPriorities extends ConsumerWidget {
       children: [
         Text(
           'Needs your attention',
-          style: AppTypography.style(AppTextRole.sectionTitle, fontSize: 20, color: kAdminNavyTrust),
+          style: AppTypography.style(
+            AppTextRole.sectionTitle,
+            fontSize: 17,
+            height: 1.4,
+            color: kAdminTextPrimary,
+            letterSpacing: 0,
+          ),
         ),
         const SizedBox(height: 8),
         const Text(
@@ -214,8 +217,8 @@ class AdminReviewPriorities extends ConsumerWidget {
       buttonBg = const Color(0xFFB42318);
       buttonFg = Colors.white;
     } else {
-      badgeBg = const Color(0xFFE2EFE7);
-      badgeFg = kAdminBridgeGreen;
+      badgeBg = kWorkspaceSubtle;
+      badgeFg = kAdminTextPrimary;
       cardBg = Colors.white;
       borderColor = kAdminHairline;
       buttonBg = kAdminBridgeGreen;
@@ -253,7 +256,12 @@ class AdminReviewPriorities extends ConsumerWidget {
                     Flexible(
                       child: Text(
                         badgeLabel,
-                        style: AppTypography.style(AppTextRole.badge, fontSize: 11, letterSpacing: 0.5, color: badgeFg),
+                        style: AppTypography.style(
+                          AppTextRole.badge,
+                          fontSize: 11,
+                          letterSpacing: 0.5,
+                          color: badgeFg,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -263,14 +271,21 @@ class AdminReviewPriorities extends ConsumerWidget {
               ),
               if (badgeCount != null && badgeCount > 0)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: badgeFg,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
                     '$badgeCount',
-                    style: AppTypography.style(AppTextRole.badge, fontSize: 11, color: Colors.white),
+                    style: AppTypography.style(
+                      AppTextRole.badge,
+                      fontSize: 11,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
             ],
@@ -278,12 +293,24 @@ class AdminReviewPriorities extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             title,
-            style: AppTypography.style(AppTextRole.cardTitle, fontSize: 17, color: kAdminNavyTrust),
+            style: AppTypography.style(
+              AppTextRole.cardTitle,
+              fontSize: 17,
+              height: 1.4,
+              color: kAdminTextPrimary,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             detail,
-            style: AppTypography.style(AppTextRole.subtitle, fontSize: 13, color: kAdminTextSecondary),
+            style: AppTypography.style(
+              AppTextRole.subtitle,
+              fontSize: 13,
+              color: kAdminTextSecondary,
+              height: 1.4,
+              letterSpacing: 0,
+            ),
           ),
           const SizedBox(height: 14),
           PressableScale(
@@ -322,7 +349,9 @@ class AdminReviewPriorities extends ConsumerWidget {
                       elevation: 0,
                     ),
                     icon: Icon(
-                      urgent ? Icons.priority_high_rounded : Icons.arrow_forward_rounded,
+                      urgent
+                          ? Icons.priority_high_rounded
+                          : Icons.arrow_forward_rounded,
                       size: 16,
                     ),
                     label: Text(

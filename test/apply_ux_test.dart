@@ -15,6 +15,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:scholaris/features/applications/providers/applications_provider.dart';
+import 'package:scholaris/features/applications/models/application_document.dart';
+import 'package:scholaris/features/applications/providers/application_document_provider.dart';
 import 'package:scholaris/features/applications/repositories/application_repository.dart';
 import 'package:scholaris/features/auth/controllers/auth_controller.dart';
 import 'package:scholaris/features/bookmarks/providers/bookmarks_provider.dart';
@@ -35,6 +37,11 @@ import 'helpers/fake_application_data_source.dart';
 import 'helpers/fake_bookmark_data_source.dart';
 import 'helpers/fake_profile_data_source.dart';
 import 'helpers/fake_scholarship_data_source.dart';
+
+class _EmptyDocumentsNotifier extends ApplicationDocumentsNotifier {
+  @override
+  Future<List<ApplicationDocument>> build(String arg) async => [];
+}
 
 /// Application data source whose inserts block on a test-controlled gate, so
 /// the apply button's loading/disabled state can be observed mid-flight.
@@ -128,6 +135,7 @@ Widget _wrap({
 
   return ProviderScope(
     overrides: [
+      applicationDocumentsProvider.overrideWith(_EmptyDocumentsNotifier.new),
       scholarshipEligibleSchoolsProvider(scholarship.id).overrideWith((ref) async => eligibleSchools),
       studentProfileSchoolIdProvider('user-a').overrideWith((ref) async => null),
       scholarshipCapacityProvider(scholarship.id).overrideWith((ref) async => ScholarshipCapacity(scholarshipId: scholarship.id, totalSlots: 1, occupiedSlots: full ? 1 : 0, remainingSlots: full ? 0 : 1, isUncapped: false)),
@@ -202,13 +210,37 @@ void main() {
   });
 
   group('Apply action rendering', () {
-    testWidgets('detail uses the same placeholder score as matching cards', (tester) async {
-      final scholarship = _scholarship();
-      final expected = placeholderMatchPercentage(matchReasonsFor(_student(), scholarship).length);
-      await tester.pumpWidget(_wrap(scholarship: scholarship));
-      await tester.pumpAndSettle();
-      expect(find.text('$expected% Match'), findsOneWidget);
-    });
+    testWidgets(
+      'detail explains matched criteria without predicting acceptance',
+      (tester) async {
+        final scholarship = _scholarship();
+        await tester.pumpWidget(_wrap(scholarship: scholarship));
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(find.text('Match details'), 200, scrollable: find.byType(Scrollable).first);
+        await tester.pumpAndSettle();
+        expect(
+          find.text('Matched criteria do not guarantee acceptance.'),
+          findsOneWidget,
+        );
+        for (final reason in matchReasonsFor(_student(), scholarship)) {
+          expect(find.text(reason), findsOneWidget);
+        }
+        expect(find.textContaining('% Match'), findsNothing);
+        expect(find.text('High Probability Tier'), findsNothing);
+        expect(find.textContaining('top 5%'), findsNothing);
+        expect(find.textContaining('18%'), findsNothing);
+        await tester.scrollUntilVisible(
+          find.text('About this scholarship'),
+          150,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.pumpAndSettle();
+        expect(find.text(scholarship.description!), findsOneWidget);
+        expect(find.text('~14%'), findsNothing);
+        expect(find.text('To Bursar'), findsNothing);
+        expect(find.textContaining('Elena R.'), findsNothing);
+      },
+    );
     testWidgets('quick apply opens review without submitting', (tester) async {
       final applications = FakeApplicationDataSource();
       await tester.pumpWidget(_wrap(scholarship: _scholarship(), applications: applications, startApplication: true));
@@ -263,6 +295,13 @@ void main() {
 
       expect(find.text('Application submitted'), findsOneWidget);
       expect(find.text('Start Application'), findsNothing);
+      expect(find.text('Application receipt'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('Attachments'), 150, scrollable: find.byType(Scrollable).first);
+      await tester.pumpAndSettle();
+      expect(find.text('No documents attached'), findsOneWidget);
+      expect(find.text('UPLOADED ATTACHMENTS'), findsNothing);
+      expect(find.text('Digital Submission Token'), findsNothing);
+      expect(find.text('INSTITUTIONAL DOSSIER'), findsNothing);
     });
   });
 
@@ -416,7 +455,7 @@ void main() {
         findsOneWidget,
       );
       // No match is claimed for a profile that does not qualify.
-      expect(find.text('Why this matches you'), findsNothing);
+      expect(find.text('Match details'), findsNothing);
 
       await tester.tap(find.text("Why you can't apply"), warnIfMissed: false);
       await tester.pumpAndSettle();

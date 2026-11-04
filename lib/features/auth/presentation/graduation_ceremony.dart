@@ -17,7 +17,6 @@
 //   * the controller is disposed with the state and a disposed widget never
 //     invokes [onCompleted].
 
-import 'package:scholaris/shared/theme/app_motion.dart' show opticalTracking, opticalLeading;
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -140,7 +139,10 @@ class _GraduationCeremonyState extends State<GraduationCeremony>
             right: 0,
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: TextButton(
                   key: const ValueKey('ceremony-skip-btn'),
                   onPressed: _complete,
@@ -152,11 +154,20 @@ class _GraduationCeremonyState extends State<GraduationCeremony>
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                   ),
                   child: Text(
                     'Skip',
-                    style: AppTypography.style(AppTextRole.button, fontSize: 13, color: const Color(0xFF0F4D2E), letterSpacing: opticalTracking(13), height: opticalLeading(13, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.button,
+                      fontSize: 13,
+                      color: const Color(0xFF0F4D2E),
+                      height: 1.25,
+                      letterSpacing: 0,
+                    ),
                   ),
                 ),
               ),

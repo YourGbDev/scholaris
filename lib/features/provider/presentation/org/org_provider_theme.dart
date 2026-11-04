@@ -7,7 +7,7 @@
 import 'package:scholaris/shared/theme/app_typography.dart';
 import 'package:scholaris/shared/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-
+export 'package:scholaris/shared/theme/workspace_theme.dart';
 
 // Brand & Institutional Colors
 const kOrgPrimary = Color(0xFF0F4D2E); // Bridge Green
@@ -16,18 +16,18 @@ const kOrgSidebarDark = Color(0xFF0A321E); // Legacy reference
 const kOrgSidebarLight = Color(0xFFFFFFFF);
 const kOrgActiveNavBg = Color(0xFF0F4D2E); // Active navigation fill
 const kOrgActiveNavText = Color(0xFFFFFFFF); // Pure white active text/icon
-const kOrgInactiveNavText = Color(0xFF404942); // Inactive dark gray nav text
+const kOrgInactiveNavText = Color(0xFF44484C); // Inactive dark gray nav text
 const kOrgAccentGold = Color(0xFFF1B41E); // Golden Opportunity
 const kOrgAccentGoldContainer = Color(0xFFFEBF2C);
 const kOrgCivicNavy = Color(0xFF1B3A5C); // Data series & tertiary
-const kOrgCanvas = Color(0xFFFFFFFF);
+const kOrgCanvas = Colors.white;
 const kOrgSurfaceWhite = Color(0xFFFFFFFF);
-const kOrgBorder = Color(0xFFE5E7EB);
-const kOrgHairline = Color(0xFFE4E7EC);
+const kOrgBorder = kBorderLight;
+const kOrgHairline = kBorderLight;
 const kOrgBorderDark = Color(0xFFD1D5DB);
-const kOrgTextPrimary = Color(0xFF1A1C1B);
-const kOrgTextSecondary = Color(0xFF5A645C);
-const kOrgTextMuted = Color(0xFF545D56);
+const kOrgTextPrimary = Color(0xFF111827);
+const kOrgTextSecondary = Color(0xFF62666B);
+const kOrgTextMuted = Color(0xFF62666B);
 const kOrgError = Color(0xFFBA1A1A);
 const kOrgSuccess = Color(0xFF27C93F);
 
@@ -50,33 +50,38 @@ const kOrgBadgeRejectedBorder = Color(0xFFFFC2BA);
 
 // Border Radius Tokens (Apple Squircle Pass)
 const BorderRadius kOrgSquircleRadius = BorderRadius.all(Radius.circular(16));
-const BorderRadius kOrgCardRadius = BorderRadius.all(Radius.circular(kRadiusCard));
+const BorderRadius kOrgCardRadius = BorderRadius.all(
+  Radius.circular(kRadiusCard),
+);
 const BorderRadius kOrgChromeRadius = BorderRadius.all(Radius.circular(10));
 const BorderRadius kOrgPillRadius = BorderRadius.all(Radius.circular(20));
 
 // Shadows
 const List<BoxShadow> kOrgCardShadow = kCardElevationCrisp;
 
-// Typography Helpers adhering to Apple HIG Optical Typography (Section 15)
+// Typography Helpers for the shared semantic hierarchy
 
 /// Tabular figures helper for numeric typography (prevents digit horizontal jittering).
 TextStyle orgTabularFigures(TextStyle base) => base.copyWith(
-      fontFeatures: [
-        ...?base.fontFeatures,
-        const FontFeature.tabularFigures(),
-      ],
-    );
+  fontFeatures: [...?base.fontFeatures, const FontFeature.tabularFigures()],
+);
 
-/// Reference-code pill container helper for IDs, hashes, and reference codes.
+/// Shared rounded pill container helper for IDs, hashes, and reference codes.
 Widget orgIdPill(String idText) => Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF4F3F8),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: kOrgHairline),
-      ),
-      child: Text(
-        idText,
-        style: AppTypography.style(AppTextRole.caption, fontSize: 11, color: kOrgTextSecondary),
-      ),
-    );
+  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+  decoration: BoxDecoration(
+    color: const Color(0xFFF6F6F6),
+    borderRadius: BorderRadius.circular(6),
+    border: Border.all(color: kOrgHairline),
+  ),
+  child: Text(
+    idText,
+    style: AppTypography.style(
+      AppTextRole.caption,
+      fontSize: 11,
+      color: kOrgTextSecondary,
+      height: 1.4,
+      letterSpacing: 0,
+    ),
+  ),
+);

@@ -18,7 +18,7 @@ class ProviderReviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackground,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -38,7 +38,13 @@ class ProviderReviewScreen extends StatelessWidget {
                   Text(
                     'Application Under Review',
                     textAlign: TextAlign.center,
-                    style: AppTypography.style(AppTextRole.screenTitle, fontSize: 28, color: kPrimary, letterSpacing: opticalTracking(28), height: opticalLeading(28, isBody: false)),
+                    style: AppTypography.style(
+                      AppTextRole.screenTitle,
+                      fontSize: 20,
+                      color: kPrimary,
+                      height: 1.2,
+                      letterSpacing: -0.15,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -46,7 +52,13 @@ class ProviderReviewScreen extends StatelessWidget {
                     'provider. Our team will review your application and '
                     'get back to you within 3–5 business days.',
                     textAlign: TextAlign.center,
-                    style: AppTypography.style(AppTextRole.body, fontSize: 15, color: Colors.black54, height: 1.5, letterSpacing: opticalTracking(15)),
+                    style: AppTypography.style(
+                      AppTextRole.body,
+                      fontSize: 15,
+                      color: Colors.black54,
+                      height: 1.5,
+                      letterSpacing: 0,
+                    ),
                   ),
                   const SizedBox(height: 32),
                   PressableScale(
@@ -63,7 +75,11 @@ class ProviderReviewScreen extends StatelessWidget {
                       ),
                       child: Text(
                         'Back to Provider Sign In',
-                        style: AppTypography.style(AppTextRole.button),
+                        style: AppTypography.style(
+                          AppTextRole.button,
+                          height: 1.2,
+                          letterSpacing: -0.4,
+                        ),
                       ),
                     ),
                   ),

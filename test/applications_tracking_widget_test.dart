@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:scholaris/features/home/presentation/widgets/student_tab_entrance.dart';
 // Widget tests for the Day 10 tracking surface.
 //
@@ -35,16 +36,16 @@ import 'helpers/fake_profile_data_source.dart';
 import 'helpers/fake_scholarship_data_source.dart';
 
 StudentProfile _student() => StudentProfile(
-      id: 'user-a',
-      fullName: 'Maria Santos',
-      nationality: 'Filipino',
-      region: 'NCR',
-      gpa: 3.2,
-      yearLevel: 2,
-      course: 'BS Computer Science',
-      monthlyFamilyIncome: 15000,
-      setupComplete: true,
-    );
+  id: 'user-a',
+  fullName: 'Maria Santos',
+  nationality: 'Filipino',
+  region: 'NCR',
+  gpa: 3.2,
+  yearLevel: 2,
+  course: 'BS Computer Science',
+  monthlyFamilyIncome: 15000,
+  setupComplete: true,
+);
 
 Future<void> _seedApplication(
   FakeApplicationDataSource applications,
@@ -84,9 +85,7 @@ Widget _wrap({
         ),
       ),
     ],
-    child: const MaterialApp(
-      home: ApplicationsScreen(embedded: true),
-    ),
+    child: const MaterialApp(home: ApplicationsScreen(embedded: true)),
   );
 }
 
@@ -184,22 +183,36 @@ void main() {
     GoogleFonts.config.allowRuntimeFetching = false;
   });
 
-  testWidgets('late scholarship results appear without a second loading fade', (tester) async {
+  testWidgets('late scholarship results appear without a second loading fade', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(440, 1600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final gate = Completer<List<Map<String, dynamic>>>();
-    await tester.pumpWidget(_wrapHomeScreen(scholarships: _DelayedScholarships(gate)));
+    await tester.pumpWidget(
+      _wrapHomeScreen(scholarships: _DelayedScholarships(gate)),
+    );
     // Wait beyond the shared entrance before releasing deliberately late data.
     await tester.pump(const Duration(milliseconds: 1300));
     gate.complete(FakeScholarshipDataSource.defaultRows);
-    for (var i = 0; i < 6; i++) { await tester.pump(); }
-    expect(find.byType(CrossFadeLoading), findsNothing,
-      reason: 'A completed visit clock must not be followed by an independent whole-list fade.');
-    final rows = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order >= 3);
+    for (var i = 0; i < 6; i++) {
+      await tester.pump();
+    }
+    expect(
+      find.byType(CrossFadeLoading),
+      findsNothing,
+      reason: 'A completed visit clock must not be followed by an independent whole-list fade.',
+    );
+    final rows = find.byWidgetPredicate(
+      (w) => w is StudentTabReveal && w.order >= 3,
+    );
     expect(rows, findsWidgets);
     for (final element in rows.evaluate()) {
-      final fades = find.descendant(of: find.byWidget(element.widget), matching: find.byType(FadeTransition));
+      final fades = find.descendant(
+        of: find.byWidget(element.widget),
+        matching: find.byType(FadeTransition),
+      );
       expect(tester.widget<FadeTransition>(fades.first).opacity.value, 1);
     }
     await tester.tap(find.byKey(const ValueKey('student-nav-discover')));
@@ -207,91 +220,173 @@ void main() {
     expect(find.byType(CrossFadeLoading), findsNothing);
   });
 
-  testWidgets('real student tabs replay section fades without replacing their scroll views', (tester) async {
-    tester.view.physicalSize = const Size(440, 956);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    final applications = FakeApplicationDataSource();
-    await _seedApplication(applications, 'user-a', scholarshipId: 'sch-dost', status: 'submitted');
-    await tester.pumpWidget(_wrapHomeScreen(applications: applications));
-    await tester.pumpAndSettle();
-    for (final tab in ['discover', 'tracker', 'profile', 'home']) {
-      await tester.tap(find.byKey(ValueKey('student-nav-$tab')));
-      await tester.pump();
-      final headings = find.byWidgetPredicate((w) => w is StudentTabReveal && (w.order == 0 || w.structural) && !w.immediate);
-      final rows = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order > 0 && !w.structural && !w.immediate);
-      expect(headings, findsWidgets, reason: '$tab heading must join the shared visit clock');
-      expect(rows, findsWidgets, reason: '$tab content rows must have their own fade phase');
-      FadeTransition phase(Finder wrapper) => tester.widget<FadeTransition>(
-        find.descendant(of: wrapper.first, matching: find.byType(FadeTransition)).first);
-      expect(phase(headings).opacity.value, 0);
-      expect(phase(rows).opacity.value, 0);
-      final scrollState = tester.state<ScrollableState>(find.byType(Scrollable).first);
-      await tester.pump(const Duration(milliseconds: 30));
-      expect(phase(headings).opacity.value, 0);
-      await tester.pump(const Duration(milliseconds: 60));
-      expect(phase(headings).opacity.value, inExclusiveRange(0, 1));
-      expect(phase(rows).opacity.value, 0);
-      final structuralTitles = tab == 'profile'
-          ? ['Verified Credentials', 'Documents & Quick Actions', 'Account & Settings']
-          : tab == 'discover'
-          ? ['Browse all scholarships']
-          : <String>[];
-      for (final title in structuralTitles) {
-        final text = find.text(title, skipOffstage: false);
-        if (text.evaluate().isEmpty) continue;
-        var hasStructuralReveal = false;
-        text.evaluate().first.visitAncestorElements((element) {
-          final widget = element.widget;
-          if (widget is StudentTabReveal && !widget.immediate) {
-            hasStructuralReveal = widget.structural || widget.order == 0;
-            return false;
-          }
-          return true;
-        });
-        expect(hasStructuralReveal, isTrue, reason: '$title must appear before cards');
+  testWidgets(
+    'real student tabs replay section fades without replacing their scroll views',
+    (tester) async {
+      tester.view.physicalSize = const Size(440, 956);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final applications = FakeApplicationDataSource();
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await tester.pumpWidget(_wrapHomeScreen(applications: applications));
+      await tester.pumpAndSettle();
+      for (final tab in ['discover', 'tracker', 'profile', 'home']) {
+        await tester.tap(find.byKey(ValueKey('student-nav-$tab')));
+        await tester.pump();
+        final headings = find.byWidgetPredicate(
+          (w) =>
+              w is StudentTabReveal &&
+              (w.order == 0 || w.structural) &&
+              !w.immediate,
+        );
+        final rows = find.byWidgetPredicate(
+          (w) =>
+              w is StudentTabReveal &&
+              w.order > 0 &&
+              !w.structural &&
+              !w.immediate,
+        );
+        expect(
+          headings,
+          findsWidgets,
+          reason: '$tab heading must join the shared visit clock',
+        );
+        expect(
+          rows,
+          findsWidgets,
+          reason: '$tab content rows must have their own fade phase',
+        );
+        FadeTransition phase(Finder wrapper) => tester.widget<FadeTransition>(
+          find
+              .descendant(
+                of: wrapper.first,
+                matching: find.byType(FadeTransition),
+              )
+              .first,
+        );
+        expect(phase(headings).opacity.value, 0);
+        expect(phase(rows).opacity.value, 0);
+        final scrollState = tester.state<ScrollableState>(
+          find.byType(Scrollable).first,
+        );
+        await tester.pump(const Duration(milliseconds: 30));
+        expect(phase(headings).opacity.value, 0);
+        await tester.pump(const Duration(milliseconds: 60));
+        expect(phase(headings).opacity.value, inExclusiveRange(0, 1));
+        expect(phase(rows).opacity.value, 0);
+        final structuralTitles = tab == 'profile'
+            ? [
+                'Verified Credentials',
+                'Documents & Quick Actions',
+                'Account & Settings',
+              ]
+            : tab == 'discover'
+            ? ['Browse all scholarships']
+            : <String>[];
+        for (final title in structuralTitles) {
+          final text = find.text(title, skipOffstage: false);
+          if (text.evaluate().isEmpty) continue;
+          var hasStructuralReveal = false;
+          text.evaluate().first.visitAncestorElements((element) {
+            final widget = element.widget;
+            if (widget is StudentTabReveal && !widget.immediate) {
+              hasStructuralReveal = widget.structural || widget.order == 0;
+              return false;
+            }
+            return true;
+          });
+          expect(
+            hasStructuralReveal,
+            isTrue,
+            reason: '$title must appear before cards',
+          );
+        }
+        await tester.pump(const Duration(milliseconds: 120));
+        expect(phase(headings).opacity.value, 1);
+        expect(
+          phase(rows).opacity.value,
+          greaterThan(0),
+          reason: '$tab first lower row starts at 260ms',
+        );
+        await tester.pumpAndSettle();
+        expect(phase(rows).opacity.value, 1);
+        expect(
+          tester.state<ScrollableState>(find.byType(Scrollable).first),
+          same(scrollState),
+        );
+        await tester.tap(find.byKey(ValueKey('student-nav-$tab')));
+        await tester.pump();
+        expect(
+          phase(headings).opacity.value,
+          0,
+          reason: 'Tapping the selected $tab replays its entrance',
+        );
+        expect(phase(rows).opacity.value, 0);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
       }
-      await tester.pump(const Duration(milliseconds: 120));
-      expect(phase(headings).opacity.value, 1);
-      expect(phase(rows).opacity.value, greaterThan(0), reason: '$tab first lower row starts at 260ms');
-      await tester.pumpAndSettle();
-      expect(phase(rows).opacity.value, 1);
-      expect(tester.state<ScrollableState>(find.byType(Scrollable).first), same(scrollState));
-      await tester.tap(find.byKey(ValueKey('student-nav-$tab')));
-      await tester.pump();
-      expect(phase(headings).opacity.value, 0, reason: 'Tapping the selected $tab replays its entrance');
-      expect(phase(rows).opacity.value, 0);
-      await tester.pumpAndSettle();
-      expect(tester.takeException(), isNull);
-    }
-  });
+    },
+  );
 
-  testWidgets('urgent tracker banner reveals before the application below it', (tester) async {
+  testWidgets('urgent tracker banner reveals before the application below it', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(800, 1400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final applications = FakeApplicationDataSource();
-    await _seedApplication(applications, 'user-a', scholarshipId: 'sch-dost', status: 'draft');
+    await _seedApplication(
+      applications,
+      'user-a',
+      scholarshipId: 'sch-dost',
+      status: 'draft',
+    );
     final scholarships = FakeScholarshipDataSource([
-      {...FakeScholarshipDataSource.defaultRows.first,
-       'deadline': DateTime.now().add(const Duration(days: 2)).toIso8601String()},
+      {
+        ...FakeScholarshipDataSource.defaultRows.first,
+        'deadline': DateTime.now()
+            .add(const Duration(days: 2))
+            .toIso8601String(),
+      },
     ]);
-    await tester.pumpWidget(_wrapHomeScreen(applications: applications, scholarships: scholarships));
+    await tester.pumpWidget(
+      _wrapHomeScreen(applications: applications, scholarships: scholarships),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('student-nav-tracker')));
     await tester.pump();
-    final banner = find.ancestor(of: find.text('1 Action Needed'), matching: find.byType(StudentTabReveal));
+    final banner = find.ancestor(
+      of: find.text('1 Action Needed'),
+      matching: find.byType(StudentTabReveal),
+    );
     expect(banner, findsOneWidget);
     expect(tester.widget<StudentTabReveal>(banner).order, 1);
     await tester.pump(const Duration(milliseconds: 160));
-    final bannerFade = find.descendant(of: banner, matching: find.byType(FadeTransition)).first;
-    expect(tester.widget<FadeTransition>(bannerFade).opacity.value, greaterThan(0));
-    final card = find.byWidgetPredicate((w) => w is StudentTabReveal && w.order == 2 && !w.structural);
+    final bannerFade = find
+        .descendant(of: banner, matching: find.byType(FadeTransition))
+        .first;
+    expect(
+      tester.widget<FadeTransition>(bannerFade).opacity.value,
+      greaterThan(0),
+    );
+    final card = find.byWidgetPredicate(
+      (w) => w is StudentTabReveal && w.order == 2 && !w.structural,
+    );
     expect(card, findsOneWidget);
-    final cardFade = find.descendant(of: card, matching: find.byType(FadeTransition)).first;
+    final cardFade = find
+        .descendant(of: card, matching: find.byType(FadeTransition))
+        .first;
     expect(tester.widget<FadeTransition>(cardFade).opacity.value, 0);
     await tester.pumpAndSettle();
-    expect(find.text('Review your draft and attached documents.'), findsOneWidget);
+    expect(
+      find.text('Review your draft and attached documents.'),
+      findsOneWidget,
+    );
     expect(find.text('UP Diliman Academic Transcript'), findsNothing);
     expect(find.text('Personal Statement (750 words)'), findsNothing);
   });
@@ -306,9 +401,14 @@ void main() {
     await tester.pump();
     final empty = find.text('No applications yet');
     expect(empty, findsOneWidget);
-    final reveal = find.ancestor(of: empty, matching: find.byType(StudentTabReveal));
+    final reveal = find.ancestor(
+      of: empty,
+      matching: find.byType(StudentTabReveal),
+    );
     expect(reveal, findsOneWidget);
-    final fade = find.descendant(of: reveal, matching: find.byType(FadeTransition)).first;
+    final fade = find
+        .descendant(of: reveal, matching: find.byType(FadeTransition))
+        .first;
     expect(tester.widget<FadeTransition>(fade).opacity.value, 0);
     await tester.pump(const Duration(milliseconds: 100));
     expect(tester.widget<FadeTransition>(fade).opacity.value, 0);
@@ -328,19 +428,31 @@ void main() {
       // All four destinations are present — scoped to the student navigation component,
       // matching the Stitch V2 navigation architecture.
       expect(
-        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Home')),
+        find.descendant(
+          of: find.byType(StudentBottomNav),
+          matching: find.text('Home'),
+        ),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Discover')),
+        find.descendant(
+          of: find.byType(StudentBottomNav),
+          matching: find.text('Discover'),
+        ),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Tracker')),
+        find.descendant(
+          of: find.byType(StudentBottomNav),
+          matching: find.text('Tracker'),
+        ),
         findsOneWidget,
       );
       expect(
-        find.descendant(of: find.byType(StudentBottomNav), matching: find.text('Profile')),
+        find.descendant(
+          of: find.byType(StudentBottomNav),
+          matching: find.text('Profile'),
+        ),
         findsOneWidget,
       );
 
@@ -357,17 +469,26 @@ void main() {
       expect(find.textContaining('Maria'), findsOneWidget);
     });
 
-    testWidgets('Applications tab shows the filtered tracking surface',
-        (tester) async {
+    testWidgets('Applications tab shows the filtered tracking surface', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-ched', status: 'approved');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-ched',
+        status: 'approved',
+      );
 
       await tester.pumpWidget(_wrapHomeScreen(applications: applications));
       await tester.pump(const Duration(milliseconds: 500));
@@ -382,19 +503,32 @@ void main() {
   });
 
   group('Filter bar and counts', () {
-    testWidgets('filter bar renders every status with live counts',
-        (tester) async {
+    testWidgets('filter bar renders every status with live counts', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-ched', status: 'approved');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'draft');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-ched',
+        status: 'approved',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'draft',
+      );
 
       await tester.pumpWidget(_wrap(applications: applications));
       await tester.pumpAndSettle();
@@ -405,19 +539,34 @@ void main() {
       expect(find.text('Under review (0)'), findsOneWidget);
       expect(find.text('Approved (1)'), findsOneWidget);
       expect(find.text('Rejected (0)'), findsOneWidget);
+      final title = tester.widget<Text>(
+        find.text('DOST-SEI Undergraduate Scholarship').first,
+      );
+      expect(title.style?.fontWeight, FontWeight.w600);
+      expect(title.style?.fontSize, 15);
+      expect(title.style?.letterSpacing, -.2);
     });
 
-    testWidgets('tapping a status chip narrows the list reactively',
-        (tester) async {
+    testWidgets('tapping a status chip narrows the list reactively', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-ched', status: 'approved');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-ched',
+        status: 'approved',
+      );
 
       await tester.pumpWidget(_wrap(applications: applications));
       await tester.pumpAndSettle();
@@ -438,15 +587,20 @@ void main() {
       expect(find.text('CHED Merit Scholarship (MSRS)'), findsOneWidget);
     });
 
-    testWidgets('an unmatched status shows a filtered empty state',
-        (tester) async {
+    testWidgets('an unmatched status shows a filtered empty state', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'approved');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'approved',
+      );
 
       await tester.pumpWidget(_wrap(applications: applications));
       await tester.pumpAndSettle();
@@ -466,21 +620,38 @@ void main() {
   });
 
   group('Compact summary', () {
-    testWidgets('summary shows total, pending and approved counts',
-        (tester) async {
+    testWidgets('summary shows total, pending and approved counts', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-ched', status: 'under_review');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'approved');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-ched', status: 'draft');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-ched',
+        status: 'under_review',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'approved',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-ched',
+        status: 'draft',
+      );
 
       await tester.pumpWidget(_wrap(applications: applications));
       await tester.pumpAndSettle();
@@ -490,17 +661,26 @@ void main() {
       expect(find.text('1 Approved'), findsOneWidget);
     });
 
-    testWidgets('summary stays consistent while a filter is active',
-        (tester) async {
+    testWidgets('summary stays consistent while a filter is active', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-ched', status: 'approved');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-ched',
+        status: 'approved',
+      );
 
       await tester.pumpWidget(_wrap(applications: applications));
       await tester.pumpAndSettle();
@@ -523,15 +703,21 @@ void main() {
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
 
       await tester.pumpWidget(_wrap(applications: applications));
       await tester.pumpAndSettle();
 
       // The card derives its deadline chip from the shared deadlineLabel
       // helper, matching the active deadline of sch-dost in FakeScholarshipDataSource.
-      final dostRow = FakeScholarshipDataSource.defaultRows.firstWhere((r) => r['id'] == 'sch-dost');
+      final dostRow = FakeScholarshipDataSource.defaultRows.firstWhere(
+        (r) => r['id'] == 'sch-dost',
+      );
       final deadline = DateTime.parse(dostRow['deadline'] as String);
       final expected = deadlineLabel(deadline);
       expect(find.text(expected), findsOneWidget);
@@ -539,18 +725,25 @@ void main() {
   });
 
   group('Responsive rendering', () {
-    testWidgets('populated tracker fits a narrow phone with larger text',
-        (tester) async {
+    testWidgets('populated tracker fits a narrow phone with larger text', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(320, 720);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await tester.pumpWidget(MediaQuery(
-        data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
-        child: _wrap(applications: applications),
-      ));
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(1.3)),
+          child: _wrap(applications: applications),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(find.text('All (1)'), findsOneWidget);
       await tester.ensureVisible(find.text('Draft (0)'));
@@ -560,31 +753,43 @@ void main() {
       expect(find.text('No draft applications'), findsOneWidget);
     });
 
-    testWidgets('empty tracker fits a narrow phone with larger text',
-        (tester) async {
+    testWidgets('empty tracker fits a narrow phone with larger text', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(320, 720);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
-      await tester.pumpWidget(MediaQuery(
-        data: const MediaQueryData(textScaler: TextScaler.linear(1.4)),
-        child: _wrap(applications: FakeApplicationDataSource()),
-      ));
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(textScaler: TextScaler.linear(1.4)),
+          child: _wrap(applications: FakeApplicationDataSource()),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(find.text('No applications yet'), findsOneWidget);
     });
 
-    testWidgets('filter bar and summary render cleanly on a 360px screen',
-        (tester) async {
+    testWidgets('filter bar and summary render cleanly on a 360px screen', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(360, 720);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-ched', status: 'approved');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-ched',
+        status: 'approved',
+      );
 
       await tester.pumpWidget(_wrap(applications: applications));
       await tester.pumpAndSettle();
@@ -596,106 +801,150 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('draft card renders honest presentation at 360x800 with 1.5x text scaling',
-        (tester) async {
-      tester.view.physicalSize = const Size(360, 800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.reset);
+    testWidgets(
+      'draft card renders honest presentation at 360x800 with 1.5x text scaling',
+      (tester) async {
+        tester.view.physicalSize = const Size(360, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
 
-      final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'draft');
+        final applications = FakeApplicationDataSource();
+        await _seedApplication(
+          applications,
+          'user-a',
+          scholarshipId: 'sch-dost',
+          status: 'draft',
+        );
 
-      await tester.pumpWidget(MediaQuery(
-        data: const MediaQueryData(
-          size: Size(360, 800),
-          textScaler: TextScaler.linear(1.5),
-        ),
-        child: _wrap(applications: applications),
-      ));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(
+              size: Size(360, 800),
+              textScaler: TextScaler.linear(1.5),
+            ),
+            child: _wrap(applications: applications),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      await tester.drag(find.byType(CustomScrollView), const Offset(0, -250));
-      await tester.pumpAndSettle();
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -250));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Review your draft and attached documents.'), findsOneWidget);
-      expect(find.text('UP Diliman Academic Transcript'), findsNothing);
-      expect(find.text('Personal Statement (750 words)'), findsNothing);
-      expect(find.text('Faculty Recommendation (1 of 2)'), findsNothing);
-      expect(find.text('Continue'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(
+          find.text('Review your draft and attached documents.'),
+          findsOneWidget,
+        );
+        expect(find.text('UP Diliman Academic Transcript'), findsNothing);
+        expect(find.text('Personal Statement (750 words)'), findsNothing);
+        expect(find.text('Faculty Recommendation (1 of 2)'), findsNothing);
+        expect(find.text('Continue'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
-    testWidgets('draft card renders honest presentation at 440x956 iPhone 16 Pro Max viewport',
-        (tester) async {
-      tester.view.physicalSize = const Size(440, 956);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.reset);
+    testWidgets(
+      'draft card renders honest presentation at 440x956 iPhone 16 Pro Max viewport',
+      (tester) async {
+        tester.view.physicalSize = const Size(440, 956);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
 
-      final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'draft');
+        final applications = FakeApplicationDataSource();
+        await _seedApplication(
+          applications,
+          'user-a',
+          scholarshipId: 'sch-dost',
+          status: 'draft',
+        );
 
-      await tester.pumpWidget(MediaQuery(
-        data: const MediaQueryData(
-          size: Size(440, 956),
-          textScaler: TextScaler.linear(1.0),
-        ),
-        child: _wrap(applications: applications),
-      ));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(
+              size: Size(440, 956),
+              textScaler: TextScaler.linear(1.0),
+            ),
+            child: _wrap(applications: applications),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Review your draft and attached documents.'), findsOneWidget);
-      expect(find.text('UP Diliman Academic Transcript'), findsNothing);
-      expect(find.text('Personal Statement (750 words)'), findsNothing);
-      expect(find.text('Faculty Recommendation (1 of 2)'), findsNothing);
-      expect(find.text('Continue'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(
+          find.text('Review your draft and attached documents.'),
+          findsOneWidget,
+        );
+        expect(find.text('UP Diliman Academic Transcript'), findsNothing);
+        expect(find.text('Personal Statement (750 words)'), findsNothing);
+        expect(find.text('Faculty Recommendation (1 of 2)'), findsNothing);
+        expect(find.text('Continue'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
-    testWidgets('draft card renders at 1280x800 desktop and handles missing deadline gracefully',
-        (tester) async {
-      tester.view.physicalSize = const Size(1280, 800);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.reset);
+    testWidgets(
+      'draft card renders at 1280x800 desktop and handles missing deadline gracefully',
+      (tester) async {
+        tester.view.physicalSize = const Size(1280, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
 
-      final applications = FakeApplicationDataSource();
-      // Use an unknown scholarship id to exercise the 'Deadline unavailable' fallback branch
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-unknown-deadline', status: 'draft');
+        final applications = FakeApplicationDataSource();
+        // Use an unknown scholarship id to exercise the 'Deadline unavailable' fallback branch
+        await _seedApplication(
+          applications,
+          'user-a',
+          scholarshipId: 'sch-unknown-deadline',
+          status: 'draft',
+        );
 
-      await tester.pumpWidget(MediaQuery(
-        data: const MediaQueryData(
-          size: Size(1280, 800),
-          textScaler: TextScaler.linear(1.2),
-        ),
-        child: _wrap(applications: applications),
-      ));
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          MediaQuery(
+            data: const MediaQueryData(
+              size: Size(1280, 800),
+              textScaler: TextScaler.linear(1.2),
+            ),
+            child: _wrap(applications: applications),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text('Review your draft and attached documents.'), findsOneWidget);
-      expect(find.text('Deadline unavailable'), findsOneWidget);
-      expect(find.text('UP Diliman Academic Transcript'), findsNothing);
-      expect(find.text('Personal Statement (750 words)'), findsNothing);
-      expect(find.text('Continue'), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(
+          find.text('Review your draft and attached documents.'),
+          findsOneWidget,
+        );
+        expect(find.text('Deadline unavailable'), findsOneWidget);
+        expect(find.text('UP Diliman Academic Transcript'), findsNothing);
+        expect(find.text('Personal Statement (750 words)'), findsNothing);
+        expect(find.text('Continue'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 
   group('User isolation', () {
-    testWidgets('a user only ever sees their own applications and counts',
-        (tester) async {
+    testWidgets('a user only ever sees their own applications and counts', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final applications = FakeApplicationDataSource();
-      await _seedApplication(applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await _seedApplication(applications, 'user-b',
-          scholarshipId: 'sch-ched', status: 'approved');
+      await _seedApplication(
+        applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await _seedApplication(
+        applications,
+        'user-b',
+        scholarshipId: 'sch-ched',
+        status: 'approved',
+      );
 
-      await tester.pumpWidget(_wrap(applications: applications, userId: 'user-a'));
+      await tester.pumpWidget(
+        _wrap(applications: applications, userId: 'user-a'),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('DOST-SEI Undergraduate Scholarship'), findsOneWidget);
@@ -704,25 +953,32 @@ void main() {
       expect(find.text('Approved (0)'), findsOneWidget);
     });
 
-    testWidgets('a filter choice does not leak across user sessions',
-        (tester) async {
+    testWidgets('a filter choice does not leak across user sessions', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(800, 1400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
 
       final h = _Harness();
       addTearDown(h.container.dispose);
-      await _seedApplication(h.applications, 'user-a',
-          scholarshipId: 'sch-dost', status: 'submitted');
-      await _seedApplication(h.applications, 'user-b',
-          scholarshipId: 'sch-ched', status: 'approved');
+      await _seedApplication(
+        h.applications,
+        'user-a',
+        scholarshipId: 'sch-dost',
+        status: 'submitted',
+      );
+      await _seedApplication(
+        h.applications,
+        'user-b',
+        scholarshipId: 'sch-ched',
+        status: 'approved',
+      );
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: h.container,
-          child: const MaterialApp(
-            home: ApplicationsScreen(embedded: true),
-          ),
+          child: const MaterialApp(home: ApplicationsScreen(embedded: true)),
         ),
       );
 

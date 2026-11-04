@@ -1,0 +1,11 @@
+✔ rejects independent fonts, weights, downloads and legacy helpers (1.6471ms)
+✔ bundled Inter includes four genuine distinct weights and its license (3.2847ms)
+✔ permits semantic roles, central resolution, geometry and comments (1.5633ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.4308

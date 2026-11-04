@@ -1,0 +1,7 @@
+00:00 +0: loading C:/scholaris/test/shared/theme/app_typography_test.dart
+00:00 +0: web always chooses bundled Inter, including iOS Safari
+00:00 +1: only native iOS selects the supported SF Pro optical proxies
+00:00 +2: all fifteen roles use exactly the approved semantic weights
+00:00 +3: semantic application preserves existing geometry and text features
+00:00 +4: styles resolve native iOS family and bundled fallback centrally
+00:00 +5: All tests passed!

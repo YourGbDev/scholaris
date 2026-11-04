@@ -1,0 +1,160 @@
+00:00 +0: loading C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart
+00:00 +0: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +1: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +2: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +3: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +4: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +5: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +5 -1: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +5 -1: C:/scholaris/scratch/typography/baseline-verification/test/auth_boundary_test.dart: auth boundary — matches isolation matches recompute for the new user and never reuse prior results [E]
+  Expected: ['sch-dost', 'sch-ched']
+    Actual: MappedListIterable<Scholarship, String>:['sch-ched', 'sch-dost']
+     Which: at location [0] is 'sch-ched' instead of 'sch-dost'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\auth_boundary_test.dart 292:7                  main.<fn>.<fn>
+  
+00:00 +5 -1: C:/scholaris/scratch/typography/baseline-verification/test/auth_boundary_test.dart: auth boundary — profile setup draft a previous user draft cannot leak into the next user session
+[ProfileSetup] _refreshErrors called attempted=false
+00:00 +6 -1: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +7 -1: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +8 -1: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +8 -2: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +8 -2: C:/scholaris/scratch/typography/baseline-verification/test/matches_provider_test.dart: matchesProvider returns ranked eligible scholarships for the student [E]
+  Expected: ['sch-dost', 'sch-ched']
+    Actual: MappedListIterable<Scholarship, String>:['sch-ched', 'sch-dost']
+     Which: at location [0] is 'sch-ched' instead of 'sch-dost'
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\matches_provider_test.dart 63:5                main.<fn>
+  
+00:00 +9 -2: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +9 -3: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +9 -3: C:/scholaris/scratch/typography/baseline-verification/test/scholarship_repository_test.dart: ScholarshipRepository fetchActive returns scholarships from snake_case rows [E]
+  Expected: 'sch-dost'
+    Actual: 'sch-ched'
+     Which: is different.
+            Expected: sch-dost
+              Actual: sch-ched
+                          ^
+             Differ at offset 4
+  
+  package:matcher                                     expect
+  package:flutter_test/src/widget_tester.dart 473:18  expect
+  test\scholarship_repository_test.dart 16:7          main.<fn>.<fn>
+  
+00:00 +10 -3: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:00 +11 -3: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders accounts, role filters, and search
+00:01 +12 -3: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab inspect dialog displays full user attributes
+00:01 +13 -3: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab creates a new user account with audit event logging
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart:162:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart line 162
+The test description was:
+  AdminUsersTab creates a new user account with audit event logging
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:03 +13 -4: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab creates a new user account with audit event logging [E]
+  Test failed. See exception logs above.
+  The test description was: AdminUsersTab creates a new user account with audit event logging
+  
+00:03 +13 -4: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: a failed signup cannot create a simulated user or show success
+00:03 +14 -4: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab edits role and status with audit event logging
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart:211:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart line 211
+The test description was:
+  AdminUsersTab edits role and status with audit event logging
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:04 +14 -5: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab edits role and status with audit event logging [E]
+  Test failed. See exception logs above.
+  The test description was: AdminUsersTab edits role and status with audit event logging
+  
+00:04 +14 -5: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab deactivates user with audit event logging
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart:244:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart line 244
+The test description was:
+  AdminUsersTab deactivates user with audit event logging
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +14 -6: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab deactivates user with audit event logging [E]
+  Test failed. See exception logs above.
+  The test description was: AdminUsersTab deactivates user with audit event logging
+  
+00:05 +14 -6: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab deletes user with audit event logging
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: true
+  Actual: <false>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart:277:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart line 277
+The test description was:
+  AdminUsersTab deletes user with audit event logging
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +14 -7: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab deletes user with audit event logging [E]
+  Test failed. See exception logs above.
+  The test description was: AdminUsersTab deletes user with audit event logging
+  
+00:05 +14 -7: C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab renders fluid card feed on mobile viewport (< 768px)
+00:06 +15 -7: Some tests failed.
+
+Failing tests:
+  C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab creates a new user account with audit event logging
+  C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab deactivates user with audit event logging
+  C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab deletes user with audit event logging
+  C:/scholaris/scratch/typography/baseline-verification/test/admin_users_tab_test.dart: AdminUsersTab edits role and status with audit event logging
+  ... and 3 more

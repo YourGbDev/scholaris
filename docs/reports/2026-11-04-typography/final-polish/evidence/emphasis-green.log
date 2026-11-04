@@ -1,0 +1,54 @@
+00:00 +0: loading C:/scholaris/test/shared/theme/semantic_widgets_test.dart
+00:00 +0: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: (setUpAll)
+00:00 +0: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:00 +1: C:/scholaris/test/hero_section_test.dart: Student Dashboard Hero Section personal greeting and opportunity hero use display emphasis
+00:00 +2: C:/scholaris/test/hero_section_test.dart: Student Dashboard Hero Section personal greeting and opportunity hero use display emphasis
+00:01 +3: C:/scholaris/test/hero_section_test.dart: Student Dashboard Hero Section personal greeting and opportunity hero use display emphasis
+00:01 +4: C:/scholaris/test/hero_section_test.dart: Student Dashboard Hero Section personal greeting and opportunity hero use display emphasis
+00:01 +5: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +6: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +7: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +8: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +9: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +10: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +11: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +12: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +13: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +14: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +15: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:01 +16: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +17: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +18: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +19: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +20: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +21: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +22: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +23: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +24: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +25: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +26: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +27: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +28: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +29: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +30: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +31: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +32: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +33: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +34: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +35: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +36: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +37: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab Profile tab exposes a My Applications entry
+00:02 +38: C:/scholaris/test/hero_section_test.dart: Student Dashboard Hero Section renders floating pill nav bar on HomeScreen
+00:02 +39: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab tapping My Applications opens the tracking screen
+00:02 +40: C:/scholaris/test/applications_screen_test.dart: Entry point from Profile tab the navigation contract remains intact
+00:03 +41: C:/scholaris/test/applications_screen_test.dart: Applications list populated list shows scholarship info and status chips
+00:03 +42: C:/scholaris/test/applications_screen_test.dart: Applications list empty state renders when the user has no applications
+00:03 +43: C:/scholaris/test/applications_screen_test.dart: Applications list loading state renders while applications are in flight
+00:03 +44: C:/scholaris/test/applications_screen_test.dart: Applications list error state surfaces with a retry path
+00:03 +45: C:/scholaris/test/applications_screen_test.dart: Applications list retry recovers from a failed load
+00:03 +46: C:/scholaris/test/applications_screen_test.dart: Status rendering every supported status renders its chip label
+00:03 +47: C:/scholaris/test/applications_screen_test.dart: Authenticated user isolation a user only ever sees their own applications
+00:03 +48: C:/scholaris/test/applications_screen_test.dart: Authenticated user isolation logout then login as another user shows only that user apps
+00:03 +49: C:/scholaris/test/applications_screen_test.dart: Responsive rendering populated list renders cleanly on a narrow screen
+00:04 +50: C:/scholaris/test/applications_screen_test.dart: (tearDownAll)
+00:04 +50: All tests passed!

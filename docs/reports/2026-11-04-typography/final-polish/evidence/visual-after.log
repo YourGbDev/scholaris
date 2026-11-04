@@ -1,0 +1,20 @@
+00:00 +0: loading C:/scholaris/test/typography_visual_capture_test.dart
+00:00 +0: (setUpAll)
+00:00 +0: onboarding at 320.0 matched capture
+00:00 +1: onboarding at 390.0 matched capture
+00:00 +2: authentication at 320.0 matched capture
+00:01 +3: authentication at 390.0 matched capture
+00:01 +4: authentication-errors at 320.0 matched capture
+00:01 +5: authentication-errors at 390.0 matched capture
+00:01 +6: provider-organization at 320.0 matched capture
+00:01 +7: provider-organization at 390.0 matched capture
+00:02 +8: provider-individual at 320.0 matched capture
+00:02 +9: provider-individual at 390.0 matched capture
+00:02 +10: admin at 320.0 matched capture
+00:02 +11: admin at 390.0 matched capture
+00:02 +12: scholarship-card at 320.0 matched capture
+00:02 +13: scholarship-card at 390.0 matched capture
+00:02 +14: logout-dialog at 320.0 matched capture
+00:02 +15: logout-dialog at 390.0 matched capture
+00:03 +16: (tearDownAll)
+00:03 +16: All tests passed!

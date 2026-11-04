@@ -1,0 +1,56 @@
+00:00 +0: loading C:/scholaris/test/dashboard_widget_test.dart
+00:00 +0: C:/scholaris/test/dashboard_widget_test.dart: (setUpAll)
+00:00 +0: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +1: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +2: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +3: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +4: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +5: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +6: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +7: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +8: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +9: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +10: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:01 +11: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:02 +12: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:02 +13: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:02 +14: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:02 +15: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:03 +16: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:03 +17: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:03 +18: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:03 +19: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:04 +20: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:04 +21: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:04 +22: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:04 +23: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:04 +24: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:04 +25: C:/scholaris/test/dashboard_widget_test.dart: Home header Settings opens account settings
+00:04 +26: C:/scholaris/test/hero_section_test.dart: Student Dashboard Hero Section hero displays the actual match count, including zero
+00:04 +27: C:/scholaris/test/dashboard_widget_test.dart: Discover header Settings opens account settings
+00:05 +28: C:/scholaris/test/dashboard_widget_test.dart: Discover header Settings opens account settings
+00:05 +29: C:/scholaris/test/dashboard_widget_test.dart: Discover header Settings opens account settings
+00:06 +30: C:/scholaris/test/hero_section_test.dart: Student Dashboard Hero Section renders floating pill nav bar on HomeScreen
+00:06 +31: C:/scholaris/test/shared/theme/semantic_widgets_test.dart: scholarship card spends emphasis on title and amount, not metadata
+00:07 +32: C:/scholaris/test/dashboard_widget_test.dart: male hero keeps shared recommendations and a working Explore action
+00:07 +33: C:/scholaris/test/dashboard_widget_test.dart: male hero keeps shared recommendations and a working Explore action
+00:08 +34: C:/scholaris/test/dashboard_widget_test.dart: male hero reflows on a narrow phone with enlarged text
+00:08 +35: C:/scholaris/test/dashboard_widget_test.dart: female hero keeps shared recommendations and a working Explore action
+00:09 +36: C:/scholaris/test/dashboard_widget_test.dart: female hero reflows on a narrow phone with enlarged text
+00:10 +37: C:/scholaris/test/dashboard_widget_test.dart: Home lists do not repeat dock clearance between sections
+00:10 +38: C:/scholaris/test/dashboard_widget_test.dart: Saved opened from Home returns to Home with Back
+00:11 +39: C:/scholaris/test/dashboard_widget_test.dart: female login never paints a male hero while profile loads
+00:11 +40: C:/scholaris/test/dashboard_widget_test.dart: explicit male gender wins over a name containing Maria
+00:11 +41: C:/scholaris/test/dashboard_widget_test.dart: Dashboard summary renders the summary with correct counts
+00:11 +42: C:/scholaris/test/dashboard_widget_test.dart: Closing Soon section shows browse scholarships inside the closing window
+00:12 +43: C:/scholaris/test/dashboard_widget_test.dart: Closing Soon section excludes scholarships outside the closing window
+00:12 +44: C:/scholaris/test/dashboard_widget_test.dart: Closing Soon section does not duplicate a personalized match
+00:12 +45: C:/scholaris/test/dashboard_widget_test.dart: Closing Soon section orders closing-soon scholarships by deadline urgency
+00:12 +46: C:/scholaris/test/dashboard_widget_test.dart: Applied state dashboard distinguishes approved applications
+00:12 +47: C:/scholaris/test/dashboard_widget_test.dart: Applied state dashboard distinguishes awarded applications
+00:13 +48: C:/scholaris/test/dashboard_widget_test.dart: Applied state a closing-soon card shows the applied indicator
+00:13 +49: C:/scholaris/test/dashboard_widget_test.dart: Applied state a matched card shows the applied indicator
+00:13 +50: C:/scholaris/test/dashboard_widget_test.dart: Responsive layout dashboard does not overflow on a narrow screen
+00:13 +51: C:/scholaris/test/dashboard_widget_test.dart: Dashboard advice card shows closing scholarships without a repeated alert
+00:13 +52: C:/scholaris/test/dashboard_widget_test.dart: (tearDownAll)
+00:14 +52: All tests passed!
